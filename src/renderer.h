@@ -47,8 +47,8 @@ const ColorScheme& GetColorScheme(bool dark);
 // ---------------------------------------------------------------------------
 // Custom scrollbar constants
 // ---------------------------------------------------------------------------
-static const int kScrollbarWidth = 8;       // Thin modern scrollbar
-static const int kScrollbarMinThumb = 30;   // Minimum thumb height in pixels
+inline constexpr int kScrollbarWidth = 8;       // Thin modern scrollbar
+inline constexpr int kScrollbarMinThumb = 30;   // Minimum thumb height in pixels
 
 // ---------------------------------------------------------------------------
 // Scrollbar hit-test result

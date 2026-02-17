@@ -33,7 +33,7 @@ BEGIN
             VALUE "FileDescription",  "AI Subscriptions Monitor"
             VALUE "FileVersion",      VER_FILE_STR
             VALUE "InternalName",     "AISubscriptionsMonitor"
-            VALUE "LegalCopyright",   "Copyright (c) 2025 dualface"
+            VALUE "LegalCopyright",   "Copyright (c) 2026 dualface"
             VALUE "OriginalFilename", "AISubscriptionsMonitor.exe"
             VALUE "ProductName",      "AI Subscriptions Monitor"
             VALUE "ProductVersion",   VER_PRODUCT_STR

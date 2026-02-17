@@ -84,8 +84,7 @@ struct Subscription {
     std::optional<Cost> cost;
     std::string status;
     
-    // Get displayable metrics (with filtering)
-    std::vector<Metric> getDisplayMetrics() const;
+
 };
 
 // JSON parsing functions

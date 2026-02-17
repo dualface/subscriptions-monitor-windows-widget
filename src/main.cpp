@@ -5,6 +5,8 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include <mutex>
+#include <atomic>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -34,10 +36,6 @@
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
-// DPI Awareness Manifest Declaration
-// This makes the application Per-Monitor DPI aware
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-
 // Enable Per-Monitor DPI Awareness for Windows 10 (1607+)
 #ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
 #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 ((DPI_AWARENESS_CONTEXT)-4)
@@ -46,7 +44,52 @@
 // Global log file
 static std::ofstream g_logFile;
 static bool g_debugMode = false;
+static std::atomic<bool> g_shuttingDown{false};
 static FILE* g_consoleOut = nullptr;
+
+// Log rotation constants
+static const char* g_logFilePath = "AISubscriptionsMonitor.log";
+static const char* g_oldLogFilePath = "AISubscriptionsMonitor.log.old";
+static const std::streamoff g_maxLogSize = 5 * 1024 * 1024; // 5 MB limit
+
+// Check and rotate log file if needed
+static void CheckAndRotateLog() {
+    if (!g_logFile.is_open()) return;
+    
+    // Get current file position (size)
+    g_logFile.flush();
+    auto currentPos = g_logFile.tellp();
+    if (currentPos < g_maxLogSize) return;
+    
+    // Close current log
+    g_logFile.close();
+    
+    // Remove old backup if exists
+    DeleteFileA(g_oldLogFilePath);
+    
+    // Rename current log to backup
+    MoveFileA(g_logFilePath, g_oldLogFilePath);
+    
+    // Reopen new log file
+    g_logFile.open(g_logFilePath, std::ios::out | std::ios::app);
+    if (g_logFile.is_open()) {
+        g_logFile << "[";
+        char timeStr[64];
+        time_t now = time(nullptr);
+        struct tm timeinfo;
+        localtime_s(&timeinfo, &now);
+        strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
+        g_logFile << timeStr;
+        g_logFile << "] Log rotated (previous log saved to .log.old)" << std::endl;
+    }
+}
+
+// Mutex protecting shared state written by the background HTTP thread
+// and read by the UI thread (subscriptions, lastError, contentHeight).
+static std::mutex g_dataMutex;
+
+// Background refresh thread handle (joined before shutdown)
+static std::thread g_refreshThread;
 
 // Logging function - outputs to console and file
 void Log(const char* fmt, ...) {
@@ -74,6 +117,7 @@ void Log(const char* fmt, ...) {
     if (g_logFile.is_open()) {
         g_logFile << logLine << std::endl;
         g_logFile.flush();
+        CheckAndRotateLog();
     }
 }
 
@@ -81,7 +125,7 @@ void Log(const char* fmt, ...) {
 bool InitLogging(bool debugMode) {
     g_debugMode = debugMode;
     
-    g_logFile.open("AISubscriptionsMonitor.log", std::ios::out | std::ios::app);
+    g_logFile.open(g_logFilePath, std::ios::out | std::ios::app);
     if (!g_logFile.is_open()) {
         return false;
     }
@@ -89,8 +133,10 @@ bool InitLogging(bool debugMode) {
     if (debugMode) {
         AllocConsole();
         freopen_s(&g_consoleOut, "CONOUT$", "w", stdout);
-        freopen_s(&g_consoleOut, "CONOUT$", "w", stderr);
-        freopen_s(&g_consoleOut, "CONIN$", "r", stdin);
+        FILE* dummyErr = nullptr;
+        FILE* dummyIn  = nullptr;
+        freopen_s(&dummyErr, "CONOUT$", "w", stderr);
+        freopen_s(&dummyIn,  "CONIN$",  "r", stdin);
         
         Log("========================================");
         Log("Debug Console Started");
@@ -113,7 +159,7 @@ void CrashHandler(int signal) {
     Log("FATAL ERROR: Signal %d caught", signal);
     Log("Application crashed!");
     CloseLogging();
-    exit(1);
+    _exit(1);  // Use _exit() instead of exit() — safe from signal handlers
 }
 
 LONG WINAPI ExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo) {
@@ -135,7 +181,7 @@ const wchar_t kClassName[] = L"AISubscriptionsMonitor";
 const wchar_t kWindowTitle[] = L"AI Subscriptions Monitor";
 const int kMinWindowWidth = 620;           // Minimum window width (normal)
 const int kMinWindowHeight = 400;          // Minimum window height (normal)
-const int kMinWindowWidthCompact = 200;    // Minimum window width (compact)
+const int kMinWindowWidthCompact = 240;    // Minimum window width (compact)
 const int kMinWindowHeightCompact = 120;   // Minimum window height (compact)
 const int kWindowWidth = kMinWindowWidth;    // Initial window width
 const int kWindowHeight = 600;               // Initial window height
@@ -151,6 +197,9 @@ struct SavedSettings {
     bool pinned;
     bool compact;
     bool windowValid;     // true if x/y/w/h loaded successfully
+
+    // Theme preference
+    std::string theme;    // "light", "dark", or "" (system)
 
     // API URL (empty if not saved)
     std::string apiUrl;
@@ -172,7 +221,7 @@ static std::wstring GetSettingsPath() {
     return dir + L"\\settings.txt";
 }
 
-static void SaveSettings(HWND hwnd, bool pinned, bool compact, const std::string& apiUrl) {
+static void SaveSettings(HWND hwnd, bool pinned, bool compact, ThemeMode themeMode, const std::string& apiUrl) {
     WINDOWPLACEMENT wp = { sizeof(wp) };
     if (!GetWindowPlacement(hwnd, &wp)) return;
 
@@ -190,6 +239,11 @@ static void SaveSettings(HWND hwnd, bool pinned, bool compact, const std::string
     f << "h=" << (rc.bottom - rc.top) << "\n";
     f << "pinned=" << (pinned ? 1 : 0) << "\n";
     f << "compact=" << (compact ? 1 : 0) << "\n";
+    switch (themeMode) {
+        case ThemeMode::Light: f << "theme=light\n"; break;
+        case ThemeMode::Dark:  f << "theme=dark\n";  break;
+        default:               f << "theme=system\n"; break;
+    }
     if (!apiUrl.empty()) {
         f << "api_url=" << apiUrl << "\n";
     }
@@ -213,13 +267,18 @@ static SavedSettings LoadSettings() {
         if (eq == std::string::npos) continue;
         std::string key = line.substr(0, eq);
         std::string val = line.substr(eq + 1);
-        if      (key == "x")       { ss.x = std::stoi(val); gotX = true; }
-        else if (key == "y")       { ss.y = std::stoi(val); gotY = true; }
-        else if (key == "w")       { ss.w = std::stoi(val); gotW = true; }
-        else if (key == "h")       { ss.h = std::stoi(val); gotH = true; }
-        else if (key == "pinned")  { ss.pinned = (std::stoi(val) != 0); }
-        else if (key == "compact") { ss.compact = (std::stoi(val) != 0); }
-        else if (key == "api_url") { ss.apiUrl = val; }
+        try {
+            if      (key == "x")       { ss.x = std::stoi(val); gotX = true; }
+            else if (key == "y")       { ss.y = std::stoi(val); gotY = true; }
+            else if (key == "w")       { ss.w = std::stoi(val); gotW = true; }
+            else if (key == "h")       { ss.h = std::stoi(val); gotH = true; }
+            else if (key == "pinned")  { ss.pinned = (std::stoi(val) != 0); }
+            else if (key == "compact") { ss.compact = (std::stoi(val) != 0); }
+            else if (key == "theme")   { ss.theme = val; }
+            else if (key == "api_url") { ss.apiUrl = val; }
+        } catch (const std::exception&) {
+            // Ignore corrupted settings entries (e.g. non-numeric values)
+        }
     }
 
     if (gotX && gotY && gotW && gotH && ss.w > 0 && ss.h > 0) {
@@ -257,8 +316,9 @@ struct AppState {
     std::wstring apiHost;
     std::wstring apiPath;
     int apiPort;
+    bool apiIsHttps;
     std::string apiUrl;   // Original URL string (for saving to config)
-    bool isLoading;
+    std::atomic<bool> isLoading;
     std::string lastError;
     HWND hwnd;
     bool debugMode;
@@ -294,7 +354,7 @@ struct AppState {
     bool trayIconCreated;
     
     AppState()
-        : apiPort(80), isLoading(false), hwnd(nullptr), debugMode(false),
+        : apiPort(80), apiIsHttps(false), isLoading(false), hwnd(nullptr), debugMode(false),
           themeMode(ThemeMode::System), scrollOffset(0), contentHeight(0),
           hBgBrush(nullptr), initialResizeDone(false),
           scrollDragging(false), dragStartMouseY(0), dragStartOffset(0),
@@ -413,7 +473,7 @@ static void ShowAppWindow(HWND hwnd) {
 static void HideAppWindow(HWND hwnd) {
     if (g_app) {
         // Save settings before hiding so geometry is persisted
-        SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->apiUrl);
+        SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->themeMode, g_app->apiUrl);
     }
     ShowWindow(hwnd, SW_HIDE);
     Log("Window hidden to tray");
@@ -481,27 +541,109 @@ static void ScrollTo(HWND hwnd, int pos) {
 }
 
 // ---------------------------------------------------------------------------
+// String conversion helpers (needed by URL parsing and RefreshData)
+// ---------------------------------------------------------------------------
+
+static std::string WstrToStr(const std::wstring& ws) {
+    if (ws.empty()) return std::string();
+    int len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), nullptr, 0, nullptr, nullptr);
+    std::string s(len, 0);
+    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), &s[0], len, nullptr, nullptr);
+    return s;
+}
+
+static std::wstring StrToWstr(const std::string& s) {
+    if (s.empty()) return std::wstring();
+    int len = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), nullptr, 0);
+    std::wstring ws(len, 0);
+    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), &ws[0], len);
+    return ws;
+}
+
+// ---------------------------------------------------------------------------
+// URL parsing (needed by RefreshData)
+// ---------------------------------------------------------------------------
+
+struct ParsedUrl {
+    std::wstring host;
+    std::wstring path;
+    int port;
+    bool isHttps;
+};
+
+static ParsedUrl ParseUrl(const std::wstring& url) {
+    ParsedUrl result;
+    result.port = 80;
+    result.path = L"/";
+    result.isHttps = false;
+    
+    std::wstring urlToParse = url;
+    
+    if (urlToParse.find(L"https://") == 0) {
+        result.isHttps = true;
+        result.port = 443;
+        urlToParse = urlToParse.substr(8);
+    } else if (urlToParse.find(L"http://") == 0) {
+        urlToParse = urlToParse.substr(7);
+    }
+    
+    size_t pathPos = urlToParse.find(L'/');
+    if (pathPos != std::wstring::npos) {
+        result.path = urlToParse.substr(pathPos);
+        urlToParse = urlToParse.substr(0, pathPos);
+    }
+    
+    size_t portPos = urlToParse.find(L':');
+    if (portPos != std::wstring::npos) {
+        result.host = urlToParse.substr(0, portPos);
+        result.port = _wtoi(urlToParse.substr(portPos + 1).c_str());
+    } else {
+        result.host = urlToParse;
+    }
+    
+    return result;
+}
+
+// ---------------------------------------------------------------------------
 // Data refresh
 // ---------------------------------------------------------------------------
 
 void RefreshData() {
-    if (!g_app || g_app->isLoading) return;
+    if (!g_app || g_app->isLoading.load()) return;
+
+    // Join previous refresh thread if it finished but hasn't been joined yet
+    if (g_refreshThread.joinable()) {
+        g_refreshThread.join();
+    }
 
     Log("Refreshing data...");
-    g_app->isLoading = true;
-    g_app->lastError.clear();
+    g_app->isLoading.store(true);
+    {
+        std::lock_guard<std::mutex> lock(g_dataMutex);
+        g_app->lastError.clear();
+    }
     InvalidateRect(g_app->hwnd, nullptr, TRUE);
 
-    std::thread([]() {
+    // Capture values needed by the thread (avoid accessing g_app members from bg thread
+    // except through the mutex-protected fields).
+    std::wstring host = g_app->apiHost;
+    std::wstring path = g_app->apiPath;
+    int port = g_app->apiPort;
+    bool isHttps = g_app->apiIsHttps;
+    HttpClient* client = g_app->httpClient.get();
+
+    g_refreshThread = std::thread([host, path, port, isHttps, client]() {
+        if (g_shuttingDown.load()) return;
+
         bool success = false;
-        Log("Sending HTTP request to %ls:%d%ls", g_app->apiHost.c_str(), g_app->apiPort, g_app->apiPath.c_str());
+        Log("Sending HTTP request to %ls:%d%ls", host.c_str(), port, path.c_str());
+
+        std::vector<Subscription> newSubs;
+        std::string newError;
+        int newContentHeight = 0;
 
         try {
-            std::string response = g_app->httpClient->GetSync(
-                g_app->apiHost,
-                g_app->apiPath,
-                g_app->apiPort,
-                success);
+            std::string response = client->GetSync(host, path, port, isHttps, success);
 
             Log("HTTP request completed. Success: %s", success ? "true" : "false");
             Log("Response size: %zu bytes", response.size());
@@ -509,37 +651,44 @@ void RefreshData() {
             if (success) {
                 try {
                     Log("Parsing subscriptions...");
-                    g_app->subscriptions = ParseSubscriptions(response);
-                    Log("Successfully parsed %zu subscriptions", g_app->subscriptions.size());
-                    g_app->lastError.clear();
+                    newSubs = ParseSubscriptions(response);
+                    Log("Successfully parsed %zu subscriptions", newSubs.size());
                 } catch (const std::exception& e) {
                     Log("Failed to parse response: %s", e.what());
-                    g_app->lastError = e.what();
-                    g_app->subscriptions.clear();
+                    newError = e.what();
                 }
             } else {
                 Log("Failed to fetch data from server");
-                g_app->lastError = "Failed to fetch data from server";
-                g_app->subscriptions.clear();
+                newError = "Failed to fetch data from server";
             }
         } catch (const std::exception& e) {
             Log("Exception in HTTP thread: %s", e.what());
-            g_app->lastError = e.what();
-            g_app->subscriptions.clear();
+            newError = e.what();
         }
 
-        g_app->isLoading = false;
-        
-        if (g_app->hwnd) {
-            // Recalculate content height and update scroll after data changes
-            if (!g_app->subscriptions.empty()) {
-                g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
-            } else {
-                g_app->contentHeight = 0;
+        if (g_shuttingDown.load()) return;
+
+        // Safely publish results to shared state under the mutex
+        {
+            std::lock_guard<std::mutex> lock(g_dataMutex);
+            if (g_app) {
+                g_app->subscriptions = std::move(newSubs);
+                g_app->lastError = std::move(newError);
+                if (!g_app->subscriptions.empty()) {
+                    g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
+                } else {
+                    g_app->contentHeight = 0;
+                }
             }
-            PostMessage(g_app->hwnd, WM_USER + 1, 0, 0); // custom "data ready" message
         }
-    }).detach();
+
+        if (g_app) {
+            g_app->isLoading.store(false);
+            if (g_app->hwnd && !g_shuttingDown.load()) {
+                PostMessage(g_app->hwnd, WM_USER + 1, 0, 0); // custom "data ready" message
+            }
+        }
+    });
 }
 
 // ---------------------------------------------------------------------------
@@ -560,10 +709,10 @@ void OnPaint(HWND hwnd) {
     int width = clientRect.right - clientRect.left;
     int height = clientRect.bottom - clientRect.top;
 
-    Log("OnPaint: Window size %dx%d", width, height);
+    if (g_debugMode) Log("OnPaint: Window size %dx%d", width, height);
     
     if (width <= 0 || height <= 0) {
-        Log("Window size is zero or negative, skipping paint");
+        if (g_debugMode) Log("Window size is zero or negative, skipping paint");
         EndPaint(hwnd, &ps);
         return;
     }
@@ -594,11 +743,26 @@ void OnPaint(HWND hwnd) {
     FillRect(hdcMem, &clientRect, hBgBrush);
     DeleteObject(hBgBrush);
 
+    // Take a snapshot of shared state under the data mutex to avoid
+    // data races with the background HTTP thread.
+    bool loading = g_app->isLoading.load();
+    std::string lastErrorCopy;
+    std::vector<Subscription> subsCopy;
+    int scrollOff = 0;
+    int contentH = 0;
+    {
+        std::lock_guard<std::mutex> lock(g_dataMutex);
+        lastErrorCopy = g_app->lastError;
+        subsCopy = g_app->subscriptions;
+        scrollOff = g_app->scrollOffset;
+        contentH = g_app->contentHeight;
+    }
+
     try {
         g_app->renderer->SetWindowSize(width, height);
 
-        if (g_app->isLoading) {
-            Log("Rendering: Loading state");
+        if (loading) {
+            if (g_debugMode) Log("Rendering: Loading state");
             
             HFONT hFont = CreateFontW(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
                                      DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -613,8 +777,8 @@ void OnPaint(HWND hwnd) {
             SelectObject(hdcMem, hOldFont);
             DeleteObject(hFont);
             
-        } else if (!g_app->lastError.empty()) {
-            Log("Rendering: Error state - %s", g_app->lastError.c_str());
+        } else if (!lastErrorCopy.empty()) {
+            if (g_debugMode) Log("Rendering: Error state - %s", lastErrorCopy.c_str());
             
             HFONT hFont = CreateFontW(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
                                      DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -625,18 +789,18 @@ void OnPaint(HWND hwnd) {
             SetTextColor(hdcMem, colors.errorTextColor);
             SetBkMode(hdcMem, TRANSPARENT);
             
-            std::wstring errorW(g_app->lastError.begin(), g_app->lastError.end());
+            std::wstring errorW = StrToWstr(lastErrorCopy);
             DrawTextW(hdcMem, errorW.c_str(), -1, &textRect, DT_CENTER | DT_WORDBREAK);
             
             SelectObject(hdcMem, hOldFont);
             DeleteObject(hFont);
             
-        } else if (!g_app->subscriptions.empty()) {
-            Log("Rendering: %zu subscriptions", g_app->subscriptions.size());
-            g_app->renderer->Render(hdcMem, g_app->subscriptions, g_app->scrollOffset);
-            Log("Render completed");
+        } else if (!subsCopy.empty()) {
+            if (g_debugMode) Log("Rendering: %zu subscriptions", subsCopy.size());
+            g_app->renderer->Render(hdcMem, subsCopy, scrollOff);
+            if (g_debugMode) Log("Render completed");
         } else {
-            Log("Rendering: No data available");
+            if (g_debugMode) Log("Rendering: No data available");
             
             HFONT hFont = CreateFontW(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
                                      DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -656,10 +820,10 @@ void OnPaint(HWND hwnd) {
     }
 
     // Draw custom scrollbar on top of content (only when content overflows)
-    if (g_app->contentHeight > height) {
+    if (contentH > height) {
         bool thumbActive = g_app->scrollThumbHovered || g_app->scrollDragging;
         g_app->renderer->DrawScrollbar(hdcMem, width, height,
-                                       g_app->contentHeight, g_app->scrollOffset,
+                                       contentH, scrollOff,
                                        thumbActive);
     }
 
@@ -747,8 +911,11 @@ static void ApplyCompactLayout(HWND hwnd) {
         style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
     SetWindowLong(hwnd, GWL_STYLE, style);
 
-    // Recalculate content
-    g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
+    // Recalculate content (under lock since subscriptions may be written by bg thread)
+    {
+        std::lock_guard<std::mutex> lock(g_dataMutex);
+        g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
+    }
     g_app->scrollOffset = 0;
 
     if (compact && !g_app->subscriptions.empty()) {
@@ -799,10 +966,21 @@ static void ApplyCompactLayout(HWND hwnd) {
             SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
                          SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
         }
-    } else {
-        // Compact but no data yet — just refresh the frame
-        SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
-                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    } else if (compact) {
+        // Compact but no data yet — apply minimum compact size
+        int contentW = kMinWindowWidthCompact;
+        int contentH = kMinWindowHeightCompact;  // Use minimum compact height
+        
+        DWORD dwStyle = GetWindowLong(hwnd, GWL_STYLE);
+        DWORD dwExStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+        RECT rc = { 0, 0, contentW, contentH };
+        AdjustWindowRectEx(&rc, dwStyle, FALSE, dwExStyle);
+        int winW = rc.right - rc.left;
+        int winH = rc.bottom - rc.top;
+        
+        SetWindowPos(hwnd, nullptr, 0, 0, winW, winH,
+                     SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        Log("Compact auto-resize (no data): client=%dx%d window=%dx%d", contentW, contentH, winW, winH);
     }
 
     UpdateScrollInfo(hwnd);
@@ -871,15 +1049,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 MINMAXINFO* mmi = (MINMAXINFO*)lParam;
                 bool compact = g_app && g_app->renderer && g_app->renderer->IsCompact();
                 if (compact) {
-                    // Lock window to its current size in compact mode
-                    RECT wr;
-                    GetWindowRect(hwnd, &wr);
-                    int w = wr.right - wr.left;
-                    int h = wr.bottom - wr.top;
-                    mmi->ptMinTrackSize.x = w;
-                    mmi->ptMinTrackSize.y = h;
-                    mmi->ptMaxTrackSize.x = w;
-                    mmi->ptMaxTrackSize.y = h;
+                    // In compact mode: set minimum size to compact minimum,
+                    // but don't set maximum - allow SetWindowPos to resize
+                    mmi->ptMinTrackSize.x = kMinWindowWidthCompact;
+                    mmi->ptMinTrackSize.y = kMinWindowHeightCompact;
                 } else {
                     mmi->ptMinTrackSize.x = kMinWindowWidth;
                     mmi->ptMinTrackSize.y = kMinWindowHeight;
@@ -929,8 +1102,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 } else if (zone == ScrollHitZone::Track) {
                     // Page up/down: jump towards click position
                     int pageAmount = ch;
-                    int thumbH = max(kScrollbarMinThumb,
-                                     (int)((long long)ch * ch / g_app->contentHeight));
+                    int thumbH = (std::max)(kScrollbarMinThumb,
+                                     static_cast<int>((static_cast<long long>(ch) * ch) / g_app->contentHeight));
                     int trackRange = ch - thumbH;
                     int maxScroll  = g_app->contentHeight - ch;
                     int currentThumbY = (maxScroll > 0)
@@ -999,12 +1172,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             // ----- System theme change -----
             case WM_SETTINGCHANGE: {
-                // Windows broadcasts this when personalisation settings change
-                if (lParam && wcscmp(reinterpret_cast<LPCWSTR>(lParam), L"ImmersiveColorSet") == 0) {
-                    if (g_app && g_app->themeMode == ThemeMode::System) {
-                        Log("System theme changed, re-applying theme");
-                        ApplyTheme();
-                        InvalidateRect(hwnd, nullptr, TRUE);
+                // Windows broadcasts this when personalisation settings change.
+                // lParam may be a string pointer or a numeric value; guard with
+                // IsBadStringPtrW to avoid crashing on non-pointer values.
+                if (lParam) {
+                    LPCWSTR setting = reinterpret_cast<LPCWSTR>(lParam);
+                    if (!IsBadStringPtrW(setting, 64) &&
+                        wcscmp(setting, L"ImmersiveColorSet") == 0) {
+                        if (g_app && g_app->themeMode == ThemeMode::System) {
+                            Log("System theme changed, re-applying theme");
+                            ApplyTheme();
+                            InvalidateRect(hwnd, nullptr, TRUE);
+                        }
                     }
                 }
                 return 0;
@@ -1111,10 +1290,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 
             case WM_DESTROY:
                 Log("WM_DESTROY received");
+                // Signal background thread to stop, then wait for it
+                g_shuttingDown.store(true);
+                if (g_refreshThread.joinable()) {
+                    g_refreshThread.join();
+                }
                 RemoveTrayIcon();
                 // Persist settings before closing
                 if (g_app) {
-                    SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->apiUrl);
+                    SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->themeMode, g_app->apiUrl);
                     Log("Settings saved");
                 }
                 KillTimer(hwnd, 1);
@@ -1131,70 +1315,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 // ---------------------------------------------------------------------------
-// URL parsing
-// ---------------------------------------------------------------------------
-
-struct ParsedUrl {
-    std::wstring host;
-    std::wstring path;
-    int port;
-    bool isHttps;
-};
-
-ParsedUrl ParseUrl(const std::wstring& url) {
-    ParsedUrl result;
-    result.port = 80;
-    result.path = L"/";
-    result.isHttps = false;
-    
-    std::wstring urlToParse = url;
-    
-    if (urlToParse.find(L"https://") == 0) {
-        result.isHttps = true;
-        result.port = 443;
-        urlToParse = urlToParse.substr(8);
-    } else if (urlToParse.find(L"http://") == 0) {
-        urlToParse = urlToParse.substr(7);
-    }
-    
-    size_t pathPos = urlToParse.find(L'/');
-    if (pathPos != std::wstring::npos) {
-        result.path = urlToParse.substr(pathPos);
-        urlToParse = urlToParse.substr(0, pathPos);
-    }
-    
-    size_t portPos = urlToParse.find(L':');
-    if (portPos != std::wstring::npos) {
-        result.host = urlToParse.substr(0, portPos);
-        result.port = _wtoi(urlToParse.substr(portPos + 1).c_str());
-    } else {
-        result.host = urlToParse;
-    }
-    
-    return result;
-}
-
-// ---------------------------------------------------------------------------
-// String conversion helpers
-// ---------------------------------------------------------------------------
-
-static std::string WstrToStr(const std::wstring& ws) {
-    if (ws.empty()) return std::string();
-    int len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), nullptr, 0, nullptr, nullptr);
-    std::string s(len, 0);
-    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), &s[0], len, nullptr, nullptr);
-    return s;
-}
-
-static std::wstring StrToWstr(const std::string& s) {
-    if (s.empty()) return std::wstring();
-    int len = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), nullptr, 0);
-    std::wstring ws(len, 0);
-    MultiByteToWideChar(CP_UTF8, 0, s.c_str(), (int)s.size(), &ws[0], len);
-    return ws;
-}
-
-// ---------------------------------------------------------------------------
 // URL validation: test if the API endpoint is reachable and returns valid JSON
 // ---------------------------------------------------------------------------
 
@@ -1206,7 +1326,7 @@ static bool ValidateApiUrl(HttpClient& client, const std::wstring& urlStr, std::
     }
 
     bool success = false;
-    std::string response = client.GetSync(parsed.host, parsed.path, parsed.port, success);
+    std::string response = client.GetSync(parsed.host, parsed.path, parsed.port, parsed.isHttps, success);
     if (!success) {
         outError = "Failed to connect to " + WstrToStr(urlStr);
         return false;
@@ -1467,10 +1587,11 @@ bool ParseCommandLine(AppState& app, bool& debugMode, std::wstring& outUrlArg) {
 // Apply a URL string to the app state
 static void ApplyUrl(AppState& app, const std::wstring& urlStr) {
     ParsedUrl parsed = ParseUrl(urlStr);
-    app.apiHost = parsed.host;
-    app.apiPort = parsed.port;
-    app.apiPath = parsed.path;
-    app.apiUrl  = WstrToStr(urlStr);
+    app.apiHost    = parsed.host;
+    app.apiPort    = parsed.port;
+    app.apiPath    = parsed.path;
+    app.apiIsHttps = parsed.isHttps;
+    app.apiUrl     = WstrToStr(urlStr);
 }
 
 // ---------------------------------------------------------------------------
@@ -1637,18 +1758,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
                      SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
 
-    // If compact mode restored, strip resize style immediately.
+    // If compact mode restored, strip resize style and apply compact layout.
     // The window will auto-resize when data arrives (WM_USER+1).
     if (app.renderer->IsCompact()) {
         LONG style = GetWindowLong(hwnd, GWL_STYLE);
         style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
         SetWindowLong(hwnd, GWL_STYLE, style);
-        SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
-                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        // Apply compact layout immediately to set correct size
+        ApplyCompactLayout(hwnd);
     }
 
-    // Skip initial auto-resize if we restored a saved window size
-    if (saved.windowValid) {
+    // Skip initial auto-resize if we restored a saved window size (only for non-compact mode)
+    if (saved.windowValid && !app.renderer->IsCompact()) {
         app.initialResizeDone = true;
     }
 

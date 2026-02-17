@@ -63,17 +63,6 @@ std::string Metric::getDisplayTitle() const {
     return name;
 }
 
-std::vector<Metric> Subscription::getDisplayMetrics() const {
-    std::vector<Metric> result;
-    for (const auto& metric : metrics) {
-        // 只显示有 limit 的指标（可以显示进度条）
-        if (metric.hasProgress()) {
-            result.push_back(metric);
-        }
-    }
-    return result;
-}
-
 std::vector<Subscription> ParseSubscriptions(const std::string& jsonString) {
     return json::parse(jsonString).get<std::vector<Subscription>>();
 }

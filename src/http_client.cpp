@@ -34,6 +34,7 @@ void HttpClient::SetTimeout(int resolveTimeout, int connectTimeout, int sendTime
 std::string HttpClient::GetSync(const std::wstring& host,
                                 const std::wstring& path,
                                 int port,
+                                bool isHttps,
                                 bool& success) {
     success = false;
     std::string result;
@@ -47,13 +48,14 @@ std::string HttpClient::GetSync(const std::wstring& host,
         return result;
     }
     
+    DWORD requestFlags = isHttps ? WINHTTP_FLAG_SECURE : 0;
     HINTERNET hRequest = WinHttpOpenRequest(hConnect,
                                            L"GET",
                                            path.c_str(),
                                            nullptr,
                                            WINHTTP_NO_REFERER,
                                            WINHTTP_DEFAULT_ACCEPT_TYPES,
-                                           0);
+                                           requestFlags);
     
     if (!hRequest) {
         WinHttpCloseHandle(hConnect);
@@ -74,6 +76,26 @@ std::string HttpClient::GetSync(const std::wstring& host,
     }
     
     if (bResults) {
+        // Check HTTP status code
+        DWORD statusCode = 0;
+        DWORD statusCodeSize = sizeof(statusCode);
+        if (!WinHttpQueryHeaders(hRequest,
+                                 WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+                                 WINHTTP_HEADER_NAME_BY_INDEX,
+                                 &statusCode, &statusCodeSize, WINHTTP_NO_HEADER_INDEX)) {
+            WinHttpCloseHandle(hRequest);
+            WinHttpCloseHandle(hConnect);
+            return result;
+        }
+
+        if (statusCode < 200 || statusCode >= 300) {
+            // Non-2xx status: read body for potential error message, then fail
+            result = "HTTP " + std::to_string(statusCode);
+            WinHttpCloseHandle(hRequest);
+            WinHttpCloseHandle(hConnect);
+            return result;
+        }
+
         DWORD dwSize = 0;
         DWORD dwDownloaded = 0;
         
@@ -104,16 +126,4 @@ std::string HttpClient::GetSync(const std::wstring& host,
     return result;
 }
 
-bool HttpClient::Get(const std::wstring& host,
-                     const std::wstring& path,
-                     int port,
-                     const HttpResponseCallback& callback) {
-    bool success = false;
-    std::string response = GetSync(host, path, port, success);
-    
-    if (callback) {
-        callback(response, success);
-    }
-    
-    return success;
-}
+

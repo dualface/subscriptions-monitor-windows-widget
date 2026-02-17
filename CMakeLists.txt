@@ -51,6 +51,8 @@ if(WIN32)
         comctl32
         advapi32
         dwmapi
+        shell32
+        ole32
     )
 endif()
 

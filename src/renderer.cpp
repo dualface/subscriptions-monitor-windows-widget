@@ -3,6 +3,15 @@
 #include <iomanip>
 #include <ctime>
 #include <cstdio>
+#include <algorithm>
+
+// Prevent Windows macros from conflicting with std::min/std::max
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
 
 // ---------------------------------------------------------------------------
 // Color schemes
@@ -91,17 +100,16 @@ static std::wstring ToWString(const std::string& str) {
     return wstr;
 }
 
-static std::wstring FormatNumber(double value, const std::string& metricName) {
+static std::wstring FormatNumber(double value, const std::string& /*metricName*/) {
     std::wstringstream ss;
-    if (metricName == "Total Tokens") {
-        long long intValue = static_cast<long long>(value);
-        if (intValue >= 1000000) {
-            ss << std::fixed << std::setprecision(1) << intValue / 1000000.0 << L"M";
-        } else {
-            ss << intValue;
-        }
-    } else if (metricName == "API Requests") {
-        ss << static_cast<long long>(value);
+    long long intValue = static_cast<long long>(value);
+    if (intValue >= 1000000) {
+        ss << std::fixed << std::setprecision(1) << intValue / 1000000.0 << L"M";
+    } else if (intValue >= 1000) {
+        ss << std::fixed << std::setprecision(1) << intValue / 1000.0 << L"K";
+    } else if (value == static_cast<double>(intValue)) {
+        // Integer value — display without decimal point
+        ss << intValue;
     } else {
         ss << std::fixed << std::setprecision(1) << value;
     }
@@ -371,31 +379,68 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
     SetTextColor(hdc, colors_.textColor);
     SetBkMode(hdc, TRANSPARENT);
 
-    if (compact_) {
-        // Compact: "window_label   percentage%   2h15m"
-        std::wstring labelW = ToWString(metric.window.label);
+    // DPI-scaled layout offsets for reset-time areas
+    int resetAreaCompact = static_cast<int>(90 * dpiScale_);
+    int resetAreaNormal  = static_cast<int>(150 * dpiScale_);
+    int resetStartNormal = static_cast<int>(140 * dpiScale_);
 
+    if (compact_) {
+        // Compact layout: draw text AFTER progress bar to ensure visibility
+        // Reserve space: [label][percentage][reset_time]
+        std::wstring labelW = ToWString(metric.window.label);
         SIZE labelSize;
         GetTextExtentPoint32W(hdc, labelW.c_str(), (int)labelW.length(), &labelSize);
-        int labelWidth = labelSize.cx + pad * 2;
-
-        RECT leftRect = { x + pad, y, x + labelWidth, y + barH };
-        DrawTextW(hdc, labelW.c_str(), -1, &leftRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-
-        // Middle: percentage
-        std::wstringstream midSs;
-        midSs << std::fixed << std::setprecision(1) << percentage << L"%";
-        RECT midRect = { x + labelWidth + pad, y, x + width - 90, y + barH };
-        DrawTextW(hdc, midSs.str().c_str(), -1, &midRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-
-        // Right: remaining time (compact format, e.g. "2h15m")
+        
+        std::wstringstream pctSs;
+        pctSs << std::fixed << std::setprecision(0) << percentage << L"%";
+        SIZE pctSize;
+        GetTextExtentPoint32W(hdc, pctSs.str().c_str(), (int)pctSs.str().length(), &pctSize);
+        
+        std::wstring remainingW;
+        SIZE remainingSize = {0, 0};
         if (metric.window.resets_at.has_value()) {
-            std::wstring remaining = CalculateRemainingTime(*metric.window.resets_at, true);
-            if (!remaining.empty()) {
-                RECT rightRect = { x + width - 90, y, x + width - pad, y + barH };
-                SetTextColor(hdc, colors_.resetTimeColor);
-                DrawTextW(hdc, remaining.c_str(), -1, &rightRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+            remainingW = CalculateRemainingTime(*metric.window.resets_at, true);
+            if (!remainingW.empty()) {
+                GetTextExtentPoint32W(hdc, remainingW.c_str(), (int)remainingW.length(), &remainingSize);
             }
+        }
+        
+        // Calculate layout with proper spacing
+        int totalTextWidth = labelSize.cx + pad + pctSize.cx + pad + remainingSize.cx;
+        int availableWidth = width - 2 * pad;
+        
+        // If text is too wide, reduce label area but keep percentage visible
+        int labelMaxWidth = labelSize.cx;
+        if (totalTextWidth > availableWidth && remainingSize.cx > 0) {
+            // Prioritize: percentage > remaining time > label
+            labelMaxWidth = availableWidth - pctSize.cx - pad - remainingSize.cx - pad;
+            if (labelMaxWidth < 30) {
+                // Not enough space for all, drop remaining time
+                remainingW.clear();
+                labelMaxWidth = availableWidth - pctSize.cx - pad;
+            }
+        }
+        
+        int labelEnd = x + pad + std::min(labelMaxWidth, static_cast<int>(labelSize.cx));
+        int pctStart = labelEnd + pad;
+        int pctEnd = pctStart + pctSize.cx;
+        int remainingStart = remainingW.empty() ? pctEnd : pctEnd + pad;
+        
+        // Draw label (clipped if needed)
+        if (labelMaxWidth > 0) {
+            RECT labelRect = { x + pad, y, labelEnd, y + barH };
+            DrawTextW(hdc, labelW.c_str(), -1, &labelRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+        }
+        
+        // Draw percentage (always visible, right-aligned in its space)
+        RECT pctRect = { pctStart, y, pctEnd + 5, y + barH };  // +5 for safety margin
+        DrawTextW(hdc, pctSs.str().c_str(), -1, &pctRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+        
+        // Draw remaining time (if space permits)
+        if (!remainingW.empty()) {
+            RECT remainingRect = { remainingStart, y, x + width - pad, y + barH };
+            SetTextColor(hdc, colors_.resetTimeColor);
+            DrawTextW(hdc, remainingW.c_str(), -1, &remainingRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
         }
     } else {
         // Normal: "MetricName (window)   percentage%   remaining time"
@@ -419,14 +464,14 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
         }
 
         int middleStart = x + leftTextWidth + pad;
-        RECT middleRect = { middleStart, y, x + width - 150, y + barH };
+        RECT middleRect = { middleStart, y, x + width - resetAreaNormal, y + barH };
         DrawTextW(hdc, middleSs.str().c_str(), -1, &middleRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
         // Right: remaining time
         if (metric.window.resets_at.has_value()) {
             std::wstring remainingTime = CalculateRemainingTime(*metric.window.resets_at);
             if (!remainingTime.empty()) {
-                RECT rightRect = { x + width - 140, y, x + width - pad, y + barH };
+                RECT rightRect = { x + width - resetStartNormal, y, x + width - pad, y + barH };
                 SetTextColor(hdc, colors_.resetTimeColor);
                 DrawTextW(hdc, remainingTime.c_str(), -1, &rightRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
             }
@@ -437,33 +482,24 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
 }
 
 // ---------------------------------------------------------------------------
-// Progress bar (double-buffered)
+// Progress bar (draws directly into the caller's DC — the caller already
+// provides a double-buffered memory DC from OnPaint)
 // ---------------------------------------------------------------------------
 
-void ProgressBarRenderer::DrawProgressBar(HDC hdcDest, int x, int y, int width, int height,
+void ProgressBarRenderer::DrawProgressBar(HDC hdc, int x, int y, int width, int height,
                                            double percentage, COLORREF barColor) {
-    HDC hdcMem = CreateCompatibleDC(hdcDest);
-    HBITMAP hbmMem = CreateCompatibleBitmap(hdcDest, width, height);
-    HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hbmMem);
-
-    RECT bgRect = { 0, 0, width, height };
+    RECT bgRect = { x, y, x + width, y + height };
     HBRUSH hBgBrush = CreateSolidBrush(colors_.barBgColor);
-    FillRect(hdcMem, &bgRect, hBgBrush);
+    FillRect(hdc, &bgRect, hBgBrush);
     DeleteObject(hBgBrush);
 
     int fillWidth = static_cast<int>((width * percentage) / 100.0);
     if (fillWidth > 0) {
-        RECT fillRect = { 0, 0, fillWidth, height };
+        RECT fillRect = { x, y, x + fillWidth, y + height };
         HBRUSH hFillBrush = CreateSolidBrush(barColor);
-        FillRect(hdcMem, &fillRect, hFillBrush);
+        FillRect(hdc, &fillRect, hFillBrush);
         DeleteObject(hFillBrush);
     }
-
-    BitBlt(hdcDest, x, y, width, height, hdcMem, 0, 0, SRCCOPY);
-
-    SelectObject(hdcMem, hbmOld);
-    DeleteObject(hbmMem);
-    DeleteDC(hdcMem);
 }
 
 // ---------------------------------------------------------------------------
@@ -477,8 +513,8 @@ void ProgressBarRenderer::CalcThumbRect(int clientHeight, int contentHeight, int
         return;
     }
     // Thumb height proportional to visible fraction
-    int thumbH = max(kScrollbarMinThumb,
-                     (int)((long long)clientHeight * clientHeight / contentHeight));
+    int thumbH = std::max(kScrollbarMinThumb,
+                          static_cast<int>((static_cast<long long>(clientHeight) * clientHeight) / contentHeight));
     int trackRange = clientHeight - thumbH;
     int maxScroll  = contentHeight - clientHeight;
     int thumbY     = (maxScroll > 0) ? (int)((long long)scrollOffset * trackRange / maxScroll) : 0;
@@ -554,8 +590,8 @@ int ProgressBarRenderer::ScrollOffsetFromThumbDrag(int mouseY, int dragStartMous
                                                     int clientHeight, int contentHeight) const {
     if (contentHeight <= clientHeight) return 0;
 
-    int thumbH    = max(kScrollbarMinThumb,
-                        (int)((long long)clientHeight * clientHeight / contentHeight));
+    int thumbH    = std::max(kScrollbarMinThumb,
+                             static_cast<int>((static_cast<long long>(clientHeight) * clientHeight) / contentHeight));
     int trackRange = clientHeight - thumbH;
     int maxScroll  = contentHeight - clientHeight;
 
