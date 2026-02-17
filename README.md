@@ -1,81 +1,129 @@
 # AI Subscription Monitor
 
-Windows 桌面应用，用于监控 AI 订阅服务的使用情况。
+A lightweight native Windows desktop widget for monitoring AI subscription service usage and quotas in real time. It fetches data from an HTTP API endpoint and renders color-coded progress bars showing consumption per service/metric.
 
-## 功能特性
+![Windows](https://img.shields.io/badge/platform-Windows%2010%2B-0078D6?logo=windows)
+![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-- 从 HTTP API 获取订阅数据
-- 使用 nlohmann/json 解析 JSON
-- GDI 渲染进度条显示使用量
-- 支持滚动查看多个服务
-- 自动定时刷新（60秒）
-- 支持鼠标滚轮滚动
+## Features
 
-## 项目结构
+- **Real-time monitoring** -- Fetches subscription data from a configurable HTTP API endpoint
+- **Color-coded progress bars** -- Green (< 50%), yellow (50-80%), red (> 80%) usage indicators
+- **Auto-refresh** -- Automatically refreshes every 60 seconds, with manual refresh via F5
+- **HiDPI support** -- Per-Monitor DPI awareness (Windows 10 1607+), scales cleanly on high-DPI displays
+- **Debug mode** -- Optional `--debug` flag enables console output and file logging
+- **Smart formatting** -- Large numbers displayed with K/M suffixes; countdown to quota reset shown as "Xh Ym"
+- **Lightweight** -- Pure native Win32 + GDI, no Electron or web runtime; single static executable with zero runtime dependencies
+- **Double-buffered rendering** -- Flicker-free drawing
+
+## Screenshot
 
 ```
-src/
-├── main.cpp          # Win32 窗口框架和消息循环
-├── subscription.h/.cpp   # 数据结构定义和 JSON 解析
-├── http_client.h/.cpp    # WinHTTP 封装
-├── renderer.h/.cpp       # GDI 进度条渲染
-└── json.hpp          # nlohmann/json 单头文件（需下载）
+┌─────────────────────────────────────────────┐
+│  ZenMux - Ultra Plan                        │
+│                                             │
+│  7d Flows (7 Day)              64.4%        │
+│  ██████████████░░░░░░░░  772.66 / 1200      │
+│                          48h 23m refresh    │
+│                                             │
+│  Daily Tokens (1 Day)          23.1%        │
+│  █████░░░░░░░░░░░░░░░░  231K / 1M          │
+│                          8h 12m refresh     │
+└─────────────────────────────────────────────┘
 ```
 
-## 依赖
+## Requirements
 
-- Windows SDK
-- nlohmann/json (header-only)
+- **OS**: Windows 10 (version 1607+) or Windows 11
+- **Build tools** (one of):
+  - [CMake](https://cmake.org/) 3.16+ with Visual Studio 2022 generator
+  - Visual Studio 2022 (Community or higher) with C++ Desktop Development workload
+- **Dependencies**: None beyond the Windows SDK. The only third-party library ([nlohmann/json](https://github.com/nlohmann/json) v3.11.3) is vendored as a single header file.
 
-## 编译步骤
+## Project Structure
 
-### 1. 下载 nlohmann/json
+```
+.
+├── CMakeLists.txt            # CMake build configuration
+├── build.bat                 # One-click build script (cl.exe)
+├── LICENSE                   # MIT License
+├── README.md
+└── src/
+    ├── main.cpp              # Win32 window framework, message loop, entry point
+    ├── subscription.h/cpp    # Data model, JSON deserialization, formatting
+    ├── http_client.h/cpp     # WinHTTP client wrapper
+    ├── renderer.h/cpp        # GDI progress bar rendering engine
+    └── json.hpp              # nlohmann/json v3.11.3 (header-only, vendored)
+```
+
+## Building
+
+### Option A: CMake (recommended)
 
 ```powershell
-# 在项目根目录执行
-Invoke-WebRequest -Uri "https://github.com/nlohmann/json/releases/download/v3.11.3/json.hpp" -OutFile "src/json.hpp"
-```
-
-或手动下载：https://github.com/nlohmann/json/releases/tag/v3.11.3
-
-### 2. 使用 CMake 编译
-
-```powershell
-# 创建构建目录
 mkdir build
 cd build
-
-# 生成 Visual Studio 项目
 cmake .. -G "Visual Studio 17 2022"
-
-# 编译
 cmake --build . --config Release
 ```
 
-### 3. 使用 Visual Studio 直接编译
+The executable will be at `build/bin/Release/AISubscriptionMonitor.exe`.
 
-1. 打开 Visual Studio
-2. 创建新的空项目
-3. 添加所有 src/*.cpp 和 src/*.h 文件到项目
-4. 下载 json.hpp 到 src 目录
-5. 配置项目属性：
-   - C/C++ -> 附加包含目录: `$(ProjectDir)src`
-   - 链接器 -> 输入 -> 附加依赖项: `winhttp.lib gdi32.lib`
-6. 编译运行
+### Option B: build.bat
 
-## 使用方法
+Run the batch file from the project root. It invokes `vcvars64.bat` and compiles directly with `cl.exe`:
 
 ```powershell
-AISubscriptionMonitor.exe <host> [port] [path]
-
-# 示例
-AISubscriptionMonitor.exe api.example.com 8080 /subscriptions
-AISubscriptionMonitor.exe localhost 3000 /api/usage
+.\build.bat
 ```
 
-## JSON API 格式
+The executable will be at `build\AISubscriptionMonitor.exe`.
 
-API 应返回以下格式的 JSON 数组：
+> **Note:** The batch file assumes Visual Studio 2022 Community Edition is installed at the default path. Edit the `vcvars64.bat` path in `build.bat` if your installation differs.
+
+### Option C: Visual Studio IDE
+
+1. Open Visual Studio 2022
+2. Create a new empty C++ project
+3. Add all files from `src/` to the project
+4. Set project properties:
+   - **C/C++ > C++ Language Standard**: ISO C++17
+   - **C/C++ > Additional Include Directories**: `$(ProjectDir)src`
+   - **Linker > Input > Additional Dependencies**: `winhttp.lib;gdi32.lib;user32.lib;kernel32.lib;comctl32.lib`
+   - **Linker > System > SubSystem**: Windows
+5. Build and run
+
+## Usage
+
+```
+AISubscriptionMonitor.exe [--debug] <url>
+```
+
+| Argument    | Description                                                      |
+| ----------- | ---------------------------------------------------------------- |
+| `<url>`     | HTTP endpoint that returns subscription data (required)          |
+| `--debug`   | Enable debug console and file logging (`AISubscriptionMonitor.log`) |
+
+### Examples
+
+```powershell
+# Basic usage
+AISubscriptionMonitor.exe http://api.example.com:8080/subscriptions
+
+# With debug logging
+AISubscriptionMonitor.exe --debug http://localhost:3000/api/v1/usage
+```
+
+### Keyboard Shortcuts
+
+| Key   | Action              |
+| ----- | ------------------- |
+| `F5`  | Manual data refresh |
+
+## API Format
+
+The endpoint must return a JSON array of subscription objects. Each subscription contains a provider, plan info, and one or more metrics with usage amounts:
 
 ```json
 [
@@ -101,6 +149,10 @@ API 应返回以下格式的 JSON 数组：
           "limit": 1200,
           "remaining": 427.34,
           "unit": "flows"
+        },
+        "cost": {
+          "amount": 12.50,
+          "currency": "USD"
         }
       }
     ],
@@ -109,13 +161,45 @@ API 应返回以下格式的 JSON 数组：
 ]
 ```
 
-## 快捷键
+### Field Reference
 
-- `F5` - 手动刷新数据
-- 鼠标滚轮 - 滚动查看
+| Field                     | Type     | Required | Description                              |
+| ------------------------- | -------- | -------- | ---------------------------------------- |
+| `provider_id`             | string   | yes      | Unique provider identifier               |
+| `display_name`            | string   | yes      | Human-readable service name              |
+| `plan.name`               | string   | yes      | Subscription plan name                   |
+| `plan.type`               | string   | yes      | Plan type (e.g. `"subscription"`)        |
+| `metrics[].name`          | string   | yes      | Metric name (e.g. `"7d Flows"`)         |
+| `metrics[].window.label`  | string   | yes      | Window label (e.g. `"7 Day"`)           |
+| `metrics[].window.resets_at` | string | no    | ISO 8601 timestamp for next reset        |
+| `metrics[].amount.used`   | number   | yes      | Current usage                            |
+| `metrics[].amount.limit`  | number   | no       | Usage cap (omit for unlimited metrics)   |
+| `metrics[].amount.remaining` | number | no    | Remaining quota                          |
+| `metrics[].amount.unit`   | string   | yes      | Unit label (e.g. `"flows"`, `"tokens"`)  |
+| `metrics[].cost`          | object   | no       | Optional cost information                |
 
-## 进度条颜色
+## Progress Bar Colors
 
-- 绿色 (< 50%) - 使用量正常
-- 黄色 (50-80%) - 使用量较高
-- 红色 (> 80%) - 使用量接近上限
+| Color  | Usage Range | Meaning              |
+| ------ | ----------- | -------------------- |
+| Green  | 0 -- 49%    | Normal usage         |
+| Yellow | 50 -- 80%   | Elevated usage       |
+| Red    | 81 -- 100%  | Approaching limit    |
+
+Metrics without a `limit` field are displayed as text-only (no progress bar).
+
+## Tech Stack
+
+| Component   | Technology                                          |
+| ----------- | --------------------------------------------------- |
+| Language    | C++17                                               |
+| Platform    | Win32 API                                           |
+| UI          | Native GDI rendering                                |
+| HTTP        | WinHTTP                                             |
+| JSON        | [nlohmann/json](https://github.com/nlohmann/json) v3.11.3 |
+| Build       | CMake 3.16+ / MSVC                                  |
+| Font        | Microsoft YaHei UI (CJK-compatible)                 |
+
+## License
+
+[MIT](LICENSE) -- Copyright (c) 2026 dualface
