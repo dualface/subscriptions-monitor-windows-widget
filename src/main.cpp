@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <windowsx.h>
+#include <commctrl.h>
 #include <string>
 #include <vector>
 #include <memory>
@@ -7,14 +8,14 @@
 #include <thread>
 #include <iostream>
 #include <sstream>
-#include <regex>
 #include <fstream>
 #include <ctime>
 #include <csignal>
+#include <map>
 #include "subscription.h"
 #include "http_client.h"
-#include "renderer.h"
 
+#pragma comment(lib, "comctl32.lib")
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 // 全局日志文件
@@ -27,29 +28,24 @@ void Log(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     
-    // 格式化消息
     char buffer[4096];
     vsnprintf(buffer, sizeof(buffer), fmt, args);
     va_end(args);
     
-    // 获取当前时间
     time_t now = time(nullptr);
     struct tm timeinfo;
     localtime_s(&timeinfo, &now);
     char timeStr[64];
     strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
     
-    // 构建带时间的日志行
     char logLine[8192];
     snprintf(logLine, sizeof(logLine), "[%s] %s", timeStr, buffer);
     
-    // 输出到控制台（如果是debug模式）
     if (g_debugMode && g_consoleOut) {
         fprintf(g_consoleOut, "%s\n", logLine);
         fflush(g_consoleOut);
     }
     
-    // 写入文件
     if (g_logFile.is_open()) {
         g_logFile << logLine << std::endl;
         g_logFile.flush();
@@ -60,13 +56,11 @@ void Log(const char* fmt, ...) {
 bool InitLogging(bool debugMode) {
     g_debugMode = debugMode;
     
-    // 打开日志文件
     g_logFile.open("AISubscriptionMonitor.log", std::ios::out | std::ios::app);
     if (!g_logFile.is_open()) {
         return false;
     }
     
-    // 如果是debug模式，创建控制台
     if (debugMode) {
         AllocConsole();
         freopen_s(&g_consoleOut, "CONOUT$", "w", stdout);
@@ -81,7 +75,6 @@ bool InitLogging(bool debugMode) {
     return true;
 }
 
-// 关闭日志系统
 void CloseLogging() {
     if (g_logFile.is_open()) {
         Log("========================================");
@@ -91,7 +84,6 @@ void CloseLogging() {
     }
 }
 
-// 崩溃处理程序
 void CrashHandler(int signal) {
     Log("FATAL ERROR: Signal %d caught", signal);
     Log("Application crashed!");
@@ -99,7 +91,6 @@ void CrashHandler(int signal) {
     exit(1);
 }
 
-// Windows异常处理
 LONG WINAPI ExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo) {
     Log("FATAL ERROR: Exception code 0x%08X", pExceptionInfo->ExceptionRecord->ExceptionCode);
     Log("Exception at address: 0x%p", pExceptionInfo->ExceptionRecord->ExceptionAddress);
@@ -107,7 +98,6 @@ LONG WINAPI ExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo) {
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
-// 设置崩溃处理程序
 void SetupCrashHandlers() {
     SetUnhandledExceptionFilter(ExceptionHandler);
     signal(SIGSEGV, CrashHandler);
@@ -118,13 +108,18 @@ void SetupCrashHandlers() {
 
 const wchar_t kClassName[] = L"AISubscriptionMonitor";
 const wchar_t kWindowTitle[] = L"AI Subscription Monitor";
-const int kWindowWidth = 700;
-const int kWindowHeight = 500;
+const int kWindowWidth = 800;
+const int kWindowHeight = 600;
 const int kRefreshIntervalMs = 60000;
+
+// 控件ID
+#define ID_LISTVIEW      1001
+#define ID_STATUS_LABEL  1002
+#define ID_REFRESH_BTN   1003
+#define ID_PROGRESS_BAR  1004
 
 struct AppState {
     std::vector<Subscription> subscriptions;
-    std::unique_ptr<ProgressBarRenderer> renderer;
     std::unique_ptr<HttpClient> httpClient;
     std::wstring apiHost;
     std::wstring apiPath;
@@ -132,22 +127,201 @@ struct AppState {
     bool isLoading;
     std::string lastError;
     HWND hwnd;
+    HWND hListView;
+    HWND hStatusLabel;
+    HWND hProgressBar;
+    HWND hRefreshBtn;
     bool debugMode;
+    HFONT hFont;
+    HFONT hFontBold;
     
-    AppState() : apiPort(80), isLoading(false), hwnd(nullptr), debugMode(false) {
-        renderer = std::make_unique<ProgressBarRenderer>();
+    AppState() : apiPort(80), isLoading(false), hwnd(nullptr), 
+                 hListView(nullptr), hStatusLabel(nullptr), 
+                 hProgressBar(nullptr), hRefreshBtn(nullptr),
+                 debugMode(false), hFont(nullptr), hFontBold(nullptr) {
         httpClient = std::make_unique<HttpClient>();
+    }
+    
+    ~AppState() {
+        if (hFont) DeleteObject(hFont);
+        if (hFontBold) DeleteObject(hFontBold);
     }
 };
 
 static AppState* g_app = nullptr;
+
+// 进度条子类化窗口过程 - 用于显示百分比文本
+LRESULT CALLBACK ProgressBarSubclassProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
+                                          UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+    switch (msg) {
+        case WM_PAINT: {
+            // 让默认绘制先执行
+            LRESULT result = DefSubclassProc(hwnd, msg, wParam, lParam);
+            
+            // 然后绘制百分比文字
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            
+            RECT rect;
+            GetClientRect(hwnd, &rect);
+            
+            // 获取当前进度
+            int pos = (int)SendMessage(hwnd, PBM_GETPOS, 0, 0);
+            int min = (int)SendMessage(hwnd, PBM_GETRANGE, TRUE, 0);
+            int max = (int)SendMessage(hwnd, PBM_GETRANGE, FALSE, 0);
+            int percentage = max > min ? ((pos - min) * 100 / (max - min)) : 0;
+            
+            // 绘制百分比文字
+            wchar_t text[32];
+            swprintf_s(text, L"%d%%", percentage);
+            
+            SetBkMode(hdc, TRANSPARENT);
+            SetTextColor(hdc, RGB(0, 0, 0));
+            DrawTextW(hdc, text, -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            
+            EndPaint(hwnd, &ps);
+            return 0;
+        }
+        
+        case WM_NCDESTROY:
+            RemoveWindowSubclass(hwnd, ProgressBarSubclassProc, uIdSubclass);
+            break;
+    }
+    
+    return DefSubclassProc(hwnd, msg, wParam, lParam);
+}
+
+// 更新列表视图
+void UpdateListView() {
+    if (!g_app || !g_app->hListView) return;
+    
+    Log("Updating ListView with %zu subscriptions", g_app->subscriptions.size());
+    
+    // 清除现有项
+    ListView_DeleteAllItems(g_app->hListView);
+    
+    if (g_app->isLoading) {
+        // 显示加载状态
+        ShowWindow(g_app->hProgressBar, SW_SHOW);
+        SendMessage(g_app->hProgressBar, PBM_SETMARQUEE, TRUE, 0);
+        SetWindowTextW(g_app->hStatusLabel, L"Loading...");
+        return;
+    }
+    
+    ShowWindow(g_app->hProgressBar, SW_HIDE);
+    
+    if (!g_app->lastError.empty()) {
+        std::wstring errorW(g_app->lastError.begin(), g_app->lastError.end());
+        SetWindowTextW(g_app->hStatusLabel, (L"Error: " + errorW).c_str());
+        return;
+    }
+    
+    if (g_app->subscriptions.empty()) {
+        SetWindowTextW(g_app->hStatusLabel, L"No data available");
+        return;
+    }
+    
+    // 计算总指标数
+    int totalMetrics = 0;
+    for (const auto& sub : g_app->subscriptions) {
+        totalMetrics += (int)sub.metrics.size();
+    }
+    
+    wchar_t statusText[256];
+    swprintf_s(statusText, L"Loaded %zu services, %d metrics", 
+               g_app->subscriptions.size(), totalMetrics);
+    SetWindowTextW(g_app->hStatusLabel, statusText);
+    
+    // 添加数据到ListView
+    int itemIndex = 0;
+    for (const auto& sub : g_app->subscriptions) {
+        std::wstring serviceName(sub.display_name.begin(), sub.display_name.end());
+        std::wstring planName(sub.plan.name.begin(), sub.plan.name.end());
+        
+        // 服务标题行
+        LVITEMW lvItem = {0};
+        lvItem.mask = LVIF_TEXT;
+        lvItem.iItem = itemIndex;
+        lvItem.pszText = (LPWSTR)serviceName.c_str();
+        ListView_InsertItem(g_app->hListView, &lvItem);
+        
+        // 设置计划列
+        std::wstring planText = L"Plan: " + planName;
+        LVITEMW lvItemPlan = {};
+        lvItemPlan.iItem = itemIndex;
+        lvItemPlan.iSubItem = 1;
+        lvItemPlan.pszText = const_cast<wchar_t*>(planText.c_str());
+        SendMessageW(g_app->hListView, LVM_SETITEMTEXT, itemIndex, (LPARAM)&lvItemPlan);
+        itemIndex++;
+        
+        // 添加每个指标
+        for (const auto& metric : sub.metrics) {
+            std::wstring metricName(metric.name.begin(), metric.name.end());
+            std::wstring windowLabel(metric.window.label.begin(), metric.window.label.end());
+            
+            // 指标名称
+            lvItem.iItem = itemIndex;
+            lvItem.pszText = (LPWSTR)metricName.c_str();
+            lvItem.state = 0;
+            ListView_InsertItem(g_app->hListView, &lvItem);
+            
+            // 计算百分比
+            auto pct = metric.percentage();
+            int percentage = pct.value_or(0);
+            
+            // 构建详情文本
+            wchar_t detailText[256];
+            if (metric.amount.limit.has_value()) {
+                swprintf_s(detailText, L"%s - %.1f/%.1f %s (%d%%)",
+                          windowLabel.c_str(),
+                          metric.amount.used,
+                          *metric.amount.limit,
+                          std::wstring(metric.amount.unit.begin(), metric.amount.unit.end()).c_str(),
+                          percentage);
+            } else {
+                swprintf_s(detailText, L"%s - %.1f %s",
+                          windowLabel.c_str(),
+                          metric.amount.used,
+                          std::wstring(metric.amount.unit.begin(), metric.amount.unit.end()).c_str());
+            }
+            // 设置详情文本
+            LVITEMW lvItemDetail = {};
+            lvItemDetail.iItem = itemIndex;
+            lvItemDetail.iSubItem = 1;
+            lvItemDetail.pszText = detailText;
+            SendMessageW(g_app->hListView, LVM_SETITEMTEXT, itemIndex, (LPARAM)&lvItemDetail);
+            
+            itemIndex++;
+        }
+        
+        // 添加空行分隔
+        if (&sub != &g_app->subscriptions.back()) {
+            LVITEMW lvItemEmpty = {};
+            lvItemEmpty.mask = LVIF_TEXT;
+            lvItemEmpty.iItem = itemIndex;
+            wchar_t emptyText[] = L"";
+            lvItemEmpty.pszText = emptyText;
+            ListView_InsertItem(g_app->hListView, &lvItemEmpty);
+            
+            LVITEMW lvItemEmpty2 = {};
+            lvItemEmpty2.iItem = itemIndex;
+            lvItemEmpty2.iSubItem = 1;
+            lvItemEmpty2.pszText = emptyText;
+            SendMessageW(g_app->hListView, LVM_SETITEMTEXT, itemIndex, (LPARAM)&lvItemEmpty2);
+            itemIndex++;
+        }
+    }
+}
 
 void RefreshData() {
     if (!g_app || g_app->isLoading) return;
 
     Log("Refreshing data...");
     g_app->isLoading = true;
-    InvalidateRect(g_app->hwnd, nullptr, TRUE);
+    g_app->lastError.clear();
+    
+    // 更新UI显示加载状态
+    PostMessage(g_app->hwnd, WM_USER + 1, 0, 0);
 
     std::thread([]() {
         bool success = false;
@@ -168,136 +342,135 @@ void RefreshData() {
                     Log("Parsing subscriptions...");
                     g_app->subscriptions = ParseSubscriptions(response);
                     Log("Successfully parsed %zu subscriptions", g_app->subscriptions.size());
-
-                    for (const auto& sub : g_app->subscriptions) {
-                        Log("  - %ls (%ls): %zu metrics",
-                            std::wstring(sub.display_name.begin(), sub.display_name.end()).c_str(),
-                            std::wstring(sub.plan.name.begin(), sub.plan.name.end()).c_str(),
-                            sub.metrics.size());
-                    }
-
                     g_app->lastError.clear();
                 } catch (const std::exception& e) {
                     Log("Failed to parse response: %s", e.what());
                     g_app->lastError = e.what();
+                    g_app->subscriptions.clear();
                 }
             } else {
                 Log("Failed to fetch data from server");
                 g_app->lastError = "Failed to fetch data from server";
+                g_app->subscriptions.clear();
             }
         } catch (const std::exception& e) {
             Log("Exception in HTTP thread: %s", e.what());
             g_app->lastError = e.what();
+            g_app->subscriptions.clear();
         }
 
         g_app->isLoading = false;
+        
+        // 通知主线程更新UI
         if (g_app->hwnd) {
-            InvalidateRect(g_app->hwnd, nullptr, TRUE);
+            PostMessage(g_app->hwnd, WM_USER + 1, 0, 0);
         }
     }).detach();
 }
 
-void OnPaint(HWND hwnd) {
-    if (!g_app) {
-        Log("ERROR: OnPaint called with null g_app");
-        return;
-    }
+// 创建字体
+void CreateFonts() {
+    if (!g_app) return;
     
-    PAINTSTRUCT ps;
-    HDC hdc = BeginPaint(hwnd, &ps);
+    // 创建普通字体（支持中文）
+    g_app->hFont = CreateFontW(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+                                DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
+                                CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei");
+    
+    // 创建粗体字体
+    g_app->hFontBold = CreateFontW(16, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+                                   DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
+                                   CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei");
+}
 
+// 创建控件
+void CreateControls(HWND hwnd) {
+    if (!g_app) return;
+    
+    Log("Creating controls...");
+    
+    // 获取客户区大小
     RECT clientRect;
     GetClientRect(hwnd, &clientRect);
     int width = clientRect.right - clientRect.left;
     int height = clientRect.bottom - clientRect.top;
-
-    Log("OnPaint: Window size %dx%d", width, height);
     
-    // 如果窗口大小为0（最小化），不绘制
-    if (width <= 0 || height <= 0) {
-        Log("Window size is zero or negative, skipping paint");
-        EndPaint(hwnd, &ps);
-        return;
-    }
-
-    // 创建内存DC和位图
-    HDC hdcMem = CreateCompatibleDC(hdc);
-    if (!hdcMem) {
-        Log("ERROR: Failed to create compatible DC");
-        EndPaint(hwnd, &ps);
-        return;
+    // 创建状态标签
+    g_app->hStatusLabel = CreateWindowW(L"STATIC", L"Ready",
+                                       WS_VISIBLE | WS_CHILD | SS_LEFT,
+                                       10, 10, width - 100, 20,
+                                       hwnd, (HMENU)ID_STATUS_LABEL, 
+                                       GetModuleHandle(nullptr), nullptr);
+    
+    // 创建刷新按钮
+    g_app->hRefreshBtn = CreateWindowW(L"BUTTON", L"Refresh (F5)",
+                                       WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+                                       width - 90, 5, 80, 25,
+                                       hwnd, (HMENU)ID_REFRESH_BTN,
+                                       GetModuleHandle(nullptr), nullptr);
+    
+    // 创建进度条
+    g_app->hProgressBar = CreateWindowW(PROGRESS_CLASSW, nullptr,
+                                         WS_VISIBLE | WS_CHILD | PBS_MARQUEE,
+                                         10, 40, width - 20, 20,
+                                         hwnd, (HMENU)ID_PROGRESS_BAR,
+                                         GetModuleHandle(nullptr), nullptr);
+    ShowWindow(g_app->hProgressBar, SW_HIDE);
+    
+    // 创建ListView
+    g_app->hListView = CreateWindowW(WC_LISTVIEWW, L"",
+                                      WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_NOSORTHEADER |
+                                      LVS_SHOWSELALWAYS | WS_BORDER,
+                                      10, 70, width - 20, height - 80,
+                                      hwnd, (HMENU)ID_LISTVIEW,
+                                      GetModuleHandle(nullptr), nullptr);
+    
+    // 设置ListView扩展样式
+    ListView_SetExtendedListViewStyle(g_app->hListView, 
+                                      LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_DOUBLEBUFFER);
+    
+    // 添加列
+    LVCOLUMNW lvCol = {0};
+    lvCol.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
+    
+    lvCol.pszText = (LPWSTR)L"Metric";
+    lvCol.cx = 200;
+    lvCol.iSubItem = 0;
+    ListView_InsertColumn(g_app->hListView, 0, &lvCol);
+    
+    lvCol.pszText = (LPWSTR)L"Details";
+    lvCol.cx = width - 220;
+    lvCol.iSubItem = 1;
+    ListView_InsertColumn(g_app->hListView, 1, &lvCol);
+    
+    // 设置字体
+    if (g_app->hFont) {
+        SendMessage(g_app->hStatusLabel, WM_SETFONT, (WPARAM)g_app->hFont, TRUE);
+        SendMessage(g_app->hRefreshBtn, WM_SETFONT, (WPARAM)g_app->hFont, TRUE);
+        SendMessage(g_app->hListView, WM_SETFONT, (WPARAM)g_app->hFont, TRUE);
     }
     
-    HBITMAP hbmMem = CreateCompatibleBitmap(hdc, width, height);
-    if (!hbmMem) {
-        Log("ERROR: Failed to create compatible bitmap (%dx%d)", width, height);
-        DeleteDC(hdcMem);
-        EndPaint(hwnd, &ps);
-        return;
-    }
-    
-    HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hbmMem);
-
-    // 填充背景
-    HBRUSH hBgBrush = CreateSolidBrush(RGB(250, 250, 250));
-    FillRect(hdcMem, &clientRect, hBgBrush);
-    DeleteObject(hBgBrush);
-
-    try {
-        g_app->renderer->SetWindowSize(width, height);
-
-        if (g_app->isLoading) {
-            Log("Rendering: Loading state");
-            RECT textRect = { 0, height / 2 - 20, width, height / 2 + 20 };
-            SetTextColor(hdcMem, RGB(100, 100, 100));
-            SetBkMode(hdcMem, TRANSPARENT);
-            DrawTextW(hdcMem, L"Loading...", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-        } else if (!g_app->lastError.empty()) {
-            Log("Rendering: Error state - %s", g_app->lastError.c_str());
-            RECT textRect = { 20, height / 2 - 40, width - 20, height / 2 + 40 };
-            SetTextColor(hdcMem, RGB(244, 67, 54));
-            SetBkMode(hdcMem, TRANSPARENT);
-            std::wstring errorW(g_app->lastError.begin(), g_app->lastError.end());
-            DrawTextW(hdcMem, errorW.c_str(), -1, &textRect, DT_CENTER | DT_WORDBREAK);
-        } else if (!g_app->subscriptions.empty()) {
-            Log("Rendering: %zu subscriptions", g_app->subscriptions.size());
-            g_app->renderer->Render(hdcMem, g_app->subscriptions);
-            Log("Render completed");
-        } else {
-            Log("Rendering: No data available");
-            RECT textRect = { 0, height / 2 - 20, width, height / 2 + 20 };
-            SetTextColor(hdcMem, RGB(150, 150, 150));
-            SetBkMode(hdcMem, TRANSPARENT);
-            DrawTextW(hdcMem, L"No data available", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-        }
-    } catch (const std::exception& e) {
-        Log("EXCEPTION in OnPaint: %s", e.what());
-    }
-
-    // 复制到屏幕
-    BitBlt(hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY);
-
-    // 清理
-    SelectObject(hdcMem, hbmOld);
-    DeleteObject(hbmMem);
-    DeleteDC(hdcMem);
-
-    EndPaint(hwnd, &ps);
+    Log("Controls created successfully");
 }
 
-void OnSize(HWND hwnd, UINT state, int cx, int cy) {
-    Log("OnSize: state=%d, cx=%d, cy=%d", state, cx, cy);
+// 调整控件大小
+void ResizeControls(int width, int height) {
+    if (!g_app) return;
     
-    // 如果是 SIZE_MINIMIZED，不要尝试重新渲染
-    if (state == SIZE_MINIMIZED) {
-        Log("Window minimized, skipping size update");
-        return;
-    }
+    // 状态标签
+    SetWindowPos(g_app->hStatusLabel, nullptr, 10, 10, width - 100, 20, SWP_NOZORDER);
     
-    if (g_app && g_app->renderer) {
-        g_app->renderer->SetWindowSize(cx, cy);
-        InvalidateRect(hwnd, nullptr, TRUE);
-    }
+    // 刷新按钮
+    SetWindowPos(g_app->hRefreshBtn, nullptr, width - 90, 5, 80, 25, SWP_NOZORDER);
+    
+    // 进度条
+    SetWindowPos(g_app->hProgressBar, nullptr, 10, 40, width - 20, 20, SWP_NOZORDER);
+    
+    // ListView
+    SetWindowPos(g_app->hListView, nullptr, 10, 70, width - 20, height - 80, SWP_NOZORDER);
+    
+    // 调整列宽
+    ListView_SetColumnWidth(g_app->hListView, 1, width - 220);
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -307,19 +480,36 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 Log("WM_CREATE received");
                 if (g_app) {
                     g_app->hwnd = hwnd;
+                    CreateControls(hwnd);
                     SetTimer(hwnd, 1, kRefreshIntervalMs, nullptr);
                     RefreshData();
                 }
                 return 0;
                 
-            case WM_PAINT:
-                OnPaint(hwnd);
+            case WM_SIZE: {
+                int width = LOWORD(lParam);
+                int height = HIWORD(lParam);
+                Log("WM_SIZE: %dx%d", width, height);
+                
+                if (wParam != SIZE_MINIMIZED) {
+                    ResizeControls(width, height);
+                }
+                return 0;
+            }
+            
+            case WM_COMMAND:
+                if (LOWORD(wParam) == ID_REFRESH_BTN) {
+                    Log("Refresh button clicked");
+                    RefreshData();
+                }
                 return 0;
                 
-            case WM_SIZE:
-                OnSize(hwnd, (UINT)wParam, LOWORD(lParam), HIWORD(lParam));
+            case WM_USER + 1:
+                // 更新UI
+                Log("WM_USER+1: Updating UI");
+                UpdateListView();
                 return 0;
-
+                
             case WM_TIMER:
                 if (wParam == 1) {
                     Log("Timer triggered, refreshing data");
@@ -345,12 +535,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
     } catch (const std::exception& e) {
         Log("EXCEPTION in WndProc (msg=%d): %s", msg, e.what());
-        // 尝试继续运行
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 }
 
-// URL解析函数，支持完整URL格式：http://host:port/path 或 https://host:port/path
+// URL解析函数
 struct ParsedUrl {
     std::wstring host;
     std::wstring path;
@@ -366,7 +555,6 @@ ParsedUrl ParseUrl(const std::wstring& url) {
     
     std::wstring urlToParse = url;
     
-    // 检查协议
     if (urlToParse.find(L"https://") == 0) {
         result.isHttps = true;
         result.port = 443;
@@ -375,14 +563,12 @@ ParsedUrl ParseUrl(const std::wstring& url) {
         urlToParse = urlToParse.substr(7);
     }
     
-    // 查找路径分隔符
     size_t pathPos = urlToParse.find(L'/');
     if (pathPos != std::wstring::npos) {
         result.path = urlToParse.substr(pathPos);
         urlToParse = urlToParse.substr(0, pathPos);
     }
     
-    // 查找端口
     size_t portPos = urlToParse.find(L':');
     if (portPos != std::wstring::npos) {
         result.host = urlToParse.substr(0, portPos);
@@ -399,7 +585,6 @@ bool ParseCommandLine(AppState& app, bool& debugMode) {
     int argc;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     
-    // 检查是否有 --debug 参数
     std::wstring urlArg;
     for (int i = 1; i < argc; i++) {
         std::wstring arg = argv[i];
@@ -419,7 +604,6 @@ bool ParseCommandLine(AppState& app, bool& debugMode) {
         return false;
     }
     
-    // 解析完整URL
     ParsedUrl parsed = ParseUrl(urlArg);
     app.apiHost = parsed.host;
     app.apiPort = parsed.port;
@@ -431,10 +615,13 @@ bool ParseCommandLine(AppState& app, bool& debugMode) {
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
-    // 设置崩溃处理程序
     SetupCrashHandlers();
     
-    // 解析命令行参数（提前检查debug模式）
+    // 初始化Common Controls
+    INITCOMMONCONTROLSEX iccex = { sizeof(iccex), ICC_LISTVIEW_CLASSES | ICC_PROGRESS_CLASS };
+    InitCommonControlsEx(&iccex);
+    
+    // 解析命令行
     int argc;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     bool debugMode = false;
@@ -446,7 +633,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     }
     LocalFree(argv);
     
-    // 初始化日志系统
     if (!InitLogging(debugMode)) {
         MessageBoxW(nullptr, L"Failed to initialize logging", L"Error", MB_OK | MB_ICONERROR);
         return 1;
@@ -459,13 +645,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     AppState app;
     g_app = &app;
     
+    // 创建字体
+    CreateFonts();
+    
     if (!ParseCommandLine(app, debugMode)) {
         Log("Failed to parse command line arguments");
         CloseLogging();
         return 1;
     }
     
-    // 打印配置信息
     Log("Parsed Host: %ls", app.apiHost.c_str());
     Log("Parsed Port: %d", app.apiPort);
     Log("Parsed Path: %ls", app.apiPath.c_str());
