@@ -5,9 +5,30 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include <iostream>
+#include <sstream>
+#include <regex>
 #include "subscription.h"
 #include "http_client.h"
 #include "renderer.h"
+
+// 创建控制台窗口用于调试输出
+void CreateConsole() {
+    AllocConsole();
+    FILE* fp;
+    freopen_s(&fp, "CONOUT$", "w", stdout);
+    freopen_s(&fp, "CONOUT$", "w", stderr);
+    freopen_s(&fp, "CONIN$", "r", stdin);
+    std::cout << "Debug Console Started" << std::endl;
+}
+
+// 便捷日志函数
+template<typename... Args>
+void Log(const char* fmt, Args... args) {
+    char buffer[1024];
+    snprintf(buffer, sizeof(buffer), fmt, args...);
+    std::cout << buffer << std::endl;
+}
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
@@ -39,29 +60,47 @@ static AppState* g_app = nullptr;
 
 void RefreshData() {
     if (!g_app || g_app->isLoading) return;
-    
+
+    Log("Refreshing data...");
     g_app->isLoading = true;
     InvalidateRect(g_app->hwnd, nullptr, TRUE);
-    
+
     std::thread([]() {
         bool success = false;
+        Log("Sending HTTP request to %ls:%d%ls", g_app->apiHost.c_str(), g_app->apiPort, g_app->apiPath.c_str());
+
         std::string response = g_app->httpClient->GetSync(
-            g_app->apiHost, 
-            g_app->apiPath, 
-            g_app->apiPort, 
+            g_app->apiHost,
+            g_app->apiPath,
+            g_app->apiPort,
             success);
-        
+
+        Log("HTTP request completed. Success: %s", success ? "true" : "false");
+        Log("Response size: %zu bytes", response.size());
+
         if (success) {
             try {
+                Log("Parsing subscriptions...");
                 g_app->subscriptions = ParseSubscriptions(response);
+                Log("Successfully parsed %zu subscriptions", g_app->subscriptions.size());
+
+                for (const auto& sub : g_app->subscriptions) {
+                    Log("  - %ls (%ls): %zu metrics",
+                        std::wstring(sub.display_name.begin(), sub.display_name.end()).c_str(),
+                        std::wstring(sub.plan.name.begin(), sub.plan.name.end()).c_str(),
+                        sub.metrics.size());
+                }
+
                 g_app->lastError.clear();
             } catch (const std::exception& e) {
+                Log("Failed to parse response: %s", e.what());
                 g_app->lastError = e.what();
             }
         } else {
+            Log("Failed to fetch data from server");
             g_app->lastError = "Failed to fetch data from server";
         }
-        
+
         g_app->isLoading = false;
         InvalidateRect(g_app->hwnd, nullptr, TRUE);
     }).detach();
@@ -70,50 +109,61 @@ void RefreshData() {
 void OnPaint(HWND hwnd) {
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(hwnd, &ps);
-    
+
     RECT clientRect;
     GetClientRect(hwnd, &clientRect);
     int width = clientRect.right - clientRect.left;
     int height = clientRect.bottom - clientRect.top;
-    
+
+    Log("OnPaint: Window size %dx%d, Subscriptions: %zu, Loading: %s, Error: %s",
+        width, height,
+        g_app ? g_app->subscriptions.size() : 0,
+        g_app && g_app->isLoading ? "true" : "false",
+        g_app && !g_app->lastError.empty() ? g_app->lastError.c_str() : "none");
+
     HDC hdcMem = CreateCompatibleDC(hdc);
     HBITMAP hbmMem = CreateCompatibleBitmap(hdc, width, height);
     SelectObject(hdcMem, hbmMem);
-    
+
     HBRUSH hBgBrush = CreateSolidBrush(RGB(250, 250, 250));
     FillRect(hdcMem, &clientRect, hBgBrush);
     DeleteObject(hBgBrush);
-    
+
     if (g_app) {
         g_app->renderer->SetWindowSize(width, height);
         g_app->renderer->SetScrollOffset(g_app->scrollOffset);
-        
+
         if (g_app->isLoading) {
+            Log("Rendering: Loading state");
             RECT textRect = { 0, height / 2 - 20, width, height / 2 + 20 };
             SetTextColor(hdcMem, RGB(100, 100, 100));
             SetBkMode(hdcMem, TRANSPARENT);
-            DrawText(hdcMem, L"Loading...", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            DrawTextW(hdcMem, L"Loading...", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
         } else if (!g_app->lastError.empty()) {
+            Log("Rendering: Error state - %s", g_app->lastError.c_str());
             RECT textRect = { 20, height / 2 - 40, width - 20, height / 2 + 40 };
             SetTextColor(hdcMem, RGB(244, 67, 54));
             SetBkMode(hdcMem, TRANSPARENT);
             std::wstring errorW(g_app->lastError.begin(), g_app->lastError.end());
-            DrawText(hdcMem, errorW.c_str(), -1, &textRect, DT_CENTER | DT_WORDBREAK);
+            DrawTextW(hdcMem, errorW.c_str(), -1, &textRect, DT_CENTER | DT_WORDBREAK);
         } else if (!g_app->subscriptions.empty()) {
+            Log("Rendering: %zu subscriptions", g_app->subscriptions.size());
             g_app->renderer->Render(hdcMem, g_app->subscriptions);
+            Log("Render completed");
         } else {
+            Log("Rendering: No data available");
             RECT textRect = { 0, height / 2 - 20, width, height / 2 + 20 };
             SetTextColor(hdcMem, RGB(150, 150, 150));
             SetBkMode(hdcMem, TRANSPARENT);
-            DrawText(hdcMem, L"No data available", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            DrawTextW(hdcMem, L"No data available", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
         }
     }
-    
+
     BitBlt(hdc, 0, 0, width, height, hdcMem, 0, 0, SRCCOPY);
-    
+
     DeleteObject(hbmMem);
     DeleteDC(hdcMem);
-    
+
     EndPaint(hwnd, &ps);
 }
 
@@ -225,49 +275,97 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
 }
 
+// URL解析函数，支持完整URL格式：http://host:port/path 或 https://host:port/path
+struct ParsedUrl {
+    std::wstring host;
+    std::wstring path;
+    int port;
+    bool isHttps;
+};
+
+ParsedUrl ParseUrl(const std::wstring& url) {
+    ParsedUrl result;
+    result.port = 80;
+    result.path = L"/";
+    result.isHttps = false;
+    
+    std::wstring urlToParse = url;
+    
+    // 检查协议
+    if (urlToParse.find(L"https://") == 0) {
+        result.isHttps = true;
+        result.port = 443;
+        urlToParse = urlToParse.substr(8);
+    } else if (urlToParse.find(L"http://") == 0) {
+        urlToParse = urlToParse.substr(7);
+    }
+    
+    // 查找路径分隔符
+    size_t pathPos = urlToParse.find(L'/');
+    if (pathPos != std::wstring::npos) {
+        result.path = urlToParse.substr(pathPos);
+        urlToParse = urlToParse.substr(0, pathPos);
+    }
+    
+    // 查找端口
+    size_t portPos = urlToParse.find(L':');
+    if (portPos != std::wstring::npos) {
+        result.host = urlToParse.substr(0, portPos);
+        std::wstring portStr = urlToParse.substr(portPos + 1);
+        result.port = _wtoi(portStr.c_str());
+    } else {
+        result.host = urlToParse;
+    }
+    
+    return result;
+}
+
 bool ParseCommandLine(AppState& app) {
     int argc;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     
     if (argc < 2) {
-        MessageBoxW(nullptr, L"Usage: AISubscriptionMonitor.exe <host> [port] [path]\n\n"
-                            L"Example: AISubscriptionMonitor.exe api.example.com 8080 /subscriptions",
+        MessageBoxW(nullptr, L"Usage: AISubscriptionMonitor.exe <url>\n\n"
+                            L"Example: AISubscriptionMonitor.exe http://api.example.com:8080/subscriptions\n"
+                            L"         AISubscriptionMonitor.exe https://api.example.com/api/v1/usage",
                             L"Command Line Error", MB_OK | MB_ICONERROR);
         return false;
     }
     
-    app.apiHost = argv[1];
-    
-    if (argc >= 3) {
-        app.apiPort = _wtoi(argv[2]);
-    } else {
-        app.apiPort = 80;
-    }
-    
-    if (argc >= 4) {
-        app.apiPath = argv[3];
-    } else {
-        app.apiPath = L"/";
-    }
+    // 解析完整URL
+    ParsedUrl parsed = ParseUrl(argv[1]);
+    app.apiHost = parsed.host;
+    app.apiPort = parsed.port;
+    app.apiPath = parsed.path;
     
     LocalFree(argv);
     return true;
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
+    // 创建调试控制台
+    CreateConsole();
+    Log("Starting AI Subscription Monitor...");
+    
     AppState app;
     g_app = &app;
     
     if (!ParseCommandLine(app)) {
+        Log("Failed to parse command line arguments");
         return 1;
     }
+    
+    // 打印配置信息
+    Log("Parsed Host: %ls", app.apiHost.c_str());
+    Log("Parsed Port: %d", app.apiPort);
+    Log("Parsed Path: %ls", app.apiPath.c_str());
     
     if (!app.httpClient->Initialize()) {
         MessageBoxW(nullptr, L"Failed to initialize HTTP client", L"Error", MB_OK | MB_ICONERROR);
         return 1;
     }
     
-    WNDCLASSEX wc = { sizeof(wc) };
+    WNDCLASSEXW wc = { sizeof(wc) };
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
@@ -277,12 +375,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     wc.lpszClassName = kClassName;
     wc.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
     
-    if (!RegisterClassEx(&wc)) {
+    if (!RegisterClassExW(&wc)) {
         MessageBoxW(nullptr, L"Window registration failed", L"Error", MB_OK | MB_ICONERROR);
         return 1;
     }
-    
-    HWND hwnd = CreateWindowEx(
+
+    HWND hwnd = CreateWindowExW(
         WS_EX_CLIENTEDGE,
         kClassName,
         kWindowTitle,

@@ -48,6 +48,17 @@ std::string Window::formatResetTime() const {
     return full;
 }
 
+std::optional<int> Metric::percentage() const {
+    if (amount.limit.has_value() && *amount.limit > 0) {
+        return static_cast<int>((amount.used / *amount.limit) * 100);
+    }
+    return std::nullopt;
+}
+
+bool Metric::hasProgress() const {
+    return amount.limit.has_value();
+}
+
 std::string Metric::getDisplayTitle() const {
     return name;
 }

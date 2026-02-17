@@ -1,5 +1,5 @@
 #include "renderer.h"
-#include <ssstream>
+#include <sstream>
 #include <iomanip>
 
 const COLORREF ProgressBarRenderer::kBgColor = RGB(240, 240, 240);
@@ -89,9 +89,7 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
     percentSs << percentage << L"%";
     
     RECT percentRect = { x, y, x + width - 10, y + kBarHeight };
-    SetTextAlign(hdc, TA_RIGHT | TA_VCENTER);
     DrawTextCentered(hdc, percentSs.str(), percentRect, kTextColor, 13);
-    SetTextAlign(hdc, TA_LEFT);
     
     if (metric.window.resets_at.has_value()) {
         RECT subRect = { x + 10, y + 20, x + width - 10, y + kBarHeight };
@@ -127,34 +125,34 @@ void ProgressBarRenderer::DrawProgressBar(HDC hdcDest, int x, int y, int width, 
     DeleteDC(hdcMem);
 }
 
-void ProgressBarRenderer::DrawTextCentered(HDC hdc, const std::wstring& text, RECT& rect, 
+void ProgressBarRenderer::DrawTextCentered(HDC hdc, const std::wstring& text, RECT& rect,
                                             COLORREF color, int fontSize) {
-    HFONT hFont = CreateFont(fontSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+    HFONT hFont = CreateFontW(fontSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
                             DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
                             CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Segoe UI");
     HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
-    
+
     SetTextColor(hdc, color);
     SetBkMode(hdc, TRANSPARENT);
-    
-    DrawText(hdc, text.c_str(), -1, &rect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
-    
+
+    DrawTextW(hdc, text.c_str(), -1, &rect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+
     SelectObject(hdc, hOldFont);
     DeleteObject(hFont);
 }
 
 void ProgressBarRenderer::DrawTextLeft(HDC hdc, const std::wstring& text, RECT& rect,
                                         COLORREF color, int fontSize) {
-    HFONT hFont = CreateFont(fontSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+    HFONT hFont = CreateFontW(fontSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
                             DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
                             CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Segoe UI");
     HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
-    
+
     SetTextColor(hdc, color);
     SetBkMode(hdc, TRANSPARENT);
-    
-    DrawText(hdc, text.c_str(), -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-    
+
+    DrawTextW(hdc, text.c_str(), -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
     SelectObject(hdc, hOldFont);
     DeleteObject(hFont);
 }

@@ -1,0 +1,4 @@
+C:/Users/dualf/Desktop/Works/subscriptions-monitor-windows-widget/build/CMakeFiles/AISubscriptionMonitor.dir
+C:/Users/dualf/Desktop/Works/subscriptions-monitor-windows-widget/build/CMakeFiles/INSTALL.dir
+C:/Users/dualf/Desktop/Works/subscriptions-monitor-windows-widget/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/dualf/Desktop/Works/subscriptions-monitor-windows-widget/build/CMakeFiles/ZERO_CHECK.dir

@@ -11,6 +11,9 @@ if(WIN32)
     
     # 静态链接运行时库（可选）
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    
+    # 使用 UTF-8 编码
+    add_compile_options(/utf-8)
 endif()
 
 # 源文件
@@ -29,8 +32,12 @@ set(HEADERS
     src/json.hpp
 )
 
-# 创建可执行文件
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+# 创建可执行文件（Windows GUI 程序）
+if(WIN32)
+    add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS})
+else()
+    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+endif()
 
 # Windows 特定库
 if(WIN32)
