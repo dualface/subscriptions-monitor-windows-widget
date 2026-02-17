@@ -16,6 +16,15 @@
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+// DPI Awareness Manifest Declaration
+// This makes the application Per-Monitor DPI aware
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+// Enable Per-Monitor DPI Awareness for Windows 10 (1607+)
+#ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+#define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 ((DPI_AWARENESS_CONTEXT)-4)
+#endif
+
 // Global log file
 static std::ofstream g_logFile;
 static bool g_debugMode = false;
@@ -345,6 +354,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 mmi->ptMinTrackSize.y = 400;  // Minimum height
                 return 0;
             }
+            
+            case WM_DPICHANGED: {
+                // Handle DPI change when window moves between monitors with different DPI
+                UINT newDpi = HIWORD(wParam);
+                Log("WM_DPICHANGED: New DPI = %d", newDpi);
+                
+                // Recreate fonts with new DPI
+                if (g_app && g_app->renderer) {
+                    g_app->renderer->OnDpiChanged(newDpi);
+                }
+                
+                // Resize window to suggested rectangle
+                RECT* const prcNewWindow = (RECT*)lParam;
+                SetWindowPos(hwnd, nullptr,
+                    prcNewWindow->left, prcNewWindow->top,
+                    prcNewWindow->right - prcNewWindow->left,
+                    prcNewWindow->bottom - prcNewWindow->top,
+                    SWP_NOZORDER | SWP_NOACTIVATE);
+                
+                // Force redraw
+                InvalidateRect(hwnd, nullptr, TRUE);
+                return 0;
+            }
 
             case WM_TIMER:
                 if (wParam == 1) {
@@ -454,6 +486,30 @@ bool ParseCommandLine(AppState& app, bool& debugMode) {
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow) {
+    // Enable Per-Monitor DPI Awareness for Windows 10 (1607+) and Windows 11
+    // This prevents Windows from bitmap-scaling the application on HiDPI displays
+    HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
+    if (hUser32) {
+        typedef BOOL (WINAPI *SetProcessDpiAwarenessContextFunc)(DPI_AWARENESS_CONTEXT);
+        SetProcessDpiAwarenessContextFunc setProcessDpiAwarenessContext = 
+            (SetProcessDpiAwarenessContextFunc)GetProcAddress(hUser32, "SetProcessDpiAwarenessContext");
+        if (setProcessDpiAwarenessContext) {
+            // Use Per-Monitor V2 for best HiDPI support (Windows 10 1703+)
+            if (!setProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2)) {
+                // Fall back to Per-Monitor V1 (Windows 10 1607+)
+                setProcessDpiAwarenessContext((DPI_AWARENESS_CONTEXT)-3); // DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE
+            }
+        } else {
+            // Fall back to SetProcessDPIAware for Windows Vista - Windows 8.1
+            typedef BOOL (WINAPI *SetProcessDPIAwareFunc)(void);
+            SetProcessDPIAwareFunc setProcessDPIAware = 
+                (SetProcessDPIAwareFunc)GetProcAddress(hUser32, "SetProcessDPIAware");
+            if (setProcessDPIAware) {
+                setProcessDPIAware();
+            }
+        }
+    }
+    
     SetupCrashHandlers();
     
     // Parse command line for debug mode

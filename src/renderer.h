@@ -15,6 +15,9 @@ public:
     // Set window dimensions
     void SetWindowSize(int width, int height);
     
+    // Handle DPI change (recreate fonts with new DPI)
+    void OnDpiChanged(UINT newDpi);
+    
     // Render all subscription progress bars
     void Render(HDC hdc, const std::vector<Subscription>& subscriptions);
     
@@ -61,6 +64,9 @@ private:
     HFONT hFontNormal_;
     HFONT hFontBold_;
     HFONT hFontSmall_;
+    
+    // DPI scale factor (1.0 = 96 DPI, standard)
+    float dpiScale_;
     
     void CreateFonts();
     void DestroyFonts();

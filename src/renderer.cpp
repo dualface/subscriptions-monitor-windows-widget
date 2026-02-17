@@ -93,7 +93,15 @@ static std::wstring CalculateRemainingTime(const std::string& resetsAt) {
 
 ProgressBarRenderer::ProgressBarRenderer() 
     : windowWidth_(800), windowHeight_(600),
-      hFontNormal_(nullptr), hFontBold_(nullptr), hFontSmall_(nullptr) {
+      hFontNormal_(nullptr), hFontBold_(nullptr), hFontSmall_(nullptr),
+      dpiScale_(1.0f) {
+    // Initialize DPI scale based on system DPI
+    HDC hdc = GetDC(nullptr);
+    if (hdc) {
+        int dpi = GetDeviceCaps(hdc, LOGPIXELSX);
+        dpiScale_ = dpi / 96.0f;
+        ReleaseDC(nullptr, hdc);
+    }
     CreateFonts();
 }
 
@@ -102,26 +110,45 @@ ProgressBarRenderer::~ProgressBarRenderer() {
 }
 
 void ProgressBarRenderer::CreateFonts() {
-    // Create normal font with Chinese support (Microsoft YaHei) - size 18
+    // Base font sizes (at 96 DPI)
+    const int baseNormalSize = 18;
+    const int baseBoldSize = 20;
+    const int baseSmallSize = 14;
+    
+    // Scale font sizes by DPI
+    int normalSize = static_cast<int>(baseNormalSize * dpiScale_);
+    int boldSize = static_cast<int>(baseBoldSize * dpiScale_);
+    int smallSize = static_cast<int>(baseSmallSize * dpiScale_);
+    
+    // Create normal font with Chinese support (Microsoft YaHei)
     hFontNormal_ = CreateFontW(
-        18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        normalSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
         CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
     );
     
-    // Create bold font - size 20
+    // Create bold font
     hFontBold_ = CreateFontW(
-        20, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+        boldSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
         CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
     );
     
-    // Create small font - size 14
+    // Create small font
     hFontSmall_ = CreateFontW(
-        14, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        smallSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
         CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
     );
+}
+
+void ProgressBarRenderer::OnDpiChanged(UINT newDpi) {
+    // Update DPI scale
+    dpiScale_ = newDpi / 96.0f;
+    
+    // Recreate fonts with new DPI
+    DestroyFonts();
+    CreateFonts();
 }
 
 void ProgressBarRenderer::DestroyFonts() {
