@@ -17,15 +17,19 @@ echo.
 echo Compiling...
 echo.
 
+:: Compile resource file
+rc.exe /nologo /fo build\app.res src\app.rc
+
 :: Compile
-cl.exe /std:c++17 /EHsc /Fe:build\AISubscriptionMonitor.exe /nologo ^
+cl.exe /std:c++17 /EHsc /utf-8 /Fe:build\AISubscriptionMonitor.exe /nologo ^
     /I"src" ^
     src\main.cpp ^
     src\subscription.cpp ^
     src\http_client.cpp ^
     src\renderer.cpp ^
     /link ^
-    winhttp.lib gdi32.lib user32.lib kernel32.lib comctl32.lib ^
+    build\app.res ^
+    winhttp.lib gdi32.lib user32.lib kernel32.lib comctl32.lib advapi32.lib dwmapi.lib shell32.lib ole32.lib ^
     /SUBSYSTEM:WINDOWS
 
 if %ERRORLEVEL% == 0 (
