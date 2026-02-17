@@ -762,10 +762,7 @@ static void ApplyCompactLayout(HWND hwnd) {
                 g_app->savedNormalRect.bottom - g_app->savedNormalRect.top);
         }
 
-        // Measure content width using a screen DC
-        HDC hdc = GetDC(hwnd);
-        int contentW = g_app->renderer->CalculateContentWidth(hdc, g_app->subscriptions);
-        ReleaseDC(hwnd, hdc);
+        int contentW = kMinWindowWidthCompact;
         int contentH = g_app->contentHeight;
 
         // Convert client size to window size
