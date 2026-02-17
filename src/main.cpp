@@ -1294,12 +1294,21 @@ static void ApplyCompactLayout(HWND hwnd)
 
     if (compact && !g_app->subscriptions.empty()) {
         // Save current normal-mode window rect before resizing
-        // Always save to capture the latest size, even if we already have one from config
-        GetWindowRect(hwnd, &g_app->savedNormalRect);
-        g_app->hasSavedNormalRect = true;
-        Log("Saved normal rect: %d,%d %dx%d", g_app->savedNormalRect.left, g_app->savedNormalRect.top,
-            g_app->savedNormalRect.right - g_app->savedNormalRect.left,
-            g_app->savedNormalRect.bottom - g_app->savedNormalRect.top);
+        // Only save if current window has a caption (i.e., it's in normal mode)
+        // If already in compact mode (no caption), don't overwrite the saved rect
+        LONG currentStyle = GetWindowLong(hwnd, GWL_STYLE);
+        bool hasCaption = (currentStyle & WS_CAPTION) != 0;
+
+        if (hasCaption) {
+            GetWindowRect(hwnd, &g_app->savedNormalRect);
+            g_app->hasSavedNormalRect = true;
+            Log("Saved normal rect: %d,%d %dx%d", g_app->savedNormalRect.left, g_app->savedNormalRect.top,
+                g_app->savedNormalRect.right - g_app->savedNormalRect.left,
+                g_app->savedNormalRect.bottom - g_app->savedNormalRect.top);
+        }
+        else {
+            Log("Already in compact mode, preserving saved normal rect");
+        }
 
         int contentW = kMinWindowWidthCompact;
         int contentH = g_app->contentHeight;
