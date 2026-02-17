@@ -1262,13 +1262,12 @@ static void ApplyCompactLayout(HWND hwnd)
 
     if (compact && !g_app->subscriptions.empty()) {
         // Save current normal-mode window rect before resizing
-        if (!g_app->hasSavedNormalRect) {
-            GetWindowRect(hwnd, &g_app->savedNormalRect);
-            g_app->hasSavedNormalRect = true;
-            Log("Saved normal rect: %d,%d %dx%d", g_app->savedNormalRect.left, g_app->savedNormalRect.top,
-                g_app->savedNormalRect.right - g_app->savedNormalRect.left,
-                g_app->savedNormalRect.bottom - g_app->savedNormalRect.top);
-        }
+        // Always save to capture the latest size, even if we already have one from config
+        GetWindowRect(hwnd, &g_app->savedNormalRect);
+        g_app->hasSavedNormalRect = true;
+        Log("Saved normal rect: %d,%d %dx%d", g_app->savedNormalRect.left, g_app->savedNormalRect.top,
+            g_app->savedNormalRect.right - g_app->savedNormalRect.left,
+            g_app->savedNormalRect.bottom - g_app->savedNormalRect.top);
 
         int contentW = kMinWindowWidthCompact;
         int contentH = g_app->contentHeight;
@@ -2211,6 +2210,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     // If compact mode restored, apply compact layout (removes caption, sets topmost).
     // The window will auto-resize when data arrives (WM_USER+1).
     if (app.renderer->IsCompact()) {
+        // If we have saved normal mode geometry, use it to initialize savedNormalRect
+        // so that exiting compact mode later restores the correct size
+        if (saved.normal.valid) {
+            app.savedNormalRect.left = saved.normal.x;
+            app.savedNormalRect.top = saved.normal.y;
+            app.savedNormalRect.right = saved.normal.x + saved.normal.w;
+            app.savedNormalRect.bottom = saved.normal.y + saved.normal.h;
+            app.hasSavedNormalRect = true;
+            Log("Initialized savedNormalRect from config: %d,%d %dx%d", saved.normal.x, saved.normal.y, saved.normal.w,
+                saved.normal.h);
+        }
         ApplyCompactLayout(hwnd);
     }
 
