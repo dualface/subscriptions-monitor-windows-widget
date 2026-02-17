@@ -1423,6 +1423,9 @@ static void ToggleCompact(HWND hwnd)
     if (g_app->taskbarList) {
         if (newCompact) {
             g_app->taskbarList->DeleteTab(hwnd);
+            // Force taskbar refresh by triggering a window frame change
+            SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
+                         SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
             Log("Taskbar button hidden (switched to compact mode)");
         }
         else {
@@ -2148,6 +2151,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
     SetupCrashHandlers();
 
+    // Initialize COM for ITaskbarList and other COM interfaces
+    HRESULT hr = CoInitialize(NULL);
+    if (FAILED(hr)) {
+        MessageBoxW(nullptr, L"Failed to initialize COM", L"Error", MB_OK | MB_ICONERROR);
+        return 1;
+    }
+
     // Quick scan for --debug before full parse (need it for InitLogging)
     int argc;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
@@ -2353,6 +2363,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     if (app.taskbarList) {
         if (app.renderer->IsCompact()) {
             app.taskbarList->DeleteTab(hwnd);
+            // Force taskbar refresh by triggering a window frame change
+            SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
+                         SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
             Log("Taskbar button hidden (compact mode)");
         }
         else {
@@ -2377,5 +2390,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     Log("Message loop ended");
     g_app = nullptr;
     CloseLogging();
+    CoUninitialize();
     return (int)msg.wParam;
 }
