@@ -568,30 +568,6 @@ static void HideAppWindow(HWND hwnd)
     Log("Window hidden to tray");
 }
 
-static void ShowTrayContextMenu(HWND hwnd)
-{
-    POINT pt;
-    GetCursorPos(&pt);
-
-    HMENU hMenu = CreatePopupMenu();
-    if (!hMenu)
-        return;
-
-    bool compact = g_app ? g_app->renderer->IsCompact() : false;
-    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_SHOW, L"Show Window");
-    AppendMenuW(hMenu, MF_STRING | (compact ? MF_CHECKED : MF_UNCHECKED), IDM_COMPACT_MODE, L"Compact Mode");
-    AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
-    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_EXIT, L"Exit");
-
-    // Required for the menu to disappear when clicking outside
-    SetForegroundWindow(hwnd);
-    TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, nullptr);
-    // Per MSDN: send a benign message to force the menu to close properly
-    PostMessage(hwnd, WM_NULL, 0, 0);
-
-    DestroyMenu(hMenu);
-}
-
 // Helper to set window opacity
 static void SetWindowOpacity(HWND hwnd, BYTE opacity)
 {
@@ -612,19 +588,27 @@ static void SetWindowOpacity(HWND hwnd, BYTE opacity)
     Log("Window opacity set to %d%%", (opacity * 100) / 255);
 }
 
-// Show context menu on window (includes opacity submenu)
-static void ShowWindowContextMenu(HWND hwnd)
+// Build unified context menu for both tray and window
+// showTrayItem: true for tray menu (Show Window), false for window menu (Hide to Tray)
+static HMENU BuildContextMenu(bool showTrayItem)
 {
-    POINT pt;
-    GetCursorPos(&pt);
-
     HMENU hMenu = CreatePopupMenu();
     if (!hMenu)
-        return;
+        return nullptr;
 
     bool compact = g_app ? g_app->renderer->IsCompact() : false;
     bool pinned = g_app ? g_app->isPinned : false;
     BYTE opacity = g_app ? g_app->opacity : 255;
+
+    // Show/Hide menu item
+    if (showTrayItem) {
+        AppendMenuW(hMenu, MF_STRING, IDM_TRAY_SHOW, L"Show Window");
+    }
+    else {
+        AppendMenuW(hMenu, MF_STRING, IDM_TRAY_HIDE, L"Hide to Tray");
+    }
+
+    AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
 
     // Compact Mode
     AppendMenuW(hMenu, MF_STRING | (compact ? MF_CHECKED : MF_UNCHECKED), IDM_COMPACT_MODE, L"Compact Mode");
@@ -644,9 +628,21 @@ static void ShowWindowContextMenu(HWND hwnd)
 
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
 
-    // Hide to tray
-    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_HIDE, L"Hide to Tray");
+    // Exit
     AppendMenuW(hMenu, MF_STRING, IDM_TRAY_EXIT, L"Exit");
+
+    return hMenu;
+}
+
+// Show unified context menu at cursor position
+static void ShowContextMenuAtCursor(HWND hwnd, bool isTrayMenu)
+{
+    POINT pt;
+    GetCursorPos(&pt);
+
+    HMENU hMenu = BuildContextMenu(isTrayMenu);
+    if (!hMenu)
+        return;
 
     // Required for the menu to disappear when clicking outside
     SetForegroundWindow(hwnd);
@@ -655,6 +651,16 @@ static void ShowWindowContextMenu(HWND hwnd)
     PostMessage(hwnd, WM_NULL, 0, 0);
 
     DestroyMenu(hMenu);
+}
+
+static void ShowTrayContextMenu(HWND hwnd)
+{
+    ShowContextMenuAtCursor(hwnd, true);
+}
+
+static void ShowWindowContextMenu(HWND hwnd)
+{
+    ShowContextMenuAtCursor(hwnd, false);
 }
 
 // ---------------------------------------------------------------------------
