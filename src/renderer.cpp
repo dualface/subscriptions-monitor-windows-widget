@@ -288,7 +288,10 @@ void ProgressBarRenderer::RenderServiceHeader(HDC hdc, int x, int y, int width, 
     HFONT hOldFont = (HFONT)SelectObject(hdc, compact_ ? hFontNormal_ : hFontBold_);
 
     std::wstringstream ss;
-    ss << ToWString(sub.display_name) << L" - " << ToWString(sub.plan.name);
+    if (compact_)
+        ss << ToWString(sub.display_name);
+    else
+        ss << ToWString(sub.display_name) << L" - " << ToWString(sub.plan.name);
 
     SetTextColor(hdc, colors_.textColor);
     SetBkMode(hdc, TRANSPARENT);
