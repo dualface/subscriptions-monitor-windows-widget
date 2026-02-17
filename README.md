@@ -37,7 +37,7 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 │                          48h 23m refresh    │
 │                                             │
 │  Daily Tokens (1 Day)          23.1%        │
-│  █████░░░░░░░░░░░░░░░░  231K / 1M          │
+│  █████░░░░░░░░░░░░░░░░  231K / 1M           │
 │                          8h 12m refresh     │
 └─────────────────────────────────────────────┘
 ```
