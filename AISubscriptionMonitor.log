@@ -1,0 +1,43 @@
+[2026-02-17 14:57:48] ========================================
+[2026-02-17 14:57:48] Debug Console Started
+[2026-02-17 14:57:48] ========================================
+[2026-02-17 14:57:48] ========================================
+[2026-02-17 14:57:48] Starting AI Subscription Monitor...
+[2026-02-17 14:57:48] Debug mode: enabled
+[2026-02-17 14:57:48] Parsed Host: tntserver
+[2026-02-17 14:57:48] Parsed Port: 51012
+[2026-02-17 14:57:48] Parsed Path: /api/v1/usage
+[2026-02-17 14:57:48] HTTP client initialized
+[2026-02-17 14:57:48] Window class registered
+[2026-02-17 14:57:48] WM_CREATE received
+[2026-02-17 14:57:48] Creating controls...
+[2026-02-17 14:57:48] Controls created successfully
+[2026-02-17 14:57:48] Refreshing data...
+[2026-02-17 14:57:48] Window created successfully
+[2026-02-17 14:57:48] Sending HTTP request to tntserver:51012/api/v1/usage
+[2026-02-17 14:57:48] WM_SIZE: 780x557
+[2026-02-17 14:57:48] HTTP request completed. Success: true
+[2026-02-17 14:57:48] Response size: 1844 bytes
+[2026-02-17 14:57:48] Parsing subscriptions...
+[2026-02-17 14:57:48] Successfully parsed 3 subscriptions
+[2026-02-17 14:57:48] Window shown
+[2026-02-17 14:57:48] WM_USER+1: Updating UI
+[2026-02-17 14:57:48] Updating ListView with 3 subscriptions
+[2026-02-17 14:57:48] WM_USER+1: Updating UI
+[2026-02-17 14:57:48] Updating ListView with 3 subscriptions
+[2026-02-17 14:58:04] Refresh button clicked
+[2026-02-17 14:58:04] Refreshing data...
+[2026-02-17 14:58:04] WM_USER+1: Updating UI
+[2026-02-17 14:58:04] Updating ListView with 3 subscriptions
+[2026-02-17 14:58:04] Sending HTTP request to tntserver:51012/api/v1/usage
+[2026-02-17 14:58:04] HTTP request completed. Success: true
+[2026-02-17 14:58:04] Response size: 1844 bytes
+[2026-02-17 14:58:04] Parsing subscriptions...
+[2026-02-17 14:58:04] Successfully parsed 3 subscriptions
+[2026-02-17 14:58:04] WM_USER+1: Updating UI
+[2026-02-17 14:58:04] Updating ListView with 3 subscriptions
+[2026-02-17 14:58:06] WM_DESTROY received
+[2026-02-17 14:58:06] Message loop ended
+[2026-02-17 14:58:06] ========================================
+[2026-02-17 14:58:06] Application shutting down
+[2026-02-17 14:58:06] ========================================

@@ -3,37 +3,42 @@
 #include <windows.h>
 #include <string>
 #include <vector>
+#include <memory>
 #include "subscription.h"
 
-// 进度条渲染器
+// Progress bar renderer with proper Chinese text support
 class ProgressBarRenderer {
 public:
     ProgressBarRenderer();
+    ~ProgressBarRenderer();
     
-    // 设置窗口尺寸
+    // Set window dimensions
     void SetWindowSize(int width, int height);
     
-    // 渲染所有订阅服务的进度条
+    // Render all subscription progress bars
     void Render(HDC hdc, const std::vector<Subscription>& subscriptions);
     
+    // Get total height for virtual scrolling (optional)
+    int GetTotalHeight() const;
+    
 private:
-    // 渲染单个指标进度条
+    // Render single metric progress bar
     void RenderMetric(HDC hdc, int x, int y, int width, const Metric& metric, const std::string& serviceName);
     
-    // 渲染服务标题
+    // Render service header
     void RenderServiceHeader(HDC hdc, int x, int y, int width, const Subscription& sub);
     
-    // 双缓冲绘制
+    // Double-buffered drawing
     void DrawProgressBar(HDC hdcDest, int x, int y, int width, int height, 
                          int percentage, COLORREF barColor);
     
-    // 工具函数
+    // Utility functions
     void DrawTextCentered(HDC hdc, const std::wstring& text, RECT& rect, 
                           COLORREF color, int fontSize = 14);
     void DrawTextLeft(HDC hdc, const std::wstring& text, RECT& rect, 
                       COLORREF color, int fontSize = 12);
     
-    // 颜色定义
+    // Color definitions
     static const COLORREF kBgColor;
     static const COLORREF kBarBgColor;
     static const COLORREF kBarLowColor;
@@ -42,7 +47,7 @@ private:
     static const COLORREF kTextColor;
     static const COLORREF kSubTextColor;
     
-    // 布局常量
+    // Layout constants
     static const int kMargin = 16;
     static const int kBarHeight = 40;
     static const int kHeaderHeight = 30;
@@ -51,4 +56,12 @@ private:
     
     int windowWidth_;
     int windowHeight_;
+    
+    // Fonts
+    HFONT hFontNormal_;
+    HFONT hFontBold_;
+    HFONT hFontSmall_;
+    
+    void CreateFonts();
+    void DestroyFonts();
 };
