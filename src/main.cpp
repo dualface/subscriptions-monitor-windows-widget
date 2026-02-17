@@ -12,6 +12,7 @@
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <shobjidl.h>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -566,12 +567,15 @@ struct AppState
     NOTIFYICONDATAW nid;
     bool trayIconCreated;
 
+    // Taskbar list for controlling taskbar visibility
+    ITaskbarList* taskbarList;
+
     AppState()
         : apiPort(80), apiIsHttps(false), isLoading(false), hwnd(nullptr), debugMode(false),
           themeMode(ThemeMode::System), scrollOffset(0), contentHeight(0), hBgBrush(nullptr), initialResizeDone(false),
           scrollDragging(false), dragStartMouseY(0), dragStartOffset(0), scrollThumbHovered(false),
           windowDragging(false), dragStartMouseX(0), dragStartMouseY2(0), isPinned(false), opacity(255),
-          savedNormalRect {}, hasSavedNormalRect(false), nid {}, trayIconCreated(false)
+          savedNormalRect {}, hasSavedNormalRect(false), nid {}, trayIconCreated(false), taskbarList(nullptr)
     {
         renderer = std::make_unique<ProgressBarRenderer>();
         httpClient = std::make_unique<HttpClient>();
@@ -581,6 +585,9 @@ struct AppState
     {
         if (hBgBrush)
             DeleteObject(hBgBrush);
+        if (taskbarList) {
+            taskbarList->Release();
+        }
     }
 };
 
@@ -1411,6 +1418,19 @@ static void ToggleCompact(HWND hwnd)
     SetWindowOpacity(hwnd, newOpacity);
 
     ApplyCompactLayout(hwnd);
+
+    // Update taskbar button visibility
+    if (g_app->taskbarList) {
+        if (newCompact) {
+            g_app->taskbarList->DeleteTab(hwnd);
+            Log("Taskbar button hidden (switched to compact mode)");
+        }
+        else {
+            g_app->taskbarList->AddTab(hwnd);
+            Log("Taskbar button shown (switched to normal mode)");
+        }
+    }
+
     Log("Compact mode toggled: %s", newCompact ? "on" : "off");
 }
 
@@ -2275,6 +2295,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
 
+    // Initialize ITaskbarList for taskbar button control
+    CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList, (void**)&app.taskbarList);
+
     // If compact mode restored, apply compact layout (removes caption, sets topmost).
     // The window will auto-resize when data arrives (WM_USER+1).
     if (app.renderer->IsCompact()) {
@@ -2331,7 +2354,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     // Apply saved opacity after window is created and visible
     SetWindowOpacity(hwnd, app.opacity);
 
-    Log("Window shown (tray-only, hidden owner suppresses taskbar button)");
+    // Control taskbar button visibility: show in normal mode, hide in compact mode
+    if (app.taskbarList) {
+        if (app.renderer->IsCompact()) {
+            app.taskbarList->DeleteTab(hwnd);
+            Log("Taskbar button hidden (compact mode)");
+        }
+        else {
+            app.taskbarList->AddTab(hwnd);
+            Log("Taskbar button shown (normal mode)");
+        }
+    }
+
+    Log("Window shown");
 
     MSG msg;
     BOOL bRet;
