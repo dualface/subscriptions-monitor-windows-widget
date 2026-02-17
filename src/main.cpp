@@ -1464,14 +1464,23 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         Log("Restored window state: %d,%d %dx%d pinned=%d", initX, initY, initW, initH, (int)saved.pinned);
     }
 
+    // Create a hidden owner window so the main window does not appear in the
+    // taskbar.  Owned windows never get a taskbar button, yet they keep a
+    // normal-sized title bar (unlike WS_EX_TOOLWINDOW which shrinks it).
+    HWND hwndOwner = CreateWindowExW(
+        0, L"STATIC", nullptr, WS_POPUP,
+        0, 0, 0, 0,
+        nullptr, nullptr, hInstance, nullptr);
+
     HWND hwnd = CreateWindowExW(
-        WS_EX_CLIENTEDGE | WS_EX_TOOLWINDOW,   // TOOLWINDOW: no taskbar button
+        WS_EX_CLIENTEDGE,
         kClassName,
         kWindowTitle,
         WS_OVERLAPPEDWINDOW,
         initX, initY,
         initW, initH,
-        nullptr, nullptr, hInstance, nullptr);
+        hwndOwner,                              // owner -> no taskbar button
+        nullptr, hInstance, nullptr);
     
     if (!hwnd) {
         Log("ERROR: Window creation failed, GetLastError=%lu", GetLastError());
@@ -1494,7 +1503,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         app.initialResizeDone = true;
     }
 
-    // Show the window (no taskbar button thanks to WS_EX_TOOLWINDOW)
+    // Show the window (no taskbar button thanks to hidden owner window)
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
@@ -1507,7 +1516,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         }
     }
 
-    Log("Window shown (tray-only, no taskbar button)");
+    Log("Window shown (tray-only, hidden owner suppresses taskbar button)");
     
     MSG msg;
     BOOL bRet;
