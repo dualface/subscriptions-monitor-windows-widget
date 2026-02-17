@@ -11,23 +11,15 @@ const COLORREF ProgressBarRenderer::kTextColor = RGB(33, 33, 33);
 const COLORREF ProgressBarRenderer::kSubTextColor = RGB(117, 117, 117);
 
 ProgressBarRenderer::ProgressBarRenderer() 
-    : windowWidth_(800), windowHeight_(600), scrollOffset_(0) {}
+    : windowWidth_(800), windowHeight_(600) {}
 
 void ProgressBarRenderer::SetWindowSize(int width, int height) {
     windowWidth_ = width;
     windowHeight_ = height;
 }
 
-void ProgressBarRenderer::SetScrollOffset(int offset) {
-    scrollOffset_ = offset;
-}
-
-int ProgressBarRenderer::GetTotalHeight() const {
-    return 1000;
-}
-
 void ProgressBarRenderer::Render(HDC hdc, const std::vector<Subscription>& subscriptions) {
-    int currentY = kMargin - scrollOffset_;
+    int currentY = kMargin;
     
     for (const auto& sub : subscriptions) {
         auto displayMetrics = sub.getDisplayMetrics();

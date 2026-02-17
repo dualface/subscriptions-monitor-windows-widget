@@ -16,12 +16,6 @@ public:
     // 渲染所有订阅服务的进度条
     void Render(HDC hdc, const std::vector<Subscription>& subscriptions);
     
-    // 获取渲染区域总高度（用于滚动）
-    int GetTotalHeight() const;
-    
-    // 设置滚动偏移
-    void SetScrollOffset(int offset);
-    
 private:
     // 渲染单个指标进度条
     void RenderMetric(HDC hdc, int x, int y, int width, const Metric& metric, const std::string& serviceName);
@@ -57,5 +51,4 @@ private:
     
     int windowWidth_;
     int windowHeight_;
-    int scrollOffset_;
 };
