@@ -312,6 +312,16 @@ static void ApplyTheme() {
         BOOL useDark = dark ? TRUE : FALSE;
         DwmSetWindowAttribute(g_app->hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE,
                               &useDark, sizeof(useDark));
+
+        // Switch app icon to match theme: light icon (dark shapes) for light
+        // mode, dark icon (light shapes) for dark mode
+        HINSTANCE hInst = (HINSTANCE)GetWindowLongPtrW(g_app->hwnd, GWLP_HINSTANCE);
+        int iconRes = dark ? IDI_APPICON : IDI_APPICON_LIGHT;
+        HICON hIcon = LoadIcon(hInst, MAKEINTRESOURCE(iconRes));
+        if (hIcon) {
+            SendMessage(g_app->hwnd, WM_SETICON, ICON_BIG,   (LPARAM)hIcon);
+            SendMessage(g_app->hwnd, WM_SETICON, ICON_SMALL,  (LPARAM)hIcon);
+        }
     }
 
     Log("Theme applied: %s", dark ? "dark" : "light");
@@ -1291,11 +1301,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     wc.style = CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = WndProc;
     wc.hInstance = hInstance;
-    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPICON));
+    int initIconRes = dark ? IDI_APPICON : IDI_APPICON_LIGHT;
+    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(initIconRes));
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wc.hbrBackground = app.hBgBrush;
     wc.lpszClassName = kClassName;
-    wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPICON));
+    wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(initIconRes));
     
     if (!RegisterClassExW(&wc)) {
         Log("ERROR: Window registration failed");

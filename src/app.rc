@@ -1,3 +1,4 @@
 #include "resource.h"
 
-IDI_APPICON ICON "..\\app_icon.ico"
+IDI_APPICON       ICON "..\\app_icon.ico"
+IDI_APPICON_LIGHT ICON "..\\app_icon_light.ico"

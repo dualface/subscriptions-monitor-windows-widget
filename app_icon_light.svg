@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Dark-colored variant of app_icon.svg for use on light backgrounds -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="app_icon_light.png"
+   inkscape:export-xdpi="144.81508"
+   inkscape:export-ydpi="144.81508"
+   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   sodipodi:docname="app_icon_light.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.0164632"
+     inkscape:cx="246.93465"
+     inkscape:cy="518.46439"
+     inkscape:window-width="2233"
+     inkscape:window-height="1338"
+     inkscape:window-x="-7"
+     inkscape:window-y="2"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2">
+      <use
+         x="0"
+         y="0"
+         xlink:href="#g1"
+         id="use2" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="BG"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g2"
+       clip-path="url(#clipPath2)"
+       transform="translate(0.09991455,11.322964)"
+       style="fill:none">
+      <g
+         inkscape:label="Clip"
+         id="g1"
+         style="fill:none">
+        <rect
+           style="fill:none;fill-opacity:1;stroke:none;stroke-width:4;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+           id="rect1"
+           width="179.60561"
+           height="179.60561"
+           x="15.097282"
+           y="47.374233" />
+      </g>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Icon">
+    <path
+       id="path9"
+       style="baseline-shift:baseline;display:inline;overflow:visible;fill:#333333;fill-opacity:1;stroke-width:3;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000;stroke:#333333;stroke-opacity:1;stroke-dasharray:none"
+       d="m 153.51072,157.78676 h -4.76791 c -4.26632,20.25103 -22.21047,35.41928 -43.74423,35.41928 -21.533767,0 -39.476549,-15.16825 -43.742428,-35.41928 H 56.48824 c 4.351922,22.818 24.436548,40.09893 48.51034,40.09893 24.07379,0 44.15982,-17.28093 48.51214,-40.09893 z" />
+    <path
+       id="path7"
+       style="baseline-shift:baseline;display:inline;overflow:visible;fill:#333333;fill-opacity:1;stroke-width:3;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000;stroke:#333333;stroke-opacity:1;stroke-dasharray:none"
+       d="m 104.99858,99.114308 c -24.07382,0 -44.15845,17.282902 -48.51034,40.101352 h 4.767912 c 4.26584,-20.25152 22.208626,-35.4217 43.742428,-35.4217 21.5338,0 39.47795,15.17018 43.74423,35.4217 h 4.76791 c -4.3523,-22.81845 -24.43833,-40.101352 -48.51214,-40.101352 z" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;fill:#333333;fill-opacity:1;stroke-width:3;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000;stroke:#333333;stroke-opacity:1;stroke-dasharray:none"
+       d="M 27.001696,148.5 H 89.120741"
+       id="path16" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;fill:#333333;fill-opacity:1;stroke-width:3;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000;stroke:#333333;stroke-opacity:1;stroke-dasharray:none"
+       d="m 27.001628,146.16074 v 4.67933 h 62.11995 v -4.67933 z"
+       id="path17" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;fill:#333333;fill-opacity:1;stroke-width:3;stroke-linecap:round;enable-background:accumulate;stop-color:#000000;stroke:#333333;stroke-opacity:1;stroke-dasharray:none"
+       d="m 38.215572,132.80819 -15.69221,15.69222 15.69221,15.69221 a 2.3396656,2.3396656 0 0 0 3.308434,0 2.3396656,2.3396656 0 0 0 0,-3.30844 L 29.140228,148.50041 41.524006,136.11663 a 2.3396656,2.3396656 0 0 0 0,-3.30844 2.3396656,2.3396656 0 0 0 -3.308434,0 z"
+       id="path15" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;fill:#333333;fill-opacity:1;stroke-width:3;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000;stroke:#333333;stroke-opacity:1;stroke-dasharray:none"
+       d="M 182.99727,148.5 H 120.87822"
+       id="path13" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;fill:#333333;fill-opacity:1;stroke-width:3;stroke-linejoin:round;enable-background:accumulate;stop-color:#000000;stroke:#333333;stroke-opacity:1;stroke-dasharray:none"
+       d="m 120.87842,146.16074 v 4.67933 h 62.11996 v -4.67933 z"
+       id="path14" />
+    <path
+       style="baseline-shift:baseline;display:inline;overflow:visible;fill:#333333;fill-opacity:1;stroke-width:3;stroke-linecap:round;enable-background:accumulate;stop-color:#000000;stroke:#333333;stroke-opacity:1;stroke-dasharray:none"
+       d="m 170.13022,132.12275 a 2.3396656,2.3396656 0 0 0 -1.65651,0.68544 2.3396656,2.3396656 0 0 0 0,3.30844 l 12.38378,12.38378 -12.38378,12.38377 a 2.3396656,2.3396656 0 0 0 0,3.30844 2.3396656,2.3396656 0 0 0 3.31072,0 l 15.69221,-15.69221 -15.69221,-15.69222 a 2.3396656,2.3396656 0 0 0 -1.65421,-0.68544 z"
+       id="path12" />
+  </g>
+</svg>
