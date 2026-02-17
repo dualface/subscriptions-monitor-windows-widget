@@ -49,9 +49,9 @@ private:
     
     // Layout constants
     static const int kMargin = 16;
-    static const int kBarHeight = 40;
-    static const int kHeaderHeight = 30;
-    static const int kItemSpacing = 12;
+    static const int kBarHeight = 44;
+    static const int kHeaderHeight = 32;
+    static const int kItemSpacing = 14;
     static const int kServiceSpacing = 24;
     
     int windowWidth_;

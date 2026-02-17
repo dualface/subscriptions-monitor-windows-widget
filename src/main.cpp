@@ -338,6 +338,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             case WM_SIZE:
                 OnSize(hwnd, (UINT)wParam, LOWORD(lParam), HIWORD(lParam));
                 return 0;
+                
+            case WM_GETMINMAXINFO: {
+                MINMAXINFO* mmi = (MINMAXINFO*)lParam;
+                mmi->ptMinTrackSize.x = 540;  // Minimum width
+                mmi->ptMinTrackSize.y = 400;  // Minimum height
+                return 0;
+            }
 
             case WM_TIMER:
                 if (wParam == 1) {

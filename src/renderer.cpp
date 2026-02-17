@@ -102,23 +102,23 @@ ProgressBarRenderer::~ProgressBarRenderer() {
 }
 
 void ProgressBarRenderer::CreateFonts() {
-    // Create normal font with Chinese support (Microsoft YaHei)
+    // Create normal font with Chinese support (Microsoft YaHei) - size 18
     hFontNormal_ = CreateFontW(
-        16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
         CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
     );
     
-    // Create bold font
+    // Create bold font - size 20
     hFontBold_ = CreateFontW(
-        18, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+        20, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
         CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
     );
     
-    // Create small font
+    // Create small font - size 14
     hFontSmall_ = CreateFontW(
-        12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
+        14, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
         CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
     );

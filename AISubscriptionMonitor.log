@@ -4710,3 +4710,3662 @@
 [2026-02-17 15:10:51] ========================================
 [2026-02-17 15:10:51] Application shutting down
 [2026-02-17 15:10:51] ========================================
+[2026-02-17 15:12:25] ========================================
+[2026-02-17 15:12:25] Starting AI Subscription Monitor...
+[2026-02-17 15:12:25] Debug mode: disabled
+[2026-02-17 15:12:25] Parsed Host: tntserver
+[2026-02-17 15:12:25] Parsed Port: 51012
+[2026-02-17 15:12:25] Parsed Path: /api/v1/usage
+[2026-02-17 15:12:25] HTTP client initialized
+[2026-02-17 15:12:25] Window class registered
+[2026-02-17 15:12:25] WM_CREATE received
+[2026-02-17 15:12:25] Refreshing data...
+[2026-02-17 15:12:25] Window created successfully
+[2026-02-17 15:12:25] Sending HTTP request to tntserver:51012/api/v1/usage
+[2026-02-17 15:12:25] HTTP request completed. Success: true
+[2026-02-17 15:12:25] Response size: 1845 bytes
+[2026-02-17 15:12:25] Parsing subscriptions...
+[2026-02-17 15:12:25] Successfully parsed 3 subscriptions
+[2026-02-17 15:12:25] OnSize: state=0, cx=780, cy=557
+[2026-02-17 15:12:25] OnPaint: Window size 780x557
+[2026-02-17 15:12:25] Rendering: 3 subscriptions
+[2026-02-17 15:12:25] Render completed
+[2026-02-17 15:12:25] Window shown
+[2026-02-17 15:12:31] OnSize: state=0, cx=779, cy=557
+[2026-02-17 15:12:31] OnPaint: Window size 779x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=778, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 778x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=777, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 777x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=775, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 775x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=774, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 774x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=771, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 771x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=769, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 769x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=766, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 766x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=761, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 761x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=757, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 757x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=751, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 751x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=745, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 745x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=738, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 738x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=730, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 730x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=721, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 721x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=711, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 711x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=701, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 701x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=690, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 690x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=678, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 678x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=669, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 669x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=657, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 657x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=645, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 645x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=635, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 635x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=624, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 624x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=612, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 612x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=603, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 603x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=591, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 591x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=579, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 579x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=570, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 570x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=558, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 558x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=548, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 548x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=539, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 539x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=529, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 529x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=521, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 521x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=514, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 514x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=504, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 504x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=496, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 496x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=486, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 486x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=478, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 478x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=470, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 470x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=462, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 462x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=454, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 454x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=448, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 448x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=441, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 441x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=434, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 434x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=429, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 429x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=423, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 423x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=417, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 417x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=412, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 412x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=408, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 408x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=403, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 403x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=399, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 399x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=396, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 396x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=393, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 393x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=389, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 389x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=386, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 386x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=382, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 382x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=378, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 378x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=375, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 375x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=371, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 371x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=367, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 367x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=364, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 364x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=358, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 358x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=354, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 354x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=350, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 350x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=345, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 345x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=341, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 341x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=336, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 336x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=331, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 331x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=327, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 327x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=324, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 324x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=320, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 320x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=317, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 317x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=313, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 313x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=310, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 310x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=308, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 308x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=304, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 304x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=302, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 302x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=299, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 299x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=298, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 298x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=294, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 294x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=293, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 293x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=291, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 291x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=290, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 290x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=288, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 288x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=286, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 286x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=285, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 285x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=284, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 284x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=282, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 282x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=280, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 280x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=278, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 278x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=277, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 277x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=276, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 276x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=274, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 274x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=273, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 273x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=271, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 271x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=270, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 270x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=269, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 269x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=268, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 268x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=266, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 266x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=265, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 265x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=264, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 264x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=263, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 263x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=261, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 261x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=260, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 260x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=258, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 258x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=256, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 256x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=254, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 254x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=252, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 252x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=250, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 250x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=249, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 249x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=247, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 247x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=246, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 246x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=245, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 245x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=243, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 243x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=242, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 242x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=241, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 241x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=240, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 240x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=239, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 239x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=238, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 238x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=237, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 237x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=236, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 236x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=234, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 234x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=233, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 233x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=232, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 232x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=230, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 230x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=229, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 229x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=227, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 227x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=226, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 226x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=224, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 224x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=222, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 222x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=221, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 221x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=219, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 219x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=217, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 217x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=216, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 216x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=214, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 214x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=213, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 213x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=212, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 212x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=210, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 210x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=209, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 209x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=208, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 208x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=207, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 207x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=206, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 206x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=205, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 205x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=204, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 204x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=203, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 203x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=201, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 201x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=200, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 200x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=198, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 198x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=197, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 197x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=196, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 196x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=195, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 195x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=193, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 193x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=191, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 191x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=189, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 189x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=187, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 187x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=186, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 186x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=184, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 184x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=182, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 182x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=181, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 181x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=180, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 180x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=179, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 179x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=178, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 178x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=177, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 177x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=176, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 176x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=175, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 175x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=174, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 174x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=173, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 173x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=172, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 172x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=170, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 170x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=169, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 169x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=168, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 168x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=166, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 166x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=164, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 164x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=162, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 162x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=161, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 161x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=159, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 159x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=158, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 158x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=156, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 156x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=155, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 155x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=154, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 154x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=153, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 153x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=152, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 152x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=151, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 151x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=150, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 150x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=149, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 149x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=148, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 148x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=147, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 147x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=146, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 146x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=145, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 145x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=144, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 144x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=142, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 142x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=141, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 141x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:32] OnSize: state=0, cx=140, cy=557
+[2026-02-17 15:12:32] OnPaint: Window size 140x557
+[2026-02-17 15:12:32] Rendering: 3 subscriptions
+[2026-02-17 15:12:32] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=138, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 138x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=137, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 137x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=136, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 136x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=134, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 134x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=133, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 133x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=132, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 132x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=131, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 131x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=130, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 130x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=129, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 129x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=128, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 128x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=127, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 127x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=126, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 126x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=125, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 125x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=124, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 124x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=122, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 122x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=121, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 121x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=120, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 120x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=119, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 119x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=118, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 118x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=117, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 117x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=116, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 116x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=117, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 117x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=119, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 119x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=121, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 121x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=123, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 123x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=125, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 125x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=128, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 128x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=130, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 130x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=133, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 133x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=136, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 136x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=139, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 139x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=142, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 142x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=146, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 146x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=150, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 150x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=154, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 154x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=157, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 157x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=160, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 160x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=164, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 164x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=169, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 169x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=173, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 173x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=178, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 178x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=182, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 182x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=186, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 186x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=190, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 190x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=194, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 194x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=199, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 199x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=204, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 204x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=209, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 209x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=214, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 214x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=218, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 218x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=223, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 223x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=229, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 229x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=234, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 234x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=242, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 242x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=248, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 248x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=254, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 254x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=260, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 260x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=268, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 268x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=274, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 274x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=281, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 281x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=286, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 286x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=293, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 293x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=298, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 298x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=303, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 303x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=307, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 307x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=311, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 311x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=315, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 315x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=318, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 318x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=319, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 319x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:33] OnSize: state=0, cx=320, cy=557
+[2026-02-17 15:12:33] OnPaint: Window size 320x557
+[2026-02-17 15:12:33] Rendering: 3 subscriptions
+[2026-02-17 15:12:33] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=319, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 319x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=318, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 318x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=317, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 317x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=316, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 316x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=315, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 315x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=314, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 314x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=315, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 315x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=316, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 316x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=318, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 318x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=319, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 319x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=320, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 320x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=321, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 321x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=322, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 322x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=323, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 323x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=324, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 324x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=325, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 325x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=326, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 326x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=327, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 327x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=328, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 328x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=329, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 329x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=330, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 330x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=331, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 331x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=332, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 332x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=334, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 334x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=335, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 335x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=337, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 337x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=338, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 338x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=340, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 340x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:34] Render completed
+[2026-02-17 15:12:34] OnSize: state=0, cx=342, cy=557
+[2026-02-17 15:12:34] OnPaint: Window size 342x557
+[2026-02-17 15:12:34] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=343, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 343x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=345, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 345x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=347, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 347x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=349, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 349x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=351, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 351x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=354, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 354x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=357, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 357x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=359, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 359x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=362, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 362x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=363, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 363x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=365, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 365x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=366, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 366x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=368, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 368x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=369, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 369x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=370, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 370x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=371, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 371x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=372, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 372x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=373, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 373x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=374, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 374x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=375, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 375x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=376, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 376x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=378, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 378x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=379, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 379x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=382, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 382x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=384, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 384x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=386, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 386x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=389, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 389x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=392, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 392x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=394, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 394x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=397, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 397x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=401, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 401x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=404, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 404x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=407, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 407x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=411, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 411x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=414, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 414x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=418, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 418x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=422, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 422x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=424, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 424x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=427, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 427x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=430, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 430x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=433, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 433x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=436, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 436x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=438, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 438x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=440, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 440x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=442, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 442x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=443, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 443x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=444, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 444x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=443, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 443x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=441, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 441x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=438, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 438x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=435, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 435x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=432, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 432x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=429, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 429x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=425, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 425x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=420, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 420x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=414, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 414x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=410, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 410x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=406, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 406x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=403, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 403x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=399, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 399x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=398, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 398x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=394, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 394x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=392, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 392x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=390, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 390x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=387, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 387x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=386, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 386x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=385, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 385x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=384, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 384x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=383, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 383x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:35] OnSize: state=0, cx=384, cy=557
+[2026-02-17 15:12:35] OnPaint: Window size 384x557
+[2026-02-17 15:12:35] Rendering: 3 subscriptions
+[2026-02-17 15:12:35] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=385, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 385x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=387, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 387x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=390, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 390x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=391, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 391x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=393, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 393x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=397, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 397x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=401, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 401x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=404, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 404x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=408, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 408x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=411, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 411x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=415, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 415x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=419, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 419x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=423, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 423x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=426, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 426x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=430, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 430x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=434, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 434x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=437, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 437x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=439, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 439x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=442, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 442x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=445, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 445x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=447, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 447x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=448, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 448x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=449, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 449x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=450, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 450x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=449, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 449x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=448, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 448x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=447, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 447x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=446, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 446x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=445, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 445x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=444, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 444x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=443, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 443x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=442, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 442x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=441, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 441x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=440, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 440x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=439, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 439x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=438, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 438x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=437, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 437x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=436, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 436x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=435, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 435x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=434, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 434x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=433, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 433x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=432, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 432x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=431, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 431x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:12:36] OnSize: state=0, cx=430, cy=557
+[2026-02-17 15:12:36] OnPaint: Window size 430x557
+[2026-02-17 15:12:36] Rendering: 3 subscriptions
+[2026-02-17 15:12:36] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=556
+[2026-02-17 15:13:20] OnPaint: Window size 430x556
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=555
+[2026-02-17 15:13:20] OnPaint: Window size 430x555
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=554
+[2026-02-17 15:13:20] OnPaint: Window size 430x554
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=553
+[2026-02-17 15:13:20] OnPaint: Window size 430x553
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=551
+[2026-02-17 15:13:20] OnPaint: Window size 430x551
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=549
+[2026-02-17 15:13:20] OnPaint: Window size 430x549
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=547
+[2026-02-17 15:13:20] OnPaint: Window size 430x547
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=545
+[2026-02-17 15:13:20] OnPaint: Window size 430x545
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=542
+[2026-02-17 15:13:20] OnPaint: Window size 430x542
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=540
+[2026-02-17 15:13:20] OnPaint: Window size 430x540
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=537
+[2026-02-17 15:13:20] OnPaint: Window size 430x537
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=533
+[2026-02-17 15:13:20] OnPaint: Window size 430x533
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=531
+[2026-02-17 15:13:20] OnPaint: Window size 430x531
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=525
+[2026-02-17 15:13:20] OnPaint: Window size 430x525
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=521
+[2026-02-17 15:13:20] OnPaint: Window size 430x521
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=514
+[2026-02-17 15:13:20] OnPaint: Window size 430x514
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=509
+[2026-02-17 15:13:20] OnPaint: Window size 430x509
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=502
+[2026-02-17 15:13:20] OnPaint: Window size 430x502
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=496
+[2026-02-17 15:13:20] OnPaint: Window size 430x496
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=489
+[2026-02-17 15:13:20] OnPaint: Window size 430x489
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=480
+[2026-02-17 15:13:20] OnPaint: Window size 430x480
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=473
+[2026-02-17 15:13:20] OnPaint: Window size 430x473
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=465
+[2026-02-17 15:13:20] OnPaint: Window size 430x465
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=458
+[2026-02-17 15:13:20] OnPaint: Window size 430x458
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=452
+[2026-02-17 15:13:20] OnPaint: Window size 430x452
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=446
+[2026-02-17 15:13:20] OnPaint: Window size 430x446
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=441
+[2026-02-17 15:13:20] OnPaint: Window size 430x441
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=435
+[2026-02-17 15:13:20] OnPaint: Window size 430x435
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=429
+[2026-02-17 15:13:20] OnPaint: Window size 430x429
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=425
+[2026-02-17 15:13:20] OnPaint: Window size 430x425
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=419
+[2026-02-17 15:13:20] OnPaint: Window size 430x419
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=414
+[2026-02-17 15:13:20] OnPaint: Window size 430x414
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=408
+[2026-02-17 15:13:20] OnPaint: Window size 430x408
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=402
+[2026-02-17 15:13:20] OnPaint: Window size 430x402
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=397
+[2026-02-17 15:13:20] OnPaint: Window size 430x397
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=393
+[2026-02-17 15:13:20] OnPaint: Window size 430x393
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=391
+[2026-02-17 15:13:20] OnPaint: Window size 430x391
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=385
+[2026-02-17 15:13:20] OnPaint: Window size 430x385
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=381
+[2026-02-17 15:13:20] OnPaint: Window size 430x381
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=379
+[2026-02-17 15:13:20] OnPaint: Window size 430x379
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=376
+[2026-02-17 15:13:20] OnPaint: Window size 430x376
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=373
+[2026-02-17 15:13:20] OnPaint: Window size 430x373
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=370
+[2026-02-17 15:13:20] OnPaint: Window size 430x370
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=368
+[2026-02-17 15:13:20] OnPaint: Window size 430x368
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=366
+[2026-02-17 15:13:20] OnPaint: Window size 430x366
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=364
+[2026-02-17 15:13:20] OnPaint: Window size 430x364
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=362
+[2026-02-17 15:13:20] OnPaint: Window size 430x362
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=360
+[2026-02-17 15:13:20] OnPaint: Window size 430x360
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=358
+[2026-02-17 15:13:20] OnPaint: Window size 430x358
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=357
+[2026-02-17 15:13:20] OnPaint: Window size 430x357
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=355
+[2026-02-17 15:13:20] OnPaint: Window size 430x355
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=354
+[2026-02-17 15:13:20] OnPaint: Window size 430x354
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=353
+[2026-02-17 15:13:20] OnPaint: Window size 430x353
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=351
+[2026-02-17 15:13:20] OnPaint: Window size 430x351
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=349
+[2026-02-17 15:13:20] OnPaint: Window size 430x349
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=348
+[2026-02-17 15:13:20] OnPaint: Window size 430x348
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=346
+[2026-02-17 15:13:20] OnPaint: Window size 430x346
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=345
+[2026-02-17 15:13:20] OnPaint: Window size 430x345
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=343
+[2026-02-17 15:13:20] OnPaint: Window size 430x343
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=341
+[2026-02-17 15:13:20] OnPaint: Window size 430x341
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=340
+[2026-02-17 15:13:20] OnPaint: Window size 430x340
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=339
+[2026-02-17 15:13:20] OnPaint: Window size 430x339
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=337
+[2026-02-17 15:13:20] OnPaint: Window size 430x337
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=335
+[2026-02-17 15:13:20] OnPaint: Window size 430x335
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=333
+[2026-02-17 15:13:20] OnPaint: Window size 430x333
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=330
+[2026-02-17 15:13:20] OnPaint: Window size 430x330
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=328
+[2026-02-17 15:13:20] OnPaint: Window size 430x328
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=326
+[2026-02-17 15:13:20] OnPaint: Window size 430x326
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=324
+[2026-02-17 15:13:20] OnPaint: Window size 430x324
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=321
+[2026-02-17 15:13:20] OnPaint: Window size 430x321
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=320
+[2026-02-17 15:13:20] OnPaint: Window size 430x320
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=318
+[2026-02-17 15:13:20] OnPaint: Window size 430x318
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=316
+[2026-02-17 15:13:20] OnPaint: Window size 430x316
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=313
+[2026-02-17 15:13:20] OnPaint: Window size 430x313
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=312
+[2026-02-17 15:13:20] OnPaint: Window size 430x312
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=308
+[2026-02-17 15:13:20] OnPaint: Window size 430x308
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=305
+[2026-02-17 15:13:20] OnPaint: Window size 430x305
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=304
+[2026-02-17 15:13:20] OnPaint: Window size 430x304
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=302
+[2026-02-17 15:13:20] OnPaint: Window size 430x302
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=300
+[2026-02-17 15:13:20] OnPaint: Window size 430x300
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=297
+[2026-02-17 15:13:20] OnPaint: Window size 430x297
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=295
+[2026-02-17 15:13:20] OnPaint: Window size 430x295
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=293
+[2026-02-17 15:13:20] OnPaint: Window size 430x293
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=292
+[2026-02-17 15:13:20] OnPaint: Window size 430x292
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=290
+[2026-02-17 15:13:20] OnPaint: Window size 430x290
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=288
+[2026-02-17 15:13:20] OnPaint: Window size 430x288
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=286
+[2026-02-17 15:13:20] OnPaint: Window size 430x286
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=285
+[2026-02-17 15:13:20] OnPaint: Window size 430x285
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=282
+[2026-02-17 15:13:20] OnPaint: Window size 430x282
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=281
+[2026-02-17 15:13:20] OnPaint: Window size 430x281
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=278
+[2026-02-17 15:13:20] OnPaint: Window size 430x278
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=276
+[2026-02-17 15:13:20] OnPaint: Window size 430x276
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=274
+[2026-02-17 15:13:20] OnPaint: Window size 430x274
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=273
+[2026-02-17 15:13:20] OnPaint: Window size 430x273
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=272
+[2026-02-17 15:13:20] OnPaint: Window size 430x272
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=270
+[2026-02-17 15:13:20] OnPaint: Window size 430x270
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=269
+[2026-02-17 15:13:20] OnPaint: Window size 430x269
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=267
+[2026-02-17 15:13:20] OnPaint: Window size 430x267
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=265
+[2026-02-17 15:13:20] OnPaint: Window size 430x265
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=263
+[2026-02-17 15:13:20] OnPaint: Window size 430x263
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=261
+[2026-02-17 15:13:20] OnPaint: Window size 430x261
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=260
+[2026-02-17 15:13:20] OnPaint: Window size 430x260
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=259
+[2026-02-17 15:13:20] OnPaint: Window size 430x259
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=257
+[2026-02-17 15:13:20] OnPaint: Window size 430x257
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=256
+[2026-02-17 15:13:20] OnPaint: Window size 430x256
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=255
+[2026-02-17 15:13:20] OnPaint: Window size 430x255
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=253
+[2026-02-17 15:13:20] OnPaint: Window size 430x253
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=252
+[2026-02-17 15:13:20] OnPaint: Window size 430x252
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=251
+[2026-02-17 15:13:20] OnPaint: Window size 430x251
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=249
+[2026-02-17 15:13:20] OnPaint: Window size 430x249
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=248
+[2026-02-17 15:13:20] OnPaint: Window size 430x248
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=247
+[2026-02-17 15:13:20] OnPaint: Window size 430x247
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=245
+[2026-02-17 15:13:20] OnPaint: Window size 430x245
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=244
+[2026-02-17 15:13:20] OnPaint: Window size 430x244
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=243
+[2026-02-17 15:13:20] OnPaint: Window size 430x243
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=241
+[2026-02-17 15:13:20] OnPaint: Window size 430x241
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=239
+[2026-02-17 15:13:20] OnPaint: Window size 430x239
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=237
+[2026-02-17 15:13:20] OnPaint: Window size 430x237
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=236
+[2026-02-17 15:13:20] OnPaint: Window size 430x236
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=234
+[2026-02-17 15:13:20] OnPaint: Window size 430x234
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=233
+[2026-02-17 15:13:20] OnPaint: Window size 430x233
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=231
+[2026-02-17 15:13:20] OnPaint: Window size 430x231
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=229
+[2026-02-17 15:13:20] OnPaint: Window size 430x229
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=227
+[2026-02-17 15:13:20] OnPaint: Window size 430x227
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=226
+[2026-02-17 15:13:20] OnPaint: Window size 430x226
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=224
+[2026-02-17 15:13:20] OnPaint: Window size 430x224
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=222
+[2026-02-17 15:13:20] OnPaint: Window size 430x222
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=220
+[2026-02-17 15:13:20] OnPaint: Window size 430x220
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=217
+[2026-02-17 15:13:20] OnPaint: Window size 430x217
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=215
+[2026-02-17 15:13:20] OnPaint: Window size 430x215
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=213
+[2026-02-17 15:13:20] OnPaint: Window size 430x213
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=212
+[2026-02-17 15:13:20] OnPaint: Window size 430x212
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=209
+[2026-02-17 15:13:20] OnPaint: Window size 430x209
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=208
+[2026-02-17 15:13:20] OnPaint: Window size 430x208
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=206
+[2026-02-17 15:13:20] OnPaint: Window size 430x206
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=205
+[2026-02-17 15:13:20] OnPaint: Window size 430x205
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=203
+[2026-02-17 15:13:20] OnPaint: Window size 430x203
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=201
+[2026-02-17 15:13:20] OnPaint: Window size 430x201
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=198
+[2026-02-17 15:13:20] OnPaint: Window size 430x198
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=197
+[2026-02-17 15:13:20] OnPaint: Window size 430x197
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=194
+[2026-02-17 15:13:20] OnPaint: Window size 430x194
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=193
+[2026-02-17 15:13:20] OnPaint: Window size 430x193
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=192
+[2026-02-17 15:13:20] OnPaint: Window size 430x192
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=190
+[2026-02-17 15:13:20] OnPaint: Window size 430x190
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=189
+[2026-02-17 15:13:20] OnPaint: Window size 430x189
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=187
+[2026-02-17 15:13:20] OnPaint: Window size 430x187
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=185
+[2026-02-17 15:13:20] OnPaint: Window size 430x185
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=184
+[2026-02-17 15:13:20] OnPaint: Window size 430x184
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=182
+[2026-02-17 15:13:20] OnPaint: Window size 430x182
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=181
+[2026-02-17 15:13:20] OnPaint: Window size 430x181
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=179
+[2026-02-17 15:13:20] OnPaint: Window size 430x179
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=177
+[2026-02-17 15:13:20] OnPaint: Window size 430x177
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=174
+[2026-02-17 15:13:20] OnPaint: Window size 430x174
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=173
+[2026-02-17 15:13:20] OnPaint: Window size 430x173
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=171
+[2026-02-17 15:13:20] OnPaint: Window size 430x171
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=169
+[2026-02-17 15:13:20] OnPaint: Window size 430x169
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=168
+[2026-02-17 15:13:20] OnPaint: Window size 430x168
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=167
+[2026-02-17 15:13:20] OnPaint: Window size 430x167
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=165
+[2026-02-17 15:13:20] OnPaint: Window size 430x165
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=164
+[2026-02-17 15:13:20] OnPaint: Window size 430x164
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=163
+[2026-02-17 15:13:20] OnPaint: Window size 430x163
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=161
+[2026-02-17 15:13:20] OnPaint: Window size 430x161
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=160
+[2026-02-17 15:13:20] OnPaint: Window size 430x160
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=159
+[2026-02-17 15:13:20] OnPaint: Window size 430x159
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=157
+[2026-02-17 15:13:20] OnPaint: Window size 430x157
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=156
+[2026-02-17 15:13:20] OnPaint: Window size 430x156
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=155
+[2026-02-17 15:13:20] OnPaint: Window size 430x155
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=154
+[2026-02-17 15:13:20] OnPaint: Window size 430x154
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=153
+[2026-02-17 15:13:20] OnPaint: Window size 430x153
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=152
+[2026-02-17 15:13:20] OnPaint: Window size 430x152
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=151
+[2026-02-17 15:13:20] OnPaint: Window size 430x151
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=150
+[2026-02-17 15:13:20] OnPaint: Window size 430x150
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=149
+[2026-02-17 15:13:20] OnPaint: Window size 430x149
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=148
+[2026-02-17 15:13:20] OnPaint: Window size 430x148
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=147
+[2026-02-17 15:13:20] OnPaint: Window size 430x147
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=146
+[2026-02-17 15:13:20] OnPaint: Window size 430x146
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=145
+[2026-02-17 15:13:20] OnPaint: Window size 430x145
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=144
+[2026-02-17 15:13:20] OnPaint: Window size 430x144
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=143
+[2026-02-17 15:13:20] OnPaint: Window size 430x143
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=142
+[2026-02-17 15:13:20] OnPaint: Window size 430x142
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=141
+[2026-02-17 15:13:20] OnPaint: Window size 430x141
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:20] OnSize: state=0, cx=430, cy=140
+[2026-02-17 15:13:20] OnPaint: Window size 430x140
+[2026-02-17 15:13:20] Rendering: 3 subscriptions
+[2026-02-17 15:13:20] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=139
+[2026-02-17 15:13:21] OnPaint: Window size 430x139
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=138
+[2026-02-17 15:13:21] OnPaint: Window size 430x138
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=137
+[2026-02-17 15:13:21] OnPaint: Window size 430x137
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=136
+[2026-02-17 15:13:21] OnPaint: Window size 430x136
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=135
+[2026-02-17 15:13:21] OnPaint: Window size 430x135
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=134
+[2026-02-17 15:13:21] OnPaint: Window size 430x134
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=133
+[2026-02-17 15:13:21] OnPaint: Window size 430x133
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=132
+[2026-02-17 15:13:21] OnPaint: Window size 430x132
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=131
+[2026-02-17 15:13:21] OnPaint: Window size 430x131
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=129
+[2026-02-17 15:13:21] OnPaint: Window size 430x129
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=127
+[2026-02-17 15:13:21] OnPaint: Window size 430x127
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=125
+[2026-02-17 15:13:21] OnPaint: Window size 430x125
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=123
+[2026-02-17 15:13:21] OnPaint: Window size 430x123
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=121
+[2026-02-17 15:13:21] OnPaint: Window size 430x121
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=119
+[2026-02-17 15:13:21] OnPaint: Window size 430x119
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=117
+[2026-02-17 15:13:21] OnPaint: Window size 430x117
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=116
+[2026-02-17 15:13:21] OnPaint: Window size 430x116
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=115
+[2026-02-17 15:13:21] OnPaint: Window size 430x115
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=113
+[2026-02-17 15:13:21] OnPaint: Window size 430x113
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=111
+[2026-02-17 15:13:21] OnPaint: Window size 430x111
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=109
+[2026-02-17 15:13:21] OnPaint: Window size 430x109
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=106
+[2026-02-17 15:13:21] OnPaint: Window size 430x106
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=104
+[2026-02-17 15:13:21] OnPaint: Window size 430x104
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=101
+[2026-02-17 15:13:21] OnPaint: Window size 430x101
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=98
+[2026-02-17 15:13:21] OnPaint: Window size 430x98
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=97
+[2026-02-17 15:13:21] OnPaint: Window size 430x97
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=95
+[2026-02-17 15:13:21] OnPaint: Window size 430x95
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=93
+[2026-02-17 15:13:21] OnPaint: Window size 430x93
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=92
+[2026-02-17 15:13:21] OnPaint: Window size 430x92
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=90
+[2026-02-17 15:13:21] OnPaint: Window size 430x90
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=88
+[2026-02-17 15:13:21] OnPaint: Window size 430x88
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=86
+[2026-02-17 15:13:21] OnPaint: Window size 430x86
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=85
+[2026-02-17 15:13:21] OnPaint: Window size 430x85
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=83
+[2026-02-17 15:13:21] OnPaint: Window size 430x83
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=81
+[2026-02-17 15:13:21] OnPaint: Window size 430x81
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=80
+[2026-02-17 15:13:21] OnPaint: Window size 430x80
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=78
+[2026-02-17 15:13:21] OnPaint: Window size 430x78
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=77
+[2026-02-17 15:13:21] OnPaint: Window size 430x77
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=75
+[2026-02-17 15:13:21] OnPaint: Window size 430x75
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=74
+[2026-02-17 15:13:21] OnPaint: Window size 430x74
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=73
+[2026-02-17 15:13:21] OnPaint: Window size 430x73
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=72
+[2026-02-17 15:13:21] OnPaint: Window size 430x72
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=71
+[2026-02-17 15:13:21] OnPaint: Window size 430x71
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=70
+[2026-02-17 15:13:21] OnPaint: Window size 430x70
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=69
+[2026-02-17 15:13:21] OnPaint: Window size 430x69
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=68
+[2026-02-17 15:13:21] OnPaint: Window size 430x68
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=67
+[2026-02-17 15:13:21] OnPaint: Window size 430x67
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=66
+[2026-02-17 15:13:21] OnPaint: Window size 430x66
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=65
+[2026-02-17 15:13:21] OnPaint: Window size 430x65
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=64
+[2026-02-17 15:13:21] OnPaint: Window size 430x64
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=63
+[2026-02-17 15:13:21] OnPaint: Window size 430x63
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=62
+[2026-02-17 15:13:21] OnPaint: Window size 430x62
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=61
+[2026-02-17 15:13:21] OnPaint: Window size 430x61
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=60
+[2026-02-17 15:13:21] OnPaint: Window size 430x60
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=59
+[2026-02-17 15:13:21] OnPaint: Window size 430x59
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=58
+[2026-02-17 15:13:21] OnPaint: Window size 430x58
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=57
+[2026-02-17 15:13:21] OnPaint: Window size 430x57
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=56
+[2026-02-17 15:13:21] OnPaint: Window size 430x56
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=55
+[2026-02-17 15:13:21] OnPaint: Window size 430x55
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=53
+[2026-02-17 15:13:21] OnPaint: Window size 430x53
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=52
+[2026-02-17 15:13:21] OnPaint: Window size 430x52
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=51
+[2026-02-17 15:13:21] OnPaint: Window size 430x51
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=49
+[2026-02-17 15:13:21] OnPaint: Window size 430x49
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=48
+[2026-02-17 15:13:21] OnPaint: Window size 430x48
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=45
+[2026-02-17 15:13:21] OnPaint: Window size 430x45
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=44
+[2026-02-17 15:13:21] OnPaint: Window size 430x44
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=41
+[2026-02-17 15:13:21] OnPaint: Window size 430x41
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=39
+[2026-02-17 15:13:21] OnPaint: Window size 430x39
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=37
+[2026-02-17 15:13:21] OnPaint: Window size 430x37
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=36
+[2026-02-17 15:13:21] OnPaint: Window size 430x36
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=34
+[2026-02-17 15:13:21] OnPaint: Window size 430x34
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=32
+[2026-02-17 15:13:21] OnPaint: Window size 430x32
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=31
+[2026-02-17 15:13:21] OnPaint: Window size 430x31
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=29
+[2026-02-17 15:13:21] OnPaint: Window size 430x29
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=28
+[2026-02-17 15:13:21] OnPaint: Window size 430x28
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=26
+[2026-02-17 15:13:21] OnPaint: Window size 430x26
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=24
+[2026-02-17 15:13:21] OnPaint: Window size 430x24
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=22
+[2026-02-17 15:13:21] OnPaint: Window size 430x22
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=20
+[2026-02-17 15:13:21] OnPaint: Window size 430x20
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=17
+[2026-02-17 15:13:21] OnPaint: Window size 430x17
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=16
+[2026-02-17 15:13:21] OnPaint: Window size 430x16
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=14
+[2026-02-17 15:13:21] OnPaint: Window size 430x14
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=13
+[2026-02-17 15:13:21] OnPaint: Window size 430x13
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=11
+[2026-02-17 15:13:21] OnPaint: Window size 430x11
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=9
+[2026-02-17 15:13:21] OnPaint: Window size 430x9
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=7
+[2026-02-17 15:13:21] OnPaint: Window size 430x7
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=5
+[2026-02-17 15:13:21] OnPaint: Window size 430x5
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=3
+[2026-02-17 15:13:21] OnPaint: Window size 430x3
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=2
+[2026-02-17 15:13:21] OnPaint: Window size 430x2
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=1
+[2026-02-17 15:13:21] OnPaint: Window size 430x1
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=430, cy=0
+[2026-02-17 15:13:21] OnPaint: Window size 430x0
+[2026-02-17 15:13:21] Window size is zero or negative, skipping paint
+[2026-02-17 15:13:21] OnSize: state=0, cx=434, cy=3
+[2026-02-17 15:13:21] OnPaint: Window size 434x3
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=434, cy=1
+[2026-02-17 15:13:21] OnPaint: Window size 434x1
+[2026-02-17 15:13:21] Rendering: 3 subscriptions
+[2026-02-17 15:13:21] Render completed
+[2026-02-17 15:13:21] OnSize: state=0, cx=434, cy=0
+[2026-02-17 15:13:21] OnPaint: Window size 434x0
+[2026-02-17 15:13:21] Window size is zero or negative, skipping paint
+[2026-02-17 15:13:22] OnSize: state=0, cx=434, cy=1
+[2026-02-17 15:13:22] OnPaint: Window size 434x1
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=0
+[2026-02-17 15:13:22] OnPaint: Window size 430x0
+[2026-02-17 15:13:22] Window size is zero or negative, skipping paint
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=2
+[2026-02-17 15:13:22] OnPaint: Window size 430x2
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=5
+[2026-02-17 15:13:22] OnPaint: Window size 430x5
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=9
+[2026-02-17 15:13:22] OnPaint: Window size 430x9
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=13
+[2026-02-17 15:13:22] OnPaint: Window size 430x13
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=17
+[2026-02-17 15:13:22] OnPaint: Window size 430x17
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=21
+[2026-02-17 15:13:22] OnPaint: Window size 430x21
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=25
+[2026-02-17 15:13:22] OnPaint: Window size 430x25
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=29
+[2026-02-17 15:13:22] OnPaint: Window size 430x29
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=34
+[2026-02-17 15:13:22] OnPaint: Window size 430x34
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=37
+[2026-02-17 15:13:22] OnPaint: Window size 430x37
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=39
+[2026-02-17 15:13:22] OnPaint: Window size 430x39
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=45
+[2026-02-17 15:13:22] OnPaint: Window size 430x45
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=50
+[2026-02-17 15:13:22] OnPaint: Window size 430x50
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=57
+[2026-02-17 15:13:22] OnPaint: Window size 430x57
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=61
+[2026-02-17 15:13:22] OnPaint: Window size 430x61
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=66
+[2026-02-17 15:13:22] OnPaint: Window size 430x66
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=69
+[2026-02-17 15:13:22] OnPaint: Window size 430x69
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=74
+[2026-02-17 15:13:22] OnPaint: Window size 430x74
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=81
+[2026-02-17 15:13:22] OnPaint: Window size 430x81
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=86
+[2026-02-17 15:13:22] OnPaint: Window size 430x86
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=91
+[2026-02-17 15:13:22] OnPaint: Window size 430x91
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=97
+[2026-02-17 15:13:22] OnPaint: Window size 430x97
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=101
+[2026-02-17 15:13:22] OnPaint: Window size 430x101
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=109
+[2026-02-17 15:13:22] OnPaint: Window size 430x109
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=115
+[2026-02-17 15:13:22] OnPaint: Window size 430x115
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=121
+[2026-02-17 15:13:22] OnPaint: Window size 430x121
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=126
+[2026-02-17 15:13:22] OnPaint: Window size 430x126
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=131
+[2026-02-17 15:13:22] OnPaint: Window size 430x131
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=136
+[2026-02-17 15:13:22] OnPaint: Window size 430x136
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=142
+[2026-02-17 15:13:22] OnPaint: Window size 430x142
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=147
+[2026-02-17 15:13:22] OnPaint: Window size 430x147
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=152
+[2026-02-17 15:13:22] OnPaint: Window size 430x152
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=156
+[2026-02-17 15:13:22] OnPaint: Window size 430x156
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=162
+[2026-02-17 15:13:22] OnPaint: Window size 430x162
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=166
+[2026-02-17 15:13:22] OnPaint: Window size 430x166
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=172
+[2026-02-17 15:13:22] OnPaint: Window size 430x172
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=176
+[2026-02-17 15:13:22] OnPaint: Window size 430x176
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=181
+[2026-02-17 15:13:22] OnPaint: Window size 430x181
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=186
+[2026-02-17 15:13:22] OnPaint: Window size 430x186
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=191
+[2026-02-17 15:13:22] OnPaint: Window size 430x191
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=195
+[2026-02-17 15:13:22] OnPaint: Window size 430x195
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=199
+[2026-02-17 15:13:22] OnPaint: Window size 430x199
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=203
+[2026-02-17 15:13:22] OnPaint: Window size 430x203
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=207
+[2026-02-17 15:13:22] OnPaint: Window size 430x207
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=213
+[2026-02-17 15:13:22] OnPaint: Window size 430x213
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=217
+[2026-02-17 15:13:22] OnPaint: Window size 430x217
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=220
+[2026-02-17 15:13:22] OnPaint: Window size 430x220
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=225
+[2026-02-17 15:13:22] OnPaint: Window size 430x225
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=229
+[2026-02-17 15:13:22] OnPaint: Window size 430x229
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=233
+[2026-02-17 15:13:22] OnPaint: Window size 430x233
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=237
+[2026-02-17 15:13:22] OnPaint: Window size 430x237
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=241
+[2026-02-17 15:13:22] OnPaint: Window size 430x241
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=244
+[2026-02-17 15:13:22] OnPaint: Window size 430x244
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=249
+[2026-02-17 15:13:22] OnPaint: Window size 430x249
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=252
+[2026-02-17 15:13:22] OnPaint: Window size 430x252
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=257
+[2026-02-17 15:13:22] OnPaint: Window size 430x257
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=259
+[2026-02-17 15:13:22] OnPaint: Window size 430x259
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=263
+[2026-02-17 15:13:22] OnPaint: Window size 430x263
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=266
+[2026-02-17 15:13:22] OnPaint: Window size 430x266
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=269
+[2026-02-17 15:13:22] OnPaint: Window size 430x269
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=273
+[2026-02-17 15:13:22] OnPaint: Window size 430x273
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=275
+[2026-02-17 15:13:22] OnPaint: Window size 430x275
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=277
+[2026-02-17 15:13:22] OnPaint: Window size 430x277
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=281
+[2026-02-17 15:13:22] OnPaint: Window size 430x281
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=283
+[2026-02-17 15:13:22] OnPaint: Window size 430x283
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=285
+[2026-02-17 15:13:22] OnPaint: Window size 430x285
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=288
+[2026-02-17 15:13:22] OnPaint: Window size 430x288
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=290
+[2026-02-17 15:13:22] OnPaint: Window size 430x290
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=292
+[2026-02-17 15:13:22] OnPaint: Window size 430x292
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=295
+[2026-02-17 15:13:22] OnPaint: Window size 430x295
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=297
+[2026-02-17 15:13:22] OnPaint: Window size 430x297
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=298
+[2026-02-17 15:13:22] OnPaint: Window size 430x298
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=300
+[2026-02-17 15:13:22] OnPaint: Window size 430x300
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=301
+[2026-02-17 15:13:22] OnPaint: Window size 430x301
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=303
+[2026-02-17 15:13:22] OnPaint: Window size 430x303
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=304
+[2026-02-17 15:13:22] OnPaint: Window size 430x304
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=305
+[2026-02-17 15:13:22] OnPaint: Window size 430x305
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=307
+[2026-02-17 15:13:22] OnPaint: Window size 430x307
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=308
+[2026-02-17 15:13:22] OnPaint: Window size 430x308
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=309
+[2026-02-17 15:13:22] OnPaint: Window size 430x309
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=310
+[2026-02-17 15:13:22] OnPaint: Window size 430x310
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=311
+[2026-02-17 15:13:22] OnPaint: Window size 430x311
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=312
+[2026-02-17 15:13:22] OnPaint: Window size 430x312
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=313
+[2026-02-17 15:13:22] OnPaint: Window size 430x313
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=314
+[2026-02-17 15:13:22] OnPaint: Window size 430x314
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=315
+[2026-02-17 15:13:22] OnPaint: Window size 430x315
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=317
+[2026-02-17 15:13:22] OnPaint: Window size 430x317
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=318
+[2026-02-17 15:13:22] OnPaint: Window size 430x318
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=319
+[2026-02-17 15:13:22] OnPaint: Window size 430x319
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=321
+[2026-02-17 15:13:22] OnPaint: Window size 430x321
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=323
+[2026-02-17 15:13:22] OnPaint: Window size 430x323
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=325
+[2026-02-17 15:13:22] OnPaint: Window size 430x325
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=326
+[2026-02-17 15:13:22] OnPaint: Window size 430x326
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=328
+[2026-02-17 15:13:22] OnPaint: Window size 430x328
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=329
+[2026-02-17 15:13:22] OnPaint: Window size 430x329
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=331
+[2026-02-17 15:13:22] OnPaint: Window size 430x331
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=333
+[2026-02-17 15:13:22] OnPaint: Window size 430x333
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=334
+[2026-02-17 15:13:22] OnPaint: Window size 430x334
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=336
+[2026-02-17 15:13:22] OnPaint: Window size 430x336
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=337
+[2026-02-17 15:13:22] OnPaint: Window size 430x337
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=340
+[2026-02-17 15:13:22] OnPaint: Window size 430x340
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=343
+[2026-02-17 15:13:22] OnPaint: Window size 430x343
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=345
+[2026-02-17 15:13:22] OnPaint: Window size 430x345
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=348
+[2026-02-17 15:13:22] OnPaint: Window size 430x348
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=350
+[2026-02-17 15:13:22] OnPaint: Window size 430x350
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=353
+[2026-02-17 15:13:22] OnPaint: Window size 430x353
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=357
+[2026-02-17 15:13:22] OnPaint: Window size 430x357
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=360
+[2026-02-17 15:13:22] OnPaint: Window size 430x360
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=365
+[2026-02-17 15:13:22] OnPaint: Window size 430x365
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=369
+[2026-02-17 15:13:22] OnPaint: Window size 430x369
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=373
+[2026-02-17 15:13:22] OnPaint: Window size 430x373
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=378
+[2026-02-17 15:13:22] OnPaint: Window size 430x378
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=383
+[2026-02-17 15:13:22] OnPaint: Window size 430x383
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=388
+[2026-02-17 15:13:22] OnPaint: Window size 430x388
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=392
+[2026-02-17 15:13:22] OnPaint: Window size 430x392
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=396
+[2026-02-17 15:13:22] OnPaint: Window size 430x396
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=401
+[2026-02-17 15:13:22] OnPaint: Window size 430x401
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=405
+[2026-02-17 15:13:22] OnPaint: Window size 430x405
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=409
+[2026-02-17 15:13:22] OnPaint: Window size 430x409
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=414
+[2026-02-17 15:13:22] OnPaint: Window size 430x414
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=419
+[2026-02-17 15:13:22] OnPaint: Window size 430x419
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=423
+[2026-02-17 15:13:22] OnPaint: Window size 430x423
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=427
+[2026-02-17 15:13:22] OnPaint: Window size 430x427
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=431
+[2026-02-17 15:13:22] OnPaint: Window size 430x431
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=435
+[2026-02-17 15:13:22] OnPaint: Window size 430x435
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=438
+[2026-02-17 15:13:22] OnPaint: Window size 430x438
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=442
+[2026-02-17 15:13:22] OnPaint: Window size 430x442
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=445
+[2026-02-17 15:13:22] OnPaint: Window size 430x445
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=449
+[2026-02-17 15:13:22] OnPaint: Window size 430x449
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=454
+[2026-02-17 15:13:22] OnPaint: Window size 430x454
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=457
+[2026-02-17 15:13:22] OnPaint: Window size 430x457
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=461
+[2026-02-17 15:13:22] OnPaint: Window size 430x461
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=465
+[2026-02-17 15:13:22] OnPaint: Window size 430x465
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=470
+[2026-02-17 15:13:22] OnPaint: Window size 430x470
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=474
+[2026-02-17 15:13:22] OnPaint: Window size 430x474
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=478
+[2026-02-17 15:13:22] OnPaint: Window size 430x478
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=483
+[2026-02-17 15:13:22] OnPaint: Window size 430x483
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=487
+[2026-02-17 15:13:22] OnPaint: Window size 430x487
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=493
+[2026-02-17 15:13:22] OnPaint: Window size 430x493
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=498
+[2026-02-17 15:13:22] OnPaint: Window size 430x498
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=503
+[2026-02-17 15:13:22] OnPaint: Window size 430x503
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=506
+[2026-02-17 15:13:22] OnPaint: Window size 430x506
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=510
+[2026-02-17 15:13:22] OnPaint: Window size 430x510
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=514
+[2026-02-17 15:13:22] OnPaint: Window size 430x514
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=517
+[2026-02-17 15:13:22] OnPaint: Window size 430x517
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=519
+[2026-02-17 15:13:22] OnPaint: Window size 430x519
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=521
+[2026-02-17 15:13:22] OnPaint: Window size 430x521
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=523
+[2026-02-17 15:13:22] OnPaint: Window size 430x523
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=525
+[2026-02-17 15:13:22] OnPaint: Window size 430x525
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=527
+[2026-02-17 15:13:22] OnPaint: Window size 430x527
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=529
+[2026-02-17 15:13:22] OnPaint: Window size 430x529
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=530
+[2026-02-17 15:13:22] OnPaint: Window size 430x530
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=531
+[2026-02-17 15:13:22] OnPaint: Window size 430x531
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=532
+[2026-02-17 15:13:22] OnPaint: Window size 430x532
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=533
+[2026-02-17 15:13:22] OnPaint: Window size 430x533
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=534
+[2026-02-17 15:13:22] OnPaint: Window size 430x534
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=535
+[2026-02-17 15:13:22] OnPaint: Window size 430x535
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=537
+[2026-02-17 15:13:22] OnPaint: Window size 430x537
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=538
+[2026-02-17 15:13:22] OnPaint: Window size 430x538
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=539
+[2026-02-17 15:13:22] OnPaint: Window size 430x539
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=541
+[2026-02-17 15:13:22] OnPaint: Window size 430x541
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=542
+[2026-02-17 15:13:22] OnPaint: Window size 430x542
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=544
+[2026-02-17 15:13:22] OnPaint: Window size 430x544
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=545
+[2026-02-17 15:13:22] OnPaint: Window size 430x545
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=548
+[2026-02-17 15:13:22] OnPaint: Window size 430x548
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=549
+[2026-02-17 15:13:22] OnPaint: Window size 430x549
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=552
+[2026-02-17 15:13:22] OnPaint: Window size 430x552
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=554
+[2026-02-17 15:13:22] OnPaint: Window size 430x554
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=557
+[2026-02-17 15:13:22] OnPaint: Window size 430x557
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=559
+[2026-02-17 15:13:22] OnPaint: Window size 430x559
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=561
+[2026-02-17 15:13:22] OnPaint: Window size 430x561
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=565
+[2026-02-17 15:13:22] OnPaint: Window size 430x565
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=567
+[2026-02-17 15:13:22] OnPaint: Window size 430x567
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=569
+[2026-02-17 15:13:22] OnPaint: Window size 430x569
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=572
+[2026-02-17 15:13:22] OnPaint: Window size 430x572
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=574
+[2026-02-17 15:13:22] OnPaint: Window size 430x574
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=577
+[2026-02-17 15:13:22] OnPaint: Window size 430x577
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=579
+[2026-02-17 15:13:22] OnPaint: Window size 430x579
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=580
+[2026-02-17 15:13:22] OnPaint: Window size 430x580
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=582
+[2026-02-17 15:13:22] OnPaint: Window size 430x582
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=583
+[2026-02-17 15:13:22] OnPaint: Window size 430x583
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=585
+[2026-02-17 15:13:22] OnPaint: Window size 430x585
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:22] OnSize: state=0, cx=430, cy=586
+[2026-02-17 15:13:22] OnPaint: Window size 430x586
+[2026-02-17 15:13:22] Rendering: 3 subscriptions
+[2026-02-17 15:13:22] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=585
+[2026-02-17 15:13:23] OnPaint: Window size 430x585
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=584
+[2026-02-17 15:13:23] OnPaint: Window size 430x584
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=583
+[2026-02-17 15:13:23] OnPaint: Window size 430x583
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=582
+[2026-02-17 15:13:23] OnPaint: Window size 430x582
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=581
+[2026-02-17 15:13:23] OnPaint: Window size 430x581
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=580
+[2026-02-17 15:13:23] OnPaint: Window size 430x580
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=579
+[2026-02-17 15:13:23] OnPaint: Window size 430x579
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=578
+[2026-02-17 15:13:23] OnPaint: Window size 430x578
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=577
+[2026-02-17 15:13:23] OnPaint: Window size 430x577
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=576
+[2026-02-17 15:13:23] OnPaint: Window size 430x576
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=575
+[2026-02-17 15:13:23] OnPaint: Window size 430x575
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=574
+[2026-02-17 15:13:23] OnPaint: Window size 430x574
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=573
+[2026-02-17 15:13:23] OnPaint: Window size 430x573
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=572
+[2026-02-17 15:13:23] OnPaint: Window size 430x572
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=571
+[2026-02-17 15:13:23] OnPaint: Window size 430x571
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=569
+[2026-02-17 15:13:23] OnPaint: Window size 430x569
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=567
+[2026-02-17 15:13:23] OnPaint: Window size 430x567
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=565
+[2026-02-17 15:13:23] OnPaint: Window size 430x565
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=564
+[2026-02-17 15:13:23] OnPaint: Window size 430x564
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=563
+[2026-02-17 15:13:23] OnPaint: Window size 430x563
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=562
+[2026-02-17 15:13:23] OnPaint: Window size 430x562
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=561
+[2026-02-17 15:13:23] OnPaint: Window size 430x561
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=560
+[2026-02-17 15:13:23] OnPaint: Window size 430x560
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=559
+[2026-02-17 15:13:23] OnPaint: Window size 430x559
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=558
+[2026-02-17 15:13:23] OnPaint: Window size 430x558
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:23] OnSize: state=0, cx=430, cy=557
+[2026-02-17 15:13:23] OnPaint: Window size 430x557
+[2026-02-17 15:13:23] Rendering: 3 subscriptions
+[2026-02-17 15:13:23] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=558
+[2026-02-17 15:13:24] OnPaint: Window size 430x558
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=559
+[2026-02-17 15:13:24] OnPaint: Window size 430x559
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=560
+[2026-02-17 15:13:24] OnPaint: Window size 430x560
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=561
+[2026-02-17 15:13:24] OnPaint: Window size 430x561
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=562
+[2026-02-17 15:13:24] OnPaint: Window size 430x562
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=563
+[2026-02-17 15:13:24] OnPaint: Window size 430x563
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=564
+[2026-02-17 15:13:24] OnPaint: Window size 430x564
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=565
+[2026-02-17 15:13:24] OnPaint: Window size 430x565
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=566
+[2026-02-17 15:13:24] OnPaint: Window size 430x566
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=567
+[2026-02-17 15:13:24] OnPaint: Window size 430x567
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=568
+[2026-02-17 15:13:24] OnPaint: Window size 430x568
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:24] OnSize: state=0, cx=430, cy=569
+[2026-02-17 15:13:24] OnPaint: Window size 430x569
+[2026-02-17 15:13:24] Rendering: 3 subscriptions
+[2026-02-17 15:13:24] Render completed
+[2026-02-17 15:13:25] Timer triggered, refreshing data
+[2026-02-17 15:13:25] Refreshing data...
+[2026-02-17 15:13:25] Sending HTTP request to tntserver:51012/api/v1/usage
+[2026-02-17 15:13:25] OnPaint: Window size 430x569
+[2026-02-17 15:13:25] Rendering: Loading state
+[2026-02-17 15:13:25] HTTP request completed. Success: true
+[2026-02-17 15:13:25] Response size: 1846 bytes
+[2026-02-17 15:13:25] Parsing subscriptions...
+[2026-02-17 15:13:25] Successfully parsed 3 subscriptions
+[2026-02-17 15:13:25] OnPaint: Window size 430x569
+[2026-02-17 15:13:25] Rendering: 3 subscriptions
+[2026-02-17 15:13:25] Render completed
+[2026-02-17 15:14:01] WM_DESTROY received
+[2026-02-17 15:14:01] Message loop ended
+[2026-02-17 15:14:01] ========================================
+[2026-02-17 15:14:01] Application shutting down
+[2026-02-17 15:14:01] ========================================
