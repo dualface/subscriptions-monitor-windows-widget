@@ -1286,9 +1286,8 @@ static void ApplyCompactLayout(HWND hwnd)
     SetWindowLong(hwnd, GWL_STYLE, style);
     SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
 
-    // Compact mode: always keep window on top
-    // Normal mode: respect the pinned state
-    HWND zOrder = compact ? HWND_TOPMOST : (g_app->isPinned ? HWND_TOPMOST : HWND_NOTOPMOST);
+    // Respect the pinned state in both normal and compact modes
+    HWND zOrder = g_app->isPinned ? HWND_TOPMOST : HWND_NOTOPMOST;
     SetWindowPos(hwnd, zOrder, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 
     // Recalculate content (under lock since subscriptions may be written by bg thread)
