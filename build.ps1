@@ -16,14 +16,11 @@
 .PARAMETER IconOnly
     Only regenerate app_icon.ico from app_icon.png, then exit.
 
-.PARAMETER Run
-    Launch the executable after a successful build.
-
 .EXAMPLE
     .\build.ps1
     .\build.ps1 -Config Debug
     .\build.ps1 -Clean
-    .\build.ps1 -Clean -Config Release -Run
+    .\build.ps1 -Clean -Config Release
     .\build.ps1 -IconOnly
 #>
 
@@ -32,8 +29,7 @@ param(
     [string]$Config = "Release",
 
     [switch]$Clean,
-    [switch]$IconOnly,
-    [switch]$Run
+    [switch]$IconOnly
 )
 
 Set-StrictMode -Version Latest
@@ -305,12 +301,7 @@ try {
         Invoke-Clean
     }
 
-    $exe = Invoke-Build
-
-    if ($Run) {
-        Write-Step "Launching $ExeName"
-        Start-Process $exe
-    }
+    Invoke-Build
 
     Pop-Location
     exit 0
