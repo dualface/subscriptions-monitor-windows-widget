@@ -129,7 +129,7 @@ private:
     int BarHeight()      const { return compact_ ? 26 : 44; }
     int HeaderHeight()   const { return compact_ ? 26 : 32; }  // same as BarHeight in compact
     int ItemSpacing()    const { return compact_ ? 6  : 14; }
-    int ServiceSpacing() const { return compact_ ? 6  : 24; }  // same as ItemSpacing in compact
+    int ServiceSpacing() const { return compact_ ? 0  : 24; }
     
     int windowWidth_;
     int windowHeight_;
