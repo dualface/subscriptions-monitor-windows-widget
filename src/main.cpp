@@ -36,6 +36,14 @@
 #define IDM_TRAY_EXIT 40002
 #define IDM_COMPACT_MODE 40003
 
+// Context menu items (opacity)
+#define IDM_OPACITY_25 40010
+#define IDM_OPACITY_50 40011
+#define IDM_OPACITY_75 40012
+#define IDM_OPACITY_100 40013
+
+static const UINT IDM_PIN_TO_TOP = 0x0010;  // Custom system menu command ID
+
 #pragma comment(                                                                                                       \
     linker,                                                                                                            \
     "\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -410,6 +418,9 @@ struct AppState
     // Pin (always-on-top)
     bool isPinned;
 
+    // Window opacity (0-255, where 255 is fully opaque)
+    BYTE opacity;
+
     // Saved normal-mode window rect (for restoring when leaving compact)
     RECT savedNormalRect;
     bool hasSavedNormalRect;
@@ -422,8 +433,8 @@ struct AppState
         : apiPort(80), apiIsHttps(false), isLoading(false), hwnd(nullptr), debugMode(false),
           themeMode(ThemeMode::System), scrollOffset(0), contentHeight(0), hBgBrush(nullptr), initialResizeDone(false),
           scrollDragging(false), dragStartMouseY(0), dragStartOffset(0), scrollThumbHovered(false),
-          windowDragging(false), dragStartMouseX(0), dragStartMouseY2(0), isPinned(false), savedNormalRect {},
-          hasSavedNormalRect(false), nid {}, trayIconCreated(false)
+          windowDragging(false), dragStartMouseX(0), dragStartMouseY2(0), isPinned(false), opacity(255),
+          savedNormalRect {}, hasSavedNormalRect(false), nid {}, trayIconCreated(false)
     {
         renderer = std::make_unique<ProgressBarRenderer>();
         httpClient = std::make_unique<HttpClient>();
@@ -569,6 +580,71 @@ static void ShowTrayContextMenu(HWND hwnd)
     AppendMenuW(hMenu, MF_STRING, IDM_TRAY_SHOW, L"Show Window");
     AppendMenuW(hMenu, MF_STRING | (compact ? MF_CHECKED : MF_UNCHECKED), IDM_COMPACT_MODE, L"Compact Mode");
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_EXIT, L"Exit");
+
+    // Required for the menu to disappear when clicking outside
+    SetForegroundWindow(hwnd);
+    TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, nullptr);
+    // Per MSDN: send a benign message to force the menu to close properly
+    PostMessage(hwnd, WM_NULL, 0, 0);
+
+    DestroyMenu(hMenu);
+}
+
+// Helper to set window opacity
+static void SetWindowOpacity(HWND hwnd, BYTE opacity)
+{
+    if (!g_app)
+        return;
+
+    g_app->opacity = opacity;
+
+    // Enable layered window style if not already enabled
+    LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+    if (!(exStyle & WS_EX_LAYERED)) {
+        SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_LAYERED);
+    }
+
+    // Set opacity using SetLayeredWindowAttributes
+    SetLayeredWindowAttributes(hwnd, 0, opacity, LWA_ALPHA);
+
+    Log("Window opacity set to %d%%", (opacity * 100) / 255);
+}
+
+// Show context menu on window (includes opacity submenu)
+static void ShowWindowContextMenu(HWND hwnd)
+{
+    POINT pt;
+    GetCursorPos(&pt);
+
+    HMENU hMenu = CreatePopupMenu();
+    if (!hMenu)
+        return;
+
+    bool compact = g_app ? g_app->renderer->IsCompact() : false;
+    bool pinned = g_app ? g_app->isPinned : false;
+    BYTE opacity = g_app ? g_app->opacity : 255;
+
+    // Compact Mode
+    AppendMenuW(hMenu, MF_STRING | (compact ? MF_CHECKED : MF_UNCHECKED), IDM_COMPACT_MODE, L"Compact Mode");
+
+    // Pin to Top
+    AppendMenuW(hMenu, MF_STRING | (pinned ? MF_CHECKED : MF_UNCHECKED), IDM_PIN_TO_TOP, L"Pin to Top");
+
+    AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+
+    // Opacity submenu
+    HMENU hOpacityMenu = CreatePopupMenu();
+    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == 64 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_25, L"25%");
+    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == 128 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_50, L"50%");
+    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == 191 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_75, L"75%");
+    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == 255 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_100, L"100%");
+    AppendMenuW(hMenu, MF_POPUP, (UINT_PTR)hOpacityMenu, L"Opacity");
+
+    AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+
+    // Hide to tray
+    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_SHOW, L"Hide to Tray");
     AppendMenuW(hMenu, MF_STRING, IDM_TRAY_EXIT, L"Exit");
 
     // Required for the menu to disappear when clicking outside
@@ -969,8 +1045,6 @@ void OnSize(HWND hwnd, UINT state, int cx, int cy)
 // Pin to top (always-on-top)
 // ---------------------------------------------------------------------------
 
-static const UINT IDM_PIN_TO_TOP = 0x0010;  // Custom system menu command ID
-
 static void UpdateWindowTitle(HWND hwnd)
 {
     if (!g_app)
@@ -1266,6 +1340,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 0;
         }
 
+        case WM_RBUTTONUP: {
+            if (!g_app)
+                return DefWindowProc(hwnd, msg, wParam, lParam);
+            // Show context menu
+            ShowWindowContextMenu(hwnd);
+            return 0;
+        }
+
         case WM_MOUSEMOVE: {
             if (!g_app)
                 return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -1425,6 +1507,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 break;
             case IDM_COMPACT_MODE:
                 ToggleCompact(hwnd);
+                break;
+            case IDM_PIN_TO_TOP:
+                TogglePin(hwnd);
+                break;
+            case IDM_OPACITY_25:
+                SetWindowOpacity(hwnd, 64);  // 25%
+                break;
+            case IDM_OPACITY_50:
+                SetWindowOpacity(hwnd, 128);  // 50%
+                break;
+            case IDM_OPACITY_75:
+                SetWindowOpacity(hwnd, 191);  // 75%
+                break;
+            case IDM_OPACITY_100:
+                SetWindowOpacity(hwnd, 255);  // 100%
                 break;
             case IDM_TRAY_EXIT:
                 DestroyWindow(hwnd);
