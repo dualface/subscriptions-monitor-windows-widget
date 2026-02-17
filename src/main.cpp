@@ -2272,15 +2272,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
             (int)saved.pinned, (int)saved.isCompact, (int)app.opacity);
     }
 
-    // Create a hidden owner window so the main window does not appear in the
-    // taskbar.  Owned windows never get a taskbar button, yet they keep a
-    // normal-sized title bar (unlike WS_EX_TOOLWINDOW which shrinks it).
-    HWND hwndOwner = CreateWindowExW(0, L"STATIC", nullptr, WS_POPUP, 0, 0, 0, 0, nullptr, nullptr, hInstance, nullptr);
-
-    HWND hwnd =
-        CreateWindowExW(WS_EX_CLIENTEDGE, kClassName, kWindowTitle, WS_OVERLAPPEDWINDOW, initX, initY, initW, initH,
-                        hwndOwner,  // owner -> no taskbar button
-                        nullptr, hInstance, nullptr);
+    // Create the main window without an owner.
+    // Taskbar button visibility is controlled via ITaskbarList instead.
+    HWND hwnd = CreateWindowExW(WS_EX_CLIENTEDGE, kClassName, kWindowTitle, WS_OVERLAPPEDWINDOW, initX, initY, initW,
+                                initH, nullptr, nullptr, hInstance, nullptr);
 
     if (!hwnd) {
         Log("ERROR: Window creation failed, GetLastError=%lu", GetLastError());
