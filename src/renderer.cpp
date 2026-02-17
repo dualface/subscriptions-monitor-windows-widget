@@ -112,20 +112,31 @@ void ProgressBarRenderer::RenderServiceHeader(HDC hdc, int x, int y, int width, 
 
 void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width, 
                                         const Metric& metric, const std::string& serviceName) {
-    int percentage = metric.percentage().value_or(0);
+    // Check if this metric has a limit (for percentage display)
+    bool hasLimit = metric.amount.limit.has_value();
+    int percentage = hasLimit ? metric.percentage().value_or(0) : 0;
     
-    // Determine bar color based on percentage
-    COLORREF barColor;
-    if (percentage < 50) {
-        barColor = kBarLowColor;
-    } else if (percentage < 80) {
-        barColor = kBarMediumColor;
+    // Only draw progress bar if there's a limit
+    if (hasLimit) {
+        // Determine bar color based on percentage
+        COLORREF barColor;
+        if (percentage < 50) {
+            barColor = kBarLowColor;
+        } else if (percentage < 80) {
+            barColor = kBarMediumColor;
+        } else {
+            barColor = kBarHighColor;
+        }
+        
+        // Draw progress bar background and fill
+        DrawProgressBar(hdc, x, y, width, kBarHeight, percentage, barColor);
     } else {
-        barColor = kBarHighColor;
+        // Draw simple background for metrics without limits
+        RECT bgRect = { x, y, x + width, y + kBarHeight };
+        HBRUSH hBgBrush = CreateSolidBrush(kBarBgColor);
+        FillRect(hdc, &bgRect, hBgBrush);
+        DeleteObject(hBgBrush);
     }
-    
-    // Draw progress bar background and fill
-    DrawProgressBar(hdc, x, y, width, kBarHeight, percentage, barColor);
     
     // Setup text area
     RECT textRect = { x + 10, y, x + width - 10, y + kBarHeight };
@@ -144,12 +155,18 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
     SetBkMode(hdc, TRANSPARENT);
     DrawTextW(hdc, ss.str().c_str(), -1, &textRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     
-    // Draw percentage on the right
-    std::wstringstream percentSs;
-    percentSs << percentage << L"%";
+    // Draw value on the right (percentage if has limit, otherwise actual value)
+    std::wstringstream valueSs;
+    if (hasLimit) {
+        valueSs << percentage << L"%";
+    } else {
+        // Show actual usage value for metrics without limits
+        valueSs << std::fixed << std::setprecision(1) << metric.amount.used;
+        valueSs << L" " << ToWString(metric.amount.unit);
+    }
     
-    RECT percentRect = { x, y, x + width - 10, y + kBarHeight };
-    DrawTextW(hdc, percentSs.str().c_str(), -1, &percentRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    RECT valueRect = { x, y, x + width - 10, y + kBarHeight };
+    DrawTextW(hdc, valueSs.str().c_str(), -1, &valueRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
     
     // Draw reset time if available (small font)
     if (metric.window.resets_at.has_value()) {
