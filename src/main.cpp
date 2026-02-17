@@ -2277,9 +2277,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     // If compact mode restored, apply compact layout (removes caption, sets topmost).
     // The window will auto-resize when data arrives (WM_USER+1).
     if (app.renderer->IsCompact()) {
-        // If we have saved normal mode geometry, use it to initialize savedNormalRect
-        // so that exiting compact mode later restores the correct size
+        // Initialize savedNormalRect for later restoration
+        // so that exiting compact mode restores the correct size
         if (saved.normal.valid) {
+            // Use saved normal mode settings from config
             app.savedNormalRect.left = saved.normal.x;
             app.savedNormalRect.top = saved.normal.y;
             app.savedNormalRect.right = saved.normal.x + saved.normal.w;
@@ -2287,6 +2288,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
             app.hasSavedNormalRect = true;
             Log("Initialized savedNormalRect from config: %d,%d %dx%d", saved.normal.x, saved.normal.y, saved.normal.w,
                 saved.normal.h);
+        }
+        else {
+            // No saved normal mode settings - use current window position with default size
+            // This happens when user first starts in compact mode without normal mode history
+            RECT rc;
+            GetWindowRect(hwnd, &rc);
+            app.savedNormalRect.left = rc.left;
+            app.savedNormalRect.top = rc.top;
+            app.savedNormalRect.right = rc.left + kWindowWidth;
+            app.savedNormalRect.bottom = rc.top + kWindowHeight;
+            app.hasSavedNormalRect = true;
+            Log("Initialized savedNormalRect with defaults: %d,%d %dx%d", rc.left, rc.top, kWindowWidth, kWindowHeight);
         }
         ApplyCompactLayout(hwnd);
     }
