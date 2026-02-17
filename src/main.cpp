@@ -1226,11 +1226,37 @@ static void TogglePin(HWND hwnd)
 
 // Resize the window to exactly fit content (compact mode only).
 // Also disables / re-enables resizing and saves/restores normal-mode geometry.
+// Helper to center window position within monitor work area
+static void CenterWindowInWorkArea(int& x, int& y, int w, int h, const RECT& workArea)
+{
+    // Clamp size to work area
+    if (w > workArea.right - workArea.left)
+        w = workArea.right - workArea.left;
+    if (h > workArea.bottom - workArea.top)
+        h = workArea.bottom - workArea.top;
+
+    // Clamp position to work area
+    if (x < workArea.left)
+        x = workArea.left;
+    if (y < workArea.top)
+        y = workArea.top;
+    if (x + w > workArea.right)
+        x = workArea.right - w;
+    if (y + h > workArea.bottom)
+        y = workArea.bottom - h;
+}
+
 static void ApplyCompactLayout(HWND hwnd)
 {
     if (!g_app || !g_app->renderer)
         return;
     bool compact = g_app->renderer->IsCompact();
+
+    // Get current window rect for center calculation before style change
+    RECT oldRect;
+    GetWindowRect(hwnd, &oldRect);
+    int oldCenterX = (oldRect.left + oldRect.right) / 2;
+    int oldCenterY = (oldRect.top + oldRect.bottom) / 2;
 
     // Toggle resizable frame, caption, and client edge
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
@@ -1260,6 +1286,12 @@ static void ApplyCompactLayout(HWND hwnd)
     }
     g_app->scrollOffset = 0;
 
+    // Get monitor work area for clamping
+    HMONITOR hMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi = {sizeof(mi)};
+    GetMonitorInfo(hMon, &mi);
+    RECT workArea = mi.rcWork;
+
     if (compact && !g_app->subscriptions.empty()) {
         // Save current normal-mode window rect before resizing
         // Always save to capture the latest size, even if we already have one from config
@@ -1280,28 +1312,34 @@ static void ApplyCompactLayout(HWND hwnd)
         int winW = rc.right - rc.left;
         int winH = rc.bottom - rc.top;
 
-        // Cap to screen work area
-        HMONITOR hMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-        MONITORINFO mi = {sizeof(mi)};
-        GetMonitorInfo(hMon, &mi);
-        int maxW = mi.rcWork.right - mi.rcWork.left;
-        int maxH = mi.rcWork.bottom - mi.rcWork.top;
-        if (winW > maxW)
-            winW = maxW;
-        if (winH > maxH)
-            winH = maxH;
+        // Calculate new position to keep center aligned
+        int newX = oldCenterX - winW / 2;
+        int newY = oldCenterY - winH / 2;
 
-        SetWindowPos(hwnd, nullptr, 0, 0, winW, winH, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-        Log("Compact auto-resize: client=%dx%d window=%dx%d", contentW, contentH, winW, winH);
+        // Clamp to work area
+        CenterWindowInWorkArea(newX, newY, winW, winH, workArea);
+
+        SetWindowPos(hwnd, nullptr, newX, newY, winW, winH, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        Log("Compact auto-resize: client=%dx%d window=%dx%d pos=%d,%d", contentW, contentH, winW, winH, newX, newY);
     }
     else if (!compact) {
         // Leaving compact — restore saved normal-mode window rect
         if (g_app->hasSavedNormalRect) {
             RECT& r = g_app->savedNormalRect;
-            SetWindowPos(hwnd, nullptr, r.left, r.top, r.right - r.left, r.bottom - r.top,
-                         SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+            int winW = r.right - r.left;
+            int winH = r.bottom - r.top;
+
+            // Calculate new position to keep center aligned
+            int newX = oldCenterX - winW / 2;
+            int newY = oldCenterY - winH / 2;
+
+            // Clamp to work area
+            CenterWindowInWorkArea(newX, newY, winW, winH, workArea);
+
+            SetWindowPos(hwnd, nullptr, newX, newY, winW, winH, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
             g_app->hasSavedNormalRect = false;
-            Log("Restored normal rect: %d,%d %dx%d", r.left, r.top, r.right - r.left, r.bottom - r.top);
+            Log("Restored normal rect: %d,%d %dx%d (centered at %d,%d)", newX, newY, winW, winH, oldCenterX,
+                oldCenterY);
         }
         else {
             SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
@@ -1320,8 +1358,16 @@ static void ApplyCompactLayout(HWND hwnd)
         int winW = rc.right - rc.left;
         int winH = rc.bottom - rc.top;
 
-        SetWindowPos(hwnd, nullptr, 0, 0, winW, winH, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-        Log("Compact auto-resize (no data): client=%dx%d window=%dx%d", contentW, contentH, winW, winH);
+        // Calculate new position to keep center aligned
+        int newX = oldCenterX - winW / 2;
+        int newY = oldCenterY - winH / 2;
+
+        // Clamp to work area
+        CenterWindowInWorkArea(newX, newY, winW, winH, workArea);
+
+        SetWindowPos(hwnd, nullptr, newX, newY, winW, winH, SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        Log("Compact auto-resize (no data): client=%dx%d window=%dx%d pos=%d,%d", contentW, contentH, winW, winH, newX,
+            newY);
     }
 
     UpdateScrollInfo(hwnd);
