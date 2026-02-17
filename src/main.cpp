@@ -12,6 +12,7 @@
 #include <csignal>
 #include <dwmapi.h>
 #include <shlobj.h>
+#include <shellapi.h>
 #include "subscription.h"
 #include "http_client.h"
 #include "renderer.h"
@@ -24,6 +25,11 @@
 #ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
 #define DWMWA_USE_IMMERSIVE_DARK_MODE 20
 #endif
+
+// System tray (notification area) constants
+#define WM_TRAYICON       (WM_USER + 100)
+#define IDM_TRAY_SHOW     40001
+#define IDM_TRAY_EXIT     40002
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
@@ -270,13 +276,17 @@ struct AppState {
 
     // Pin (always-on-top)
     bool isPinned;
+
+    // System tray (notification area)
+    NOTIFYICONDATAW nid;
+    bool trayIconCreated;
     
     AppState()
         : apiPort(80), isLoading(false), hwnd(nullptr), debugMode(false),
           themeMode(ThemeMode::System), scrollOffset(0), contentHeight(0),
           hBgBrush(nullptr), initialResizeDone(false),
           scrollDragging(false), dragStartMouseY(0), dragStartOffset(0),
-          scrollThumbHovered(false), isPinned(false) {
+          scrollThumbHovered(false), isPinned(false), nid{}, trayIconCreated(false) {
         renderer = std::make_unique<ProgressBarRenderer>();
         httpClient = std::make_unique<HttpClient>();
     }
@@ -287,6 +297,9 @@ struct AppState {
 };
 
 static AppState* g_app = nullptr;
+
+// Forward declarations
+static void UpdateTrayIcon();
 
 // ---------------------------------------------------------------------------
 // Theme helpers
@@ -322,9 +335,95 @@ static void ApplyTheme() {
             SendMessage(g_app->hwnd, WM_SETICON, ICON_BIG,   (LPARAM)hIcon);
             SendMessage(g_app->hwnd, WM_SETICON, ICON_SMALL,  (LPARAM)hIcon);
         }
+
+        // Update tray icon to match theme
+        UpdateTrayIcon();
     }
 
     Log("Theme applied: %s", dark ? "dark" : "light");
+}
+
+// ---------------------------------------------------------------------------
+// System tray (notification area) helpers
+// ---------------------------------------------------------------------------
+
+static void CreateTrayIcon(HWND hwnd) {
+    if (!g_app) return;
+
+    bool dark = IsDarkModeActive(g_app->themeMode);
+    HINSTANCE hInst = (HINSTANCE)GetWindowLongPtrW(hwnd, GWLP_HINSTANCE);
+    int iconRes = dark ? IDI_APPICON : IDI_APPICON_LIGHT;
+
+    ZeroMemory(&g_app->nid, sizeof(g_app->nid));
+    g_app->nid.cbSize = sizeof(NOTIFYICONDATAW);
+    g_app->nid.hWnd = hwnd;
+    g_app->nid.uID = 1;
+    g_app->nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+    g_app->nid.uCallbackMessage = WM_TRAYICON;
+    g_app->nid.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(iconRes));
+    wcscpy_s(g_app->nid.szTip, L"AI Subscription Monitor");
+
+    Shell_NotifyIconW(NIM_ADD, &g_app->nid);
+    g_app->trayIconCreated = true;
+    Log("Tray icon created");
+}
+
+static void RemoveTrayIcon() {
+    if (!g_app || !g_app->trayIconCreated) return;
+    Shell_NotifyIconW(NIM_DELETE, &g_app->nid);
+    g_app->trayIconCreated = false;
+    Log("Tray icon removed");
+}
+
+static void UpdateTrayIcon() {
+    if (!g_app || !g_app->trayIconCreated) return;
+
+    bool dark = IsDarkModeActive(g_app->themeMode);
+    HINSTANCE hInst = (HINSTANCE)GetWindowLongPtrW(g_app->hwnd, GWLP_HINSTANCE);
+    int iconRes = dark ? IDI_APPICON : IDI_APPICON_LIGHT;
+
+    g_app->nid.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(iconRes));
+    g_app->nid.uFlags = NIF_ICON;
+    Shell_NotifyIconW(NIM_MODIFY, &g_app->nid);
+    Log("Tray icon updated for %s theme", dark ? "dark" : "light");
+}
+
+static void ShowAppWindow(HWND hwnd) {
+    // Ensure the window has no taskbar button: keep WS_EX_TOOLWINDOW
+    // while adding back visibility.
+    ShowWindow(hwnd, SW_SHOW);
+    ShowWindow(hwnd, SW_RESTORE);   // in case it was minimised
+    SetForegroundWindow(hwnd);
+    Log("Window shown from tray");
+}
+
+static void HideAppWindow(HWND hwnd) {
+    if (g_app) {
+        // Save settings before hiding so geometry is persisted
+        SaveSettings(hwnd, g_app->isPinned, g_app->apiUrl);
+    }
+    ShowWindow(hwnd, SW_HIDE);
+    Log("Window hidden to tray");
+}
+
+static void ShowTrayContextMenu(HWND hwnd) {
+    POINT pt;
+    GetCursorPos(&pt);
+
+    HMENU hMenu = CreatePopupMenu();
+    if (!hMenu) return;
+
+    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_SHOW, L"Show Window");
+    AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_EXIT, L"Exit");
+
+    // Required for the menu to disappear when clicking outside
+    SetForegroundWindow(hwnd);
+    TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, nullptr);
+    // Per MSDN: send a benign message to force the menu to close properly
+    PostMessage(hwnd, WM_NULL, 0, 0);
+
+    DestroyMenu(hMenu);
 }
 
 // ---------------------------------------------------------------------------
@@ -634,6 +733,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         AppendMenuW(hSysMenu, MF_STRING, IDM_PIN_TO_TOP, L"Pin to Top\tCtrl+T");
                     }
 
+                    // Create system tray icon
+                    CreateTrayIcon(hwnd);
+
                     SetTimer(hwnd, 1, kRefreshIntervalMs, nullptr);
                     RefreshData();
                 }
@@ -821,12 +923,45 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 }
                 return 0;
                 
-            case WM_SYSCOMMAND:
-                if ((wParam & 0xFFF0) == IDM_PIN_TO_TOP) {
+            case WM_SYSCOMMAND: {
+                UINT cmd = wParam & 0xFFF0;
+                if (cmd == IDM_PIN_TO_TOP) {
                     TogglePin(hwnd);
                     return 0;
                 }
+                if (cmd == SC_MINIMIZE) {
+                    // Minimize -> hide to tray instead of taskbar
+                    HideAppWindow(hwnd);
+                    return 0;
+                }
                 return DefWindowProc(hwnd, msg, wParam, lParam);
+            }
+
+            // ----- Close -> hide to tray -----
+            case WM_CLOSE:
+                HideAppWindow(hwnd);
+                return 0;
+
+            // ----- Tray icon interaction -----
+            case WM_TRAYICON:
+                if (lParam == WM_LBUTTONUP) {
+                    ShowAppWindow(hwnd);
+                } else if (lParam == WM_RBUTTONUP) {
+                    ShowTrayContextMenu(hwnd);
+                }
+                return 0;
+
+            // ----- Tray context menu commands -----
+            case WM_COMMAND:
+                switch (LOWORD(wParam)) {
+                    case IDM_TRAY_SHOW:
+                        ShowAppWindow(hwnd);
+                        break;
+                    case IDM_TRAY_EXIT:
+                        DestroyWindow(hwnd);
+                        break;
+                }
+                return 0;
 
             case WM_KEYDOWN:
                 if (wParam == VK_F5) {
@@ -839,6 +974,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 
             case WM_DESTROY:
                 Log("WM_DESTROY received");
+                RemoveTrayIcon();
                 // Persist settings before closing
                 if (g_app) {
                     SaveSettings(hwnd, g_app->isPinned, g_app->apiUrl);
@@ -1329,7 +1465,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     }
 
     HWND hwnd = CreateWindowExW(
-        WS_EX_CLIENTEDGE,
+        WS_EX_CLIENTEDGE | WS_EX_TOOLWINDOW,   // TOOLWINDOW: no taskbar button
         kClassName,
         kWindowTitle,
         WS_OVERLAPPEDWINDOW,
@@ -1358,6 +1494,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         app.initialResizeDone = true;
     }
 
+    // Show the window (no taskbar button thanks to WS_EX_TOOLWINDOW)
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
@@ -1370,7 +1507,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         }
     }
 
-    Log("Window shown");
+    Log("Window shown (tray-only, no taskbar button)");
     
     MSG msg;
     BOOL bRet;
