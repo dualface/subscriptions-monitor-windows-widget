@@ -213,13 +213,29 @@ const int kRefreshIntervalMs = 60000;
 // Window state persistence (%LOCALAPPDATA%\AISubscriptionsMonitor\settings.txt)
 // ---------------------------------------------------------------------------
 
+// Settings for a specific mode (normal or compact)
+struct ModeSettings
+{
+    int x, y, w, h;  // Window geometry
+    bool valid;      // true if geometry loaded successfully
+    BYTE opacity;    // Window opacity (0-255)
+
+    ModeSettings() : x(0), y(0), w(0), h(0), valid(false), opacity(255) {}
+};
+
 struct SavedSettings
 {
-    // Window geometry
-    int x, y, w, h;
+    // Settings for normal mode
+    ModeSettings normal;
+
+    // Settings for compact mode
+    ModeSettings compact;
+
+    // Current mode preference
+    bool isCompact;
+
+    // Pin state (shared between modes)
     bool pinned;
-    bool compact;
-    bool windowValid;  // true if x/y/w/h loaded successfully
 
     // Theme preference
     std::string theme;  // "light", "dark", or "" (system)
@@ -245,13 +261,20 @@ static std::wstring GetSettingsPath()
     return dir + L"\\settings.txt";
 }
 
-static void SaveSettings(HWND hwnd, bool pinned, bool compact, ThemeMode themeMode, const std::string& apiUrl)
+// Forward declaration
+static SavedSettings LoadSettings();
+
+static void SaveSettings(HWND hwnd, bool pinned, bool compact, ThemeMode themeMode, const std::string& apiUrl,
+                         BYTE opacity)
 {
     WINDOWPLACEMENT wp = {sizeof(wp)};
     if (!GetWindowPlacement(hwnd, &wp))
         return;
 
     RECT rc = wp.rcNormalPosition;
+
+    // Load existing settings first
+    SavedSettings existing = LoadSettings();
 
     std::wstring path = GetSettingsPath();
     if (path.empty())
@@ -261,12 +284,40 @@ static void SaveSettings(HWND hwnd, bool pinned, bool compact, ThemeMode themeMo
     if (!f.is_open())
         return;
 
-    f << "x=" << rc.left << "\n";
-    f << "y=" << rc.top << "\n";
-    f << "w=" << (rc.right - rc.left) << "\n";
-    f << "h=" << (rc.bottom - rc.top) << "\n";
+    // Save current mode's geometry and opacity
+    if (compact) {
+        f << "compact_x=" << rc.left << "\n";
+        f << "compact_y=" << rc.top << "\n";
+        f << "compact_w=" << (rc.right - rc.left) << "\n";
+        f << "compact_h=" << (rc.bottom - rc.top) << "\n";
+        f << "compact_opacity=" << (int)opacity << "\n";
+        // Keep normal mode settings if they exist
+        if (existing.normal.valid) {
+            f << "normal_x=" << existing.normal.x << "\n";
+            f << "normal_y=" << existing.normal.y << "\n";
+            f << "normal_w=" << existing.normal.w << "\n";
+            f << "normal_h=" << existing.normal.h << "\n";
+            f << "normal_opacity=" << (int)existing.normal.opacity << "\n";
+        }
+    }
+    else {
+        f << "normal_x=" << rc.left << "\n";
+        f << "normal_y=" << rc.top << "\n";
+        f << "normal_w=" << (rc.right - rc.left) << "\n";
+        f << "normal_h=" << (rc.bottom - rc.top) << "\n";
+        f << "normal_opacity=" << (int)opacity << "\n";
+        // Keep compact mode settings if they exist
+        if (existing.compact.valid) {
+            f << "compact_x=" << existing.compact.x << "\n";
+            f << "compact_y=" << existing.compact.y << "\n";
+            f << "compact_w=" << existing.compact.w << "\n";
+            f << "compact_h=" << existing.compact.h << "\n";
+            f << "compact_opacity=" << (int)existing.compact.opacity << "\n";
+        }
+    }
+
     f << "pinned=" << (pinned ? 1 : 0) << "\n";
-    f << "compact=" << (compact ? 1 : 0) << "\n";
+    f << "is_compact=" << (compact ? 1 : 0) << "\n";
     switch (themeMode) {
     case ThemeMode::Light:
         f << "theme=light\n";
@@ -283,10 +334,39 @@ static void SaveSettings(HWND hwnd, bool pinned, bool compact, ThemeMode themeMo
     }
 }
 
+// Helper to clamp window size to monitor work area
+static void ClampWindowToMonitor(int& x, int& y, int& w, int& h, bool compact)
+{
+    int minW = compact ? kMinWindowWidthCompact : kMinWindowWidth;
+    int minH = compact ? kMinWindowHeightCompact : kMinWindowHeight;
+    if (w < minW)
+        w = minW;
+    if (h < minH)
+        h = minH;
+
+    RECT testRect = {x, y, x + w, y + h};
+    HMONITOR hMon = MonitorFromRect(&testRect, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi = {sizeof(mi)};
+    if (GetMonitorInfo(hMon, &mi)) {
+        RECT& work = mi.rcWork;
+        if (x + w > work.right)
+            x = work.right - w;
+        if (y + h > work.bottom)
+            y = work.bottom - h;
+        if (x < work.left)
+            x = work.left;
+        if (y < work.top)
+            y = work.top;
+        if (w > work.right - work.left)
+            w = work.right - work.left;
+        if (h > work.bottom - work.top)
+            h = work.bottom - work.top;
+    }
+}
+
 static SavedSettings LoadSettings()
 {
-    SavedSettings ss = {};
-    ss.windowValid = false;
+    SavedSettings ss;
 
     std::wstring path = GetSettingsPath();
     if (path.empty())
@@ -297,7 +377,9 @@ static SavedSettings LoadSettings()
         return ss;
 
     std::string line;
-    bool gotX = false, gotY = false, gotW = false, gotH = false;
+    bool gotNormalX = false, gotNormalY = false, gotNormalW = false, gotNormalH = false;
+    bool gotCompactX = false, gotCompactY = false, gotCompactW = false, gotCompactH = false;
+
     while (std::getline(f, line)) {
         if (line.empty())
             continue;
@@ -307,27 +389,52 @@ static SavedSettings LoadSettings()
         std::string key = line.substr(0, eq);
         std::string val = line.substr(eq + 1);
         try {
-            if (key == "x") {
-                ss.x = std::stoi(val);
-                gotX = true;
+            // Normal mode settings
+            if (key == "normal_x") {
+                ss.normal.x = std::stoi(val);
+                gotNormalX = true;
             }
-            else if (key == "y") {
-                ss.y = std::stoi(val);
-                gotY = true;
+            else if (key == "normal_y") {
+                ss.normal.y = std::stoi(val);
+                gotNormalY = true;
             }
-            else if (key == "w") {
-                ss.w = std::stoi(val);
-                gotW = true;
+            else if (key == "normal_w") {
+                ss.normal.w = std::stoi(val);
+                gotNormalW = true;
             }
-            else if (key == "h") {
-                ss.h = std::stoi(val);
-                gotH = true;
+            else if (key == "normal_h") {
+                ss.normal.h = std::stoi(val);
+                gotNormalH = true;
             }
+            else if (key == "normal_opacity") {
+                ss.normal.opacity = static_cast<BYTE>(std::stoi(val));
+            }
+            // Compact mode settings
+            else if (key == "compact_x") {
+                ss.compact.x = std::stoi(val);
+                gotCompactX = true;
+            }
+            else if (key == "compact_y") {
+                ss.compact.y = std::stoi(val);
+                gotCompactY = true;
+            }
+            else if (key == "compact_w") {
+                ss.compact.w = std::stoi(val);
+                gotCompactW = true;
+            }
+            else if (key == "compact_h") {
+                ss.compact.h = std::stoi(val);
+                gotCompactH = true;
+            }
+            else if (key == "compact_opacity") {
+                ss.compact.opacity = static_cast<BYTE>(std::stoi(val));
+            }
+            // Global settings
             else if (key == "pinned") {
                 ss.pinned = (std::stoi(val) != 0);
             }
-            else if (key == "compact") {
-                ss.compact = (std::stoi(val) != 0);
+            else if (key == "is_compact") {
+                ss.isCompact = (std::stoi(val) != 0);
             }
             else if (key == "theme") {
                 ss.theme = val;
@@ -337,37 +444,66 @@ static SavedSettings LoadSettings()
             }
         }
         catch (const std::exception&) {
-            // Ignore corrupted settings entries (e.g. non-numeric values)
+            // Ignore corrupted settings entries
         }
     }
 
-    if (gotX && gotY && gotW && gotH && ss.w > 0 && ss.h > 0) {
-        int minW = ss.compact ? kMinWindowWidthCompact : kMinWindowWidth;
-        int minH = ss.compact ? kMinWindowHeightCompact : kMinWindowHeight;
-        if (ss.w < minW)
-            ss.w = minW;
-        if (ss.h < minH)
-            ss.h = minH;
+    // Validate and clamp normal mode settings
+    if (gotNormalX && gotNormalY && gotNormalW && gotNormalH && ss.normal.w > 0 && ss.normal.h > 0) {
+        ClampWindowToMonitor(ss.normal.x, ss.normal.y, ss.normal.w, ss.normal.h, false);
+        ss.normal.valid = true;
+    }
 
-        RECT testRect = {ss.x, ss.y, ss.x + ss.w, ss.y + ss.h};
-        HMONITOR hMon = MonitorFromRect(&testRect, MONITOR_DEFAULTTONEAREST);
-        MONITORINFO mi = {sizeof(mi)};
-        if (GetMonitorInfo(hMon, &mi)) {
-            RECT& work = mi.rcWork;
-            if (ss.x + ss.w > work.right)
-                ss.x = work.right - ss.w;
-            if (ss.y + ss.h > work.bottom)
-                ss.y = work.bottom - ss.h;
-            if (ss.x < work.left)
-                ss.x = work.left;
-            if (ss.y < work.top)
-                ss.y = work.top;
-            if (ss.w > work.right - work.left)
-                ss.w = work.right - work.left;
-            if (ss.h > work.bottom - work.top)
-                ss.h = work.bottom - work.top;
+    // Validate and clamp compact mode settings
+    if (gotCompactX && gotCompactY && gotCompactW && gotCompactH && ss.compact.w > 0 && ss.compact.h > 0) {
+        ClampWindowToMonitor(ss.compact.x, ss.compact.y, ss.compact.w, ss.compact.h, true);
+        ss.compact.valid = true;
+    }
+
+    // Backward compatibility: if old format exists, migrate it
+    if (!ss.normal.valid && !ss.compact.valid) {
+        // Try to load old format settings
+        f.clear();
+        f.seekg(0);
+        bool gotX = false, gotY = false, gotW = false, gotH = false;
+        bool oldCompact = false;
+        while (std::getline(f, line)) {
+            if (line.empty())
+                continue;
+            size_t eq = line.find('=');
+            if (eq == std::string::npos)
+                continue;
+            std::string key = line.substr(0, eq);
+            std::string val = line.substr(eq + 1);
+            try {
+                if (key == "x") {
+                    ss.normal.x = std::stoi(val);
+                    gotX = true;
+                }
+                else if (key == "y") {
+                    ss.normal.y = std::stoi(val);
+                    gotY = true;
+                }
+                else if (key == "w") {
+                    ss.normal.w = std::stoi(val);
+                    gotW = true;
+                }
+                else if (key == "h") {
+                    ss.normal.h = std::stoi(val);
+                    gotH = true;
+                }
+                else if (key == "compact") {
+                    oldCompact = (std::stoi(val) != 0);
+                }
+            }
+            catch (...) {
+            }
         }
-        ss.windowValid = true;
+        if (gotX && gotY && gotW && gotH && ss.normal.w > 0 && ss.normal.h > 0) {
+            ClampWindowToMonitor(ss.normal.x, ss.normal.y, ss.normal.w, ss.normal.h, oldCompact);
+            ss.normal.valid = true;
+            ss.isCompact = oldCompact;
+        }
     }
 
     return ss;
@@ -562,7 +698,8 @@ static void HideAppWindow(HWND hwnd)
 {
     if (g_app) {
         // Save settings before hiding so geometry is persisted
-        SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->themeMode, g_app->apiUrl);
+        SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->themeMode, g_app->apiUrl,
+                     g_app->opacity);
     }
     ShowWindow(hwnd, SW_HIDE);
     Log("Window hidden to tray");
@@ -1559,7 +1696,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             RemoveTrayIcon();
             // Persist settings before closing
             if (g_app) {
-                SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->themeMode, g_app->apiUrl);
+                SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->themeMode, g_app->apiUrl,
+                             g_app->opacity);
                 Log("Settings saved");
             }
             KillTimer(hwnd, 1);
@@ -2015,19 +2153,36 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     }
     Log("Window class registered");
 
-    // Restore window geometry from saved settings
+    // Restore window geometry and settings from saved settings
     int initX = CW_USEDEFAULT, initY = CW_USEDEFAULT;
     int initW = kWindowWidth, initH = kWindowHeight;
-    if (saved.windowValid) {
-        initX = saved.x;
-        initY = saved.y;
-        initW = saved.w;
-        initH = saved.h;
-        app.isPinned = saved.pinned;
-        if (saved.compact)
-            app.renderer->SetCompact(true);
-        Log("Restored window state: %d,%d %dx%d pinned=%d compact=%d", initX, initY, initW, initH, (int)saved.pinned,
-            (int)saved.compact);
+    bool hasSavedGeometry = false;
+
+    app.isPinned = saved.pinned;
+    if (saved.isCompact)
+        app.renderer->SetCompact(true);
+
+    // Load settings for the appropriate mode
+    if (saved.isCompact && saved.compact.valid) {
+        initX = saved.compact.x;
+        initY = saved.compact.y;
+        initW = saved.compact.w;
+        initH = saved.compact.h;
+        app.opacity = saved.compact.opacity;
+        hasSavedGeometry = true;
+    }
+    else if (!saved.isCompact && saved.normal.valid) {
+        initX = saved.normal.x;
+        initY = saved.normal.y;
+        initW = saved.normal.w;
+        initH = saved.normal.h;
+        app.opacity = saved.normal.opacity;
+        hasSavedGeometry = true;
+    }
+
+    if (hasSavedGeometry) {
+        Log("Restored window state: %d,%d %dx%d pinned=%d compact=%d opacity=%d", initX, initY, initW, initH,
+            (int)saved.pinned, (int)saved.isCompact, (int)app.opacity);
     }
 
     // Create a hidden owner window so the main window does not appear in the
@@ -2060,7 +2215,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     }
 
     // Skip initial auto-resize if we restored a saved window size (only for non-compact mode)
-    if (saved.windowValid && !app.renderer->IsCompact()) {
+    if (hasSavedGeometry && !app.renderer->IsCompact()) {
         app.initialResizeDone = true;
     }
 
