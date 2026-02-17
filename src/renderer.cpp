@@ -4,102 +4,154 @@
 #include <ctime>
 #include <cstdio>
 
-const COLORREF ProgressBarRenderer::kBgColor = RGB(240, 240, 240);
-const COLORREF ProgressBarRenderer::kBarBgColor = RGB(224, 224, 224);
-const COLORREF ProgressBarRenderer::kBarLowColor = RGB(76, 175, 80);
-const COLORREF ProgressBarRenderer::kBarMediumColor = RGB(255, 193, 7);
-const COLORREF ProgressBarRenderer::kBarHighColor = RGB(244, 67, 54);
-const COLORREF ProgressBarRenderer::kTextColor = RGB(33, 33, 33);
-const COLORREF ProgressBarRenderer::kSubTextColor = RGB(117, 117, 117);
+// ---------------------------------------------------------------------------
+// Color schemes
+// ---------------------------------------------------------------------------
 
-// Helper function to convert std::string to std::wstring
+static const ColorScheme kLightScheme = {
+    RGB(250, 250, 250),   // bgColor
+    RGB(224, 224, 224),   // barBgColor
+    RGB(76, 175, 80),     // barLowColor   (green)
+    RGB(255, 193, 7),     // barMediumColor (amber)
+    RGB(244, 67, 54),     // barHighColor  (red)
+    RGB(33, 33, 33),      // textColor
+    RGB(117, 117, 117),   // subTextColor
+    RGB(100, 100, 100),   // loadingTextColor
+    RGB(244, 67, 54),     // errorTextColor
+    RGB(150, 150, 150),   // noDataTextColor
+    RGB(0, 0, 0),         // resetTimeColor
+    // scrollbar
+    RGB(235, 235, 235),   // scrollTrackColor
+    RGB(190, 190, 190),   // scrollThumbColor
+    RGB(160, 160, 160),   // scrollThumbHover
+};
+
+static const ColorScheme kDarkScheme = {
+    RGB(30, 30, 30),      // bgColor
+    RGB(55, 55, 55),      // barBgColor
+    RGB(56, 142, 60),     // barLowColor   (muted green)
+    RGB(255, 160, 0),     // barMediumColor (orange)
+    RGB(229, 57, 53),     // barHighColor  (red)
+    RGB(230, 230, 230),   // textColor
+    RGB(160, 160, 160),   // subTextColor
+    RGB(160, 160, 160),   // loadingTextColor
+    RGB(239, 83, 80),     // errorTextColor
+    RGB(120, 120, 120),   // noDataTextColor
+    RGB(220, 220, 220),   // resetTimeColor
+    // scrollbar
+    RGB(40, 40, 40),      // scrollTrackColor
+    RGB(80, 80, 80),      // scrollThumbColor
+    RGB(110, 110, 110),   // scrollThumbHover
+};
+
+const ColorScheme& GetLightScheme() { return kLightScheme; }
+const ColorScheme& GetDarkScheme()  { return kDarkScheme; }
+const ColorScheme& GetColorScheme(bool dark) { return dark ? kDarkScheme : kLightScheme; }
+
+// ---------------------------------------------------------------------------
+// System dark-mode detection (Windows 10 1809+)
+// Registry: HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize
+//   AppsUseLightTheme  DWORD  0 = dark, 1 = light
+// ---------------------------------------------------------------------------
+
+bool IsSystemDarkMode() {
+    HKEY hKey = nullptr;
+    LONG res = RegOpenKeyExW(
+        HKEY_CURRENT_USER,
+        L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        0, KEY_READ, &hKey);
+    if (res != ERROR_SUCCESS) return false;
+
+    DWORD value = 1; // default to light
+    DWORD size = sizeof(value);
+    RegQueryValueExW(hKey, L"AppsUseLightTheme", nullptr, nullptr,
+                     reinterpret_cast<LPBYTE>(&value), &size);
+    RegCloseKey(hKey);
+    return value == 0;
+}
+
+bool IsDarkModeActive(ThemeMode mode) {
+    switch (mode) {
+        case ThemeMode::Dark:   return true;
+        case ThemeMode::Light:  return false;
+        case ThemeMode::System: return IsSystemDarkMode();
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
 static std::wstring ToWString(const std::string& str) {
     if (str.empty()) return std::wstring();
-    
     int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
     std::wstring wstr(size_needed, 0);
     MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
     return wstr;
 }
 
-// Helper function to format large numbers
 static std::wstring FormatNumber(double value, const std::string& metricName) {
     std::wstringstream ss;
-    
-    // Check if it's Total Tokens or API Requests
     if (metricName == "Total Tokens") {
-        // Format as integer, or as millions if large
         long long intValue = static_cast<long long>(value);
         if (intValue >= 1000000) {
-            double millions = intValue / 1000000.0;
-            ss << std::fixed << std::setprecision(1) << millions << L"M";
+            ss << std::fixed << std::setprecision(1) << intValue / 1000000.0 << L"M";
         } else {
             ss << intValue;
         }
     } else if (metricName == "API Requests") {
-        // Format as integer
         ss << static_cast<long long>(value);
     } else {
-        // Default: show with one decimal place
         ss << std::fixed << std::setprecision(1) << value;
     }
-    
     return ss.str();
 }
 
-// Helper function to calculate remaining time until reset
 static std::wstring CalculateRemainingTime(const std::string& resetsAt) {
     if (resetsAt.empty()) return L"";
-    
-    // Parse ISO 8601 format (e.g., "2026-02-20T07:36:05Z")
+
     struct tm resetTime = {0};
     int year, month, day, hour, minute, second;
-    if (sscanf_s(resetsAt.c_str(), "%d-%d-%dT%d:%d:%d", 
+    if (sscanf_s(resetsAt.c_str(), "%d-%d-%dT%d:%d:%d",
                  &year, &month, &day, &hour, &minute, &second) != 6) {
         return L"";
     }
-    
     resetTime.tm_year = year - 1900;
-    resetTime.tm_mon = month - 1;
+    resetTime.tm_mon  = month - 1;
     resetTime.tm_mday = day;
     resetTime.tm_hour = hour;
-    resetTime.tm_min = minute;
-    resetTime.tm_sec = second;
+    resetTime.tm_min  = minute;
+    resetTime.tm_sec  = second;
     resetTime.tm_isdst = 0;
-    
+
     time_t resetTimestamp = _mkgmtime(&resetTime);
     time_t now = time(nullptr);
-    
-    if (resetTimestamp <= now) {
-        return L"Refreshing soon";
-    }
-    
+    if (resetTimestamp <= now) return L"Refreshing soon";
+
     double diffSeconds = difftime(resetTimestamp, now);
-    int diffHours = static_cast<int>(diffSeconds / 3600);
+    int diffHours   = static_cast<int>(diffSeconds / 3600);
     int diffMinutes = static_cast<int>((diffSeconds - diffHours * 3600) / 60);
-    
+
     std::wstringstream ss;
-    if (diffHours > 0) {
-        ss << diffHours << L"h " << diffMinutes << L"m";
-    } else if (diffMinutes > 0) {
-        ss << diffMinutes << L"m";
-    } else {
-        ss << L"<1m";
-    }
+    if (diffHours > 0)        ss << diffHours << L"h " << diffMinutes << L"m";
+    else if (diffMinutes > 0) ss << diffMinutes << L"m";
+    else                      ss << L"<1m";
     ss << L" refresh";
-    
     return ss.str();
 }
 
-ProgressBarRenderer::ProgressBarRenderer() 
+// ---------------------------------------------------------------------------
+// ProgressBarRenderer
+// ---------------------------------------------------------------------------
+
+ProgressBarRenderer::ProgressBarRenderer()
     : windowWidth_(800), windowHeight_(600),
       hFontNormal_(nullptr), hFontBold_(nullptr), hFontSmall_(nullptr),
-      dpiScale_(1.0f) {
-    // Initialize DPI scale based on system DPI
+      dpiScale_(1.0f), colors_(kLightScheme) {
     HDC hdc = GetDC(nullptr);
     if (hdc) {
-        int dpi = GetDeviceCaps(hdc, LOGPIXELSX);
-        dpiScale_ = dpi / 96.0f;
+        dpiScale_ = GetDeviceCaps(hdc, LOGPIXELSX) / 96.0f;
         ReleaseDC(nullptr, hdc);
     }
     CreateFonts();
@@ -109,244 +161,306 @@ ProgressBarRenderer::~ProgressBarRenderer() {
     DestroyFonts();
 }
 
+void ProgressBarRenderer::SetColorScheme(const ColorScheme& scheme) {
+    colors_ = scheme;
+}
+
 void ProgressBarRenderer::CreateFonts() {
-    // Base font sizes (at 96 DPI)
     const int baseNormalSize = 18;
-    const int baseBoldSize = 20;
-    const int baseSmallSize = 14;
-    
-    // Scale font sizes by DPI
+    const int baseBoldSize   = 20;
+    const int baseSmallSize  = 14;
+
     int normalSize = static_cast<int>(baseNormalSize * dpiScale_);
-    int boldSize = static_cast<int>(baseBoldSize * dpiScale_);
-    int smallSize = static_cast<int>(baseSmallSize * dpiScale_);
-    
-    // Create normal font with Chinese support (Microsoft YaHei)
+    int boldSize   = static_cast<int>(baseBoldSize   * dpiScale_);
+    int smallSize  = static_cast<int>(baseSmallSize  * dpiScale_);
+
     hFontNormal_ = CreateFontW(
         normalSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
-    );
-    
-    // Create bold font
+        CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
+
     hFontBold_ = CreateFontW(
         boldSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
-    );
-    
-    // Create small font
+        CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
+
     hFontSmall_ = CreateFontW(
         smallSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
         DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
-    );
+        CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
 }
 
 void ProgressBarRenderer::OnDpiChanged(UINT newDpi) {
-    // Update DPI scale
     dpiScale_ = newDpi / 96.0f;
-    
-    // Recreate fonts with new DPI
     DestroyFonts();
     CreateFonts();
 }
 
 void ProgressBarRenderer::DestroyFonts() {
-    if (hFontNormal_) DeleteObject(hFontNormal_);
-    if (hFontBold_) DeleteObject(hFontBold_);
-    if (hFontSmall_) DeleteObject(hFontSmall_);
+    if (hFontNormal_) { DeleteObject(hFontNormal_); hFontNormal_ = nullptr; }
+    if (hFontBold_)   { DeleteObject(hFontBold_);   hFontBold_   = nullptr; }
+    if (hFontSmall_)  { DeleteObject(hFontSmall_);  hFontSmall_  = nullptr; }
 }
 
 void ProgressBarRenderer::SetWindowSize(int width, int height) {
-    windowWidth_ = width;
+    windowWidth_  = width;
     windowHeight_ = height;
 }
 
-int ProgressBarRenderer::GetTotalHeight() const {
-    // Calculate based on content - simplified
-    return windowHeight_;
+// ---------------------------------------------------------------------------
+// Content height calculation (no drawing)
+// ---------------------------------------------------------------------------
+
+int ProgressBarRenderer::CalculateContentHeight(const std::vector<Subscription>& subscriptions) const {
+    int h = kMargin;
+    for (const auto& sub : subscriptions) {
+        h += kHeaderHeight;
+        for (size_t i = 0; i < sub.metrics.size(); ++i) {
+            h += kBarHeight + kItemSpacing;
+        }
+        h += kServiceSpacing;
+    }
+    // Add bottom margin
+    h += kMargin;
+    return h;
 }
 
-void ProgressBarRenderer::Render(HDC hdc, const std::vector<Subscription>& subscriptions) {
-    int currentY = kMargin;
-    
+// ---------------------------------------------------------------------------
+// Render (with scroll offset)
+// ---------------------------------------------------------------------------
+
+int ProgressBarRenderer::Render(HDC hdc, const std::vector<Subscription>& subscriptions, int scrollOffset) {
+    int currentY = kMargin - scrollOffset;
+
     for (const auto& sub : subscriptions) {
-        // Render service header
         if (currentY + kHeaderHeight > 0 && currentY < windowHeight_) {
             RenderServiceHeader(hdc, kMargin, currentY, windowWidth_ - 2 * kMargin, sub);
         }
         currentY += kHeaderHeight;
-        
-        // Render each metric
+
         for (const auto& metric : sub.metrics) {
             if (currentY + kBarHeight > 0 && currentY < windowHeight_) {
                 RenderMetric(hdc, kMargin, currentY, windowWidth_ - 2 * kMargin, metric, sub.display_name);
             }
             currentY += kBarHeight + kItemSpacing;
         }
-        
         currentY += kServiceSpacing;
     }
+
+    // Return total content height
+    return currentY + scrollOffset + kMargin;
 }
+
+// ---------------------------------------------------------------------------
+// Service header
+// ---------------------------------------------------------------------------
 
 void ProgressBarRenderer::RenderServiceHeader(HDC hdc, int x, int y, int width, const Subscription& sub) {
     RECT rect = { x, y, x + width, y + kHeaderHeight };
-    
-    // Select bold font
     HFONT hOldFont = (HFONT)SelectObject(hdc, hFontBold_);
-    
-    // Build header text
+
     std::wstringstream ss;
-    ss << ToWString(sub.display_name);
-    ss << L" - ";
-    ss << ToWString(sub.plan.name);
-    
-    SetTextColor(hdc, kTextColor);
+    ss << ToWString(sub.display_name) << L" - " << ToWString(sub.plan.name);
+
+    SetTextColor(hdc, colors_.textColor);
     SetBkMode(hdc, TRANSPARENT);
     DrawTextW(hdc, ss.str().c_str(), -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-    
+
     SelectObject(hdc, hOldFont);
 }
 
-void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width, 
+// ---------------------------------------------------------------------------
+// Single metric
+// ---------------------------------------------------------------------------
+
+void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
                                         const Metric& metric, const std::string& serviceName) {
-    // Check if this metric has a limit (for percentage display)
     bool hasLimit = metric.amount.limit.has_value();
-    int percentage = hasLimit ? metric.percentage().value_or(0) : 0;
-    
-    // Only draw progress bar if there's a limit
+    double percentage = hasLimit ? metric.percentage().value_or(0.0) : 0.0;
+
     if (hasLimit) {
-        // Determine bar color based on percentage
         COLORREF barColor;
-        if (percentage < 50) {
-            barColor = kBarLowColor;
-        } else if (percentage < 80) {
-            barColor = kBarMediumColor;
-        } else {
-            barColor = kBarHighColor;
-        }
-        
-        // Draw progress bar background and fill
+        if (percentage < 50.0)      barColor = colors_.barLowColor;
+        else if (percentage < 80.0) barColor = colors_.barMediumColor;
+        else                        barColor = colors_.barHighColor;
         DrawProgressBar(hdc, x, y, width, kBarHeight, percentage, barColor);
     } else {
-        // Draw simple background for metrics without limits
         RECT bgRect = { x, y, x + width, y + kBarHeight };
-        HBRUSH hBgBrush = CreateSolidBrush(kBarBgColor);
+        HBRUSH hBgBrush = CreateSolidBrush(colors_.barBgColor);
         FillRect(hdc, &bgRect, hBgBrush);
         DeleteObject(hBgBrush);
     }
-    
-    // Select normal font
+
     HFONT hOldFont = (HFONT)SelectObject(hdc, hFontNormal_);
-    
-    // Build left side: metric name and window label
+
+    // Left: metric name + window label
     std::wstringstream leftSs;
-    leftSs << ToWString(metric.name);
-    leftSs << L" (";
-    leftSs << ToWString(metric.window.label);
-    leftSs << L")";
-    
-    // Calculate width needed for left text
+    leftSs << ToWString(metric.name) << L" (" << ToWString(metric.window.label) << L")";
+
     SIZE textSize;
     GetTextExtentPoint32W(hdc, leftSs.str().c_str(), (int)leftSs.str().length(), &textSize);
-    int leftTextWidth = textSize.cx + 20; // Add padding
-    
-    // Draw left side text
+    int leftTextWidth = textSize.cx + 20;
+
     RECT leftRect = { x + 10, y, x + leftTextWidth, y + kBarHeight };
-    SetTextColor(hdc, kTextColor);
+    SetTextColor(hdc, colors_.textColor);
     SetBkMode(hdc, TRANSPARENT);
     DrawTextW(hdc, leftSs.str().c_str(), -1, &leftRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-    
-    // Build middle section: usage value
+
+    // Middle: percentage or usage
     std::wstringstream middleSs;
     if (hasLimit) {
-        middleSs << percentage << L"%";
+        middleSs << std::fixed << std::setprecision(2) << percentage << L"%";
     } else {
-        // Use formatted number for metrics without limits
-        middleSs << FormatNumber(metric.amount.used, metric.name);
-        middleSs << L" " << ToWString(metric.amount.unit);
+        middleSs << FormatNumber(metric.amount.used, metric.name)
+                 << L" " << ToWString(metric.amount.unit);
     }
-    
-    // Draw middle text (center-left area)
+
     int middleStart = x + leftTextWidth + 10;
     RECT middleRect = { middleStart, y, x + width - 150, y + kBarHeight };
     DrawTextW(hdc, middleSs.str().c_str(), -1, &middleRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-    
-    // Build right side: remaining time until refresh (large, black font)
+
+    // Right: remaining time
     if (metric.window.resets_at.has_value()) {
         std::wstring remainingTime = CalculateRemainingTime(*metric.window.resets_at);
         if (!remainingTime.empty()) {
             RECT rightRect = { x + width - 140, y, x + width - 10, y + kBarHeight };
-            SetTextColor(hdc, RGB(0, 0, 0)); // Black color
+            SetTextColor(hdc, colors_.resetTimeColor);
             DrawTextW(hdc, remainingTime.c_str(), -1, &rightRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
         }
     }
-    
-    // Restore original font
+
     SelectObject(hdc, hOldFont);
 }
 
+// ---------------------------------------------------------------------------
+// Progress bar (double-buffered)
+// ---------------------------------------------------------------------------
+
 void ProgressBarRenderer::DrawProgressBar(HDC hdcDest, int x, int y, int width, int height,
-                                           int percentage, COLORREF barColor) {
-    // Create memory DC for double buffering
+                                           double percentage, COLORREF barColor) {
     HDC hdcMem = CreateCompatibleDC(hdcDest);
     HBITMAP hbmMem = CreateCompatibleBitmap(hdcDest, width, height);
     HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hbmMem);
-    
-    // Draw background
+
     RECT bgRect = { 0, 0, width, height };
-    HBRUSH hBgBrush = CreateSolidBrush(kBarBgColor);
+    HBRUSH hBgBrush = CreateSolidBrush(colors_.barBgColor);
     FillRect(hdcMem, &bgRect, hBgBrush);
     DeleteObject(hBgBrush);
-    
-    // Draw filled portion
-    int fillWidth = (width * percentage) / 100;
+
+    int fillWidth = static_cast<int>((width * percentage) / 100.0);
     if (fillWidth > 0) {
         RECT fillRect = { 0, 0, fillWidth, height };
         HBRUSH hFillBrush = CreateSolidBrush(barColor);
         FillRect(hdcMem, &fillRect, hFillBrush);
         DeleteObject(hFillBrush);
     }
-    
-    // Copy to destination
+
     BitBlt(hdcDest, x, y, width, height, hdcMem, 0, 0, SRCCOPY);
-    
-    // Cleanup
+
     SelectObject(hdcMem, hbmOld);
     DeleteObject(hbmMem);
     DeleteDC(hdcMem);
 }
 
-void ProgressBarRenderer::DrawTextCentered(HDC hdc, const std::wstring& text, RECT& rect,
-                                            COLORREF color, int fontSize) {
-    HFONT hFont = CreateFontW(
-        fontSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-        DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
-    );
-    HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
+// ---------------------------------------------------------------------------
+// Custom scrollbar geometry
+// ---------------------------------------------------------------------------
 
-    SetTextColor(hdc, color);
-    SetBkMode(hdc, TRANSPARENT);
-    DrawTextW(hdc, text.c_str(), -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+void ProgressBarRenderer::CalcThumbRect(int clientHeight, int contentHeight, int scrollOffset,
+                                         int trackX, RECT& outThumb) const {
+    if (contentHeight <= clientHeight || clientHeight <= 0) {
+        SetRectEmpty(&outThumb);
+        return;
+    }
+    // Thumb height proportional to visible fraction
+    int thumbH = max(kScrollbarMinThumb,
+                     (int)((long long)clientHeight * clientHeight / contentHeight));
+    int trackRange = clientHeight - thumbH;
+    int maxScroll  = contentHeight - clientHeight;
+    int thumbY     = (maxScroll > 0) ? (int)((long long)scrollOffset * trackRange / maxScroll) : 0;
 
-    SelectObject(hdc, hOldFont);
-    DeleteObject(hFont);
+    outThumb.left   = trackX;
+    outThumb.top    = thumbY;
+    outThumb.right  = trackX + kScrollbarWidth;
+    outThumb.bottom = thumbY + thumbH;
 }
 
-void ProgressBarRenderer::DrawTextLeft(HDC hdc, const std::wstring& text, RECT& rect,
-                                        COLORREF color, int fontSize) {
-    HFONT hFont = CreateFontW(
-        fontSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-        DEFAULT_CHARSET, OUT_OUTLINE_PRECIS, CLIP_DEFAULT_PRECIS,
-        CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI"
-    );
-    HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
+RECT ProgressBarRenderer::GetScrollbarRect(int clientWidth, int clientHeight) const {
+    RECT r;
+    r.left   = clientWidth - kScrollbarWidth;
+    r.top    = 0;
+    r.right  = clientWidth;
+    r.bottom = clientHeight;
+    return r;
+}
 
-    SetTextColor(hdc, color);
-    SetBkMode(hdc, TRANSPARENT);
-    DrawTextW(hdc, text.c_str(), -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+// ---------------------------------------------------------------------------
+// Draw scrollbar
+// ---------------------------------------------------------------------------
 
-    SelectObject(hdc, hOldFont);
-    DeleteObject(hFont);
+void ProgressBarRenderer::DrawScrollbar(HDC hdc, int clientWidth, int clientHeight,
+                                         int contentHeight, int scrollOffset, bool thumbHovered) {
+    if (contentHeight <= clientHeight) return; // No scrollbar needed
+
+    int trackX = clientWidth - kScrollbarWidth;
+
+    // Track
+    RECT trackRect = { trackX, 0, clientWidth, clientHeight };
+    HBRUSH hTrackBrush = CreateSolidBrush(colors_.scrollTrackColor);
+    FillRect(hdc, &trackRect, hTrackBrush);
+    DeleteObject(hTrackBrush);
+
+    // Thumb
+    RECT thumbRect;
+    CalcThumbRect(clientHeight, contentHeight, scrollOffset, trackX, thumbRect);
+
+    COLORREF thumbColor = thumbHovered ? colors_.scrollThumbHover : colors_.scrollThumbColor;
+    HBRUSH hThumbBrush = CreateSolidBrush(thumbColor);
+    FillRect(hdc, &thumbRect, hThumbBrush);
+    DeleteObject(hThumbBrush);
+}
+
+// ---------------------------------------------------------------------------
+// Hit-test scrollbar
+// ---------------------------------------------------------------------------
+
+ScrollHitZone ProgressBarRenderer::HitTestScrollbar(int mouseX, int mouseY,
+                                                     int clientWidth, int clientHeight,
+                                                     int contentHeight, int scrollOffset) const {
+    if (contentHeight <= clientHeight) return ScrollHitZone::None;
+
+    int trackX = clientWidth - kScrollbarWidth;
+    if (mouseX < trackX || mouseX >= clientWidth) return ScrollHitZone::None;
+    if (mouseY < 0 || mouseY >= clientHeight)      return ScrollHitZone::None;
+
+    RECT thumbRect;
+    CalcThumbRect(clientHeight, contentHeight, scrollOffset, trackX, thumbRect);
+
+    if (mouseY >= thumbRect.top && mouseY < thumbRect.bottom)
+        return ScrollHitZone::Thumb;
+
+    return ScrollHitZone::Track;
+}
+
+// ---------------------------------------------------------------------------
+// Convert mouse-Y during drag to scroll offset
+// ---------------------------------------------------------------------------
+
+int ProgressBarRenderer::ScrollOffsetFromThumbDrag(int mouseY, int dragStartMouseY, int dragStartOffset,
+                                                    int clientHeight, int contentHeight) const {
+    if (contentHeight <= clientHeight) return 0;
+
+    int thumbH    = max(kScrollbarMinThumb,
+                        (int)((long long)clientHeight * clientHeight / contentHeight));
+    int trackRange = clientHeight - thumbH;
+    int maxScroll  = contentHeight - clientHeight;
+
+    if (trackRange <= 0) return 0;
+
+    int deltaY = mouseY - dragStartMouseY;
+    int newOffset = dragStartOffset + (int)((long long)deltaY * maxScroll / trackRange);
+
+    if (newOffset < 0) newOffset = 0;
+    if (newOffset > maxScroll) newOffset = maxScroll;
+    return newOffset;
 }
