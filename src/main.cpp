@@ -725,18 +725,69 @@ static void TogglePin(HWND hwnd) {
 }
 
 // ---------------------------------------------------------------------------
-// Compact mode toggle
+// Compact mode helpers
 // ---------------------------------------------------------------------------
+
+// Resize the window to exactly fit content (compact mode only).
+// Also disables / re-enables resizing.
+static void ApplyCompactLayout(HWND hwnd) {
+    if (!g_app || !g_app->renderer) return;
+    bool compact = g_app->renderer->IsCompact();
+
+    // Toggle resizable frame
+    LONG style = GetWindowLong(hwnd, GWL_STYLE);
+    if (compact)
+        style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
+    else
+        style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+    SetWindowLong(hwnd, GWL_STYLE, style);
+
+    // Recalculate content
+    g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
+    g_app->scrollOffset = 0;
+
+    if (compact && !g_app->subscriptions.empty()) {
+        // Measure content width using a screen DC
+        HDC hdc = GetDC(hwnd);
+        int contentW = g_app->renderer->CalculateContentWidth(hdc, g_app->subscriptions);
+        ReleaseDC(hwnd, hdc);
+        int contentH = g_app->contentHeight;
+
+        // Convert client size to window size
+        DWORD dwStyle = GetWindowLong(hwnd, GWL_STYLE);
+        DWORD dwExStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+        RECT rc = { 0, 0, contentW, contentH };
+        AdjustWindowRectEx(&rc, dwStyle, FALSE, dwExStyle);
+        int winW = rc.right - rc.left;
+        int winH = rc.bottom - rc.top;
+
+        // Cap to screen work area
+        HMONITOR hMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+        MONITORINFO mi = { sizeof(mi) };
+        GetMonitorInfo(hMon, &mi);
+        int maxW = mi.rcWork.right - mi.rcWork.left;
+        int maxH = mi.rcWork.bottom - mi.rcWork.top;
+        if (winW > maxW) winW = maxW;
+        if (winH > maxH) winH = maxH;
+
+        SetWindowPos(hwnd, nullptr, 0, 0, winW, winH,
+                     SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        Log("Compact auto-resize: client=%dx%d window=%dx%d", contentW, contentH, winW, winH);
+    } else {
+        // Leaving compact or no data yet — just refresh the frame
+        SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    }
+
+    UpdateScrollInfo(hwnd);
+    InvalidateRect(hwnd, nullptr, TRUE);
+}
 
 static void ToggleCompact(HWND hwnd) {
     if (!g_app || !g_app->renderer) return;
 
     bool compact = !g_app->renderer->IsCompact();
     g_app->renderer->SetCompact(compact);
-
-    // Recalculate content height and scroll
-    g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
-    UpdateScrollInfo(hwnd);
 
     // Update system menu check mark
     HMENU hSysMenu = GetSystemMenu(hwnd, FALSE);
@@ -745,7 +796,7 @@ static void ToggleCompact(HWND hwnd) {
                       MF_BYCOMMAND | (compact ? MF_CHECKED : MF_UNCHECKED));
     }
 
-    InvalidateRect(hwnd, nullptr, TRUE);
+    ApplyCompactLayout(hwnd);
     Log("Compact mode toggled: %s", compact ? "on" : "off");
 }
 
@@ -793,8 +844,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             case WM_GETMINMAXINFO: {
                 MINMAXINFO* mmi = (MINMAXINFO*)lParam;
                 bool compact = g_app && g_app->renderer && g_app->renderer->IsCompact();
-                mmi->ptMinTrackSize.x = compact ? kMinWindowWidthCompact  : kMinWindowWidth;
-                mmi->ptMinTrackSize.y = compact ? kMinWindowHeightCompact : kMinWindowHeight;
+                if (compact) {
+                    // Lock window to its current size in compact mode
+                    RECT wr;
+                    GetWindowRect(hwnd, &wr);
+                    int w = wr.right - wr.left;
+                    int h = wr.bottom - wr.top;
+                    mmi->ptMinTrackSize.x = w;
+                    mmi->ptMinTrackSize.y = h;
+                    mmi->ptMaxTrackSize.x = w;
+                    mmi->ptMaxTrackSize.y = h;
+                } else {
+                    mmi->ptMinTrackSize.x = kMinWindowWidth;
+                    mmi->ptMinTrackSize.y = kMinWindowHeight;
+                }
                 return 0;
             }
             
@@ -923,8 +986,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             // ----- Custom: data ready from background thread -----
             case WM_USER + 1: {
-                // On first successful data load, resize window to fit content
-                if (g_app && !g_app->initialResizeDone && g_app->contentHeight > 0) {
+                bool compact = g_app && g_app->renderer && g_app->renderer->IsCompact();
+                if (compact) {
+                    // Compact mode: always auto-resize to fit content
+                    ApplyCompactLayout(hwnd);
+                } else if (g_app && !g_app->initialResizeDone && g_app->contentHeight > 0) {
                     g_app->initialResizeDone = true;
 
                     // Calculate required window size from desired client area
@@ -1543,8 +1609,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     if (app.isPinned) {
         SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0,
                      SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-        // Menu check and title will be updated in WM_CREATE via ApplyTheme path,
-        // but we also update title explicitly after show
+    }
+
+    // If compact mode restored, strip resize style immediately.
+    // The window will auto-resize when data arrives (WM_USER+1).
+    if (app.renderer->IsCompact()) {
+        LONG style = GetWindowLong(hwnd, GWL_STYLE);
+        style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
+        SetWindowLong(hwnd, GWL_STYLE, style);
+        SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
+                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
     }
 
     // Skip initial auto-resize if we restored a saved window size

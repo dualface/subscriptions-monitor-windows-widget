@@ -87,6 +87,9 @@ public:
     // Calculate total content height without rendering
     int CalculateContentHeight(const std::vector<Subscription>& subscriptions) const;
 
+    // Calculate minimum content width (compact mode auto-sizing)
+    int CalculateContentWidth(HDC hdc, const std::vector<Subscription>& subscriptions) const;
+
     // ----- Custom scrollbar -----
 
     // Draw the scrollbar on top of the already-rendered content.

@@ -244,6 +244,49 @@ int ProgressBarRenderer::CalculateContentHeight(const std::vector<Subscription>&
 }
 
 // ---------------------------------------------------------------------------
+// Content width calculation (compact mode auto-sizing)
+// ---------------------------------------------------------------------------
+
+int ProgressBarRenderer::CalculateContentWidth(HDC hdc, const std::vector<Subscription>& subscriptions) const {
+    int maxW = 0;
+    int pad = compact_ ? 6 : 10;
+
+    // Measure service header text widths
+    HFONT hOldFont = (HFONT)SelectObject(hdc, compact_ ? hFontNormal_ : hFontBold_);
+    for (const auto& sub : subscriptions) {
+        std::wstring name = ToWString(sub.display_name);
+        if (!compact_) name += L" - " + ToWString(sub.plan.name);
+        SIZE sz;
+        GetTextExtentPoint32W(hdc, name.c_str(), (int)name.length(), &sz);
+        if (sz.cx > maxW) maxW = sz.cx;
+    }
+
+    // Measure metric row widths: label + gap + "100.0%" + gap + reset_time_area
+    SelectObject(hdc, hFontNormal_);
+    // Pre-measure a worst-case percentage string
+    std::wstring pctSample = L"100.0%";
+    SIZE pctSize;
+    GetTextExtentPoint32W(hdc, pctSample.c_str(), (int)pctSample.length(), &pctSize);
+    int resetArea = 90;  // reserved for compact reset time like "23h59m"
+
+    for (const auto& sub : subscriptions) {
+        for (const auto& metric : sub.metrics) {
+            if (compact_ && !metric.amount.limit.has_value()) continue;
+            std::wstring label = compact_ ? ToWString(metric.window.label)
+                : ToWString(metric.name) + L" (" + ToWString(metric.window.label) + L")";
+            SIZE sz;
+            GetTextExtentPoint32W(hdc, label.c_str(), (int)label.length(), &sz);
+            int rowW = sz.cx + pad + pctSize.cx + pad + resetArea;
+            if (rowW > maxW) maxW = rowW;
+        }
+    }
+    SelectObject(hdc, hOldFont);
+
+    // Add margins and inner padding
+    return maxW + 2 * Margin() + 2 * pad;
+}
+
+// ---------------------------------------------------------------------------
 // Render (with scroll offset)
 // ---------------------------------------------------------------------------
 
