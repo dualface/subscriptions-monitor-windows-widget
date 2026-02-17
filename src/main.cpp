@@ -1014,17 +1014,21 @@ static void ApplyCompactLayout(HWND hwnd)
         return;
     bool compact = g_app->renderer->IsCompact();
 
-    // Toggle resizable frame and caption
+    // Toggle resizable frame, caption, and client edge
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
+    LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     if (compact) {
-        // Compact mode: remove caption, border, thick frame
+        // Compact mode: remove caption, border, thick frame, client edge
         style &= ~(WS_CAPTION | WS_THICKFRAME | WS_BORDER | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU);
+        exStyle &= ~(WS_EX_CLIENTEDGE | WS_EX_WINDOWEDGE);
     }
     else {
-        // Normal mode: restore caption and border
+        // Normal mode: restore caption, border, and client edge
         style |= WS_CAPTION | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU;
+        exStyle |= WS_EX_CLIENTEDGE;
     }
     SetWindowLong(hwnd, GWL_STYLE, style);
+    SetWindowLong(hwnd, GWL_EXSTYLE, exStyle);
 
     // Compact mode: always keep window on top
     // Normal mode: respect the pinned state
