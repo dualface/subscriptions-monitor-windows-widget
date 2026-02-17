@@ -1014,13 +1014,22 @@ static void ApplyCompactLayout(HWND hwnd)
         return;
     bool compact = g_app->renderer->IsCompact();
 
-    // Toggle resizable frame
+    // Toggle resizable frame and caption
     LONG style = GetWindowLong(hwnd, GWL_STYLE);
-    if (compact)
-        style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
-    else
-        style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+    if (compact) {
+        // Compact mode: remove caption, border, thick frame
+        style &= ~(WS_CAPTION | WS_THICKFRAME | WS_BORDER | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU);
+    }
+    else {
+        // Normal mode: restore caption and border
+        style |= WS_CAPTION | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU;
+    }
     SetWindowLong(hwnd, GWL_STYLE, style);
+
+    // Compact mode: always keep window on top
+    // Normal mode: respect the pinned state
+    HWND zOrder = compact ? HWND_TOPMOST : (g_app->isPinned ? HWND_TOPMOST : HWND_NOTOPMOST);
+    SetWindowPos(hwnd, zOrder, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 
     // Recalculate content (under lock since subscriptions may be written by bg thread)
     {
@@ -1933,13 +1942,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
 
-    // If compact mode restored, strip resize style and apply compact layout.
+    // If compact mode restored, apply compact layout (removes caption, sets topmost).
     // The window will auto-resize when data arrives (WM_USER+1).
     if (app.renderer->IsCompact()) {
-        LONG style = GetWindowLong(hwnd, GWL_STYLE);
-        style &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
-        SetWindowLong(hwnd, GWL_STYLE, style);
-        // Apply compact layout immediately to set correct size
         ApplyCompactLayout(hwnd);
     }
 
