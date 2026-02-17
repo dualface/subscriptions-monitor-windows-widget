@@ -115,8 +115,10 @@ void SetupCrashHandlers() {
 
 const wchar_t kClassName[] = L"AISubscriptionMonitor";
 const wchar_t kWindowTitle[] = L"AI Subscription Monitor";
-const int kWindowWidth = 800;
-const int kWindowHeight = 600;
+const int kMinWindowWidth = 540;     // Minimum window width
+const int kMinWindowHeight = 400;    // Minimum window height
+const int kWindowWidth = kMinWindowWidth;    // Initial window width
+const int kWindowHeight = 600;               // Initial window height
 const int kRefreshIntervalMs = 60000;
 
 struct AppState {
@@ -350,8 +352,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 
             case WM_GETMINMAXINFO: {
                 MINMAXINFO* mmi = (MINMAXINFO*)lParam;
-                mmi->ptMinTrackSize.x = 540;  // Minimum width
-                mmi->ptMinTrackSize.y = 400;  // Minimum height
+                mmi->ptMinTrackSize.x = kMinWindowWidth;   // Minimum width
+                mmi->ptMinTrackSize.y = kMinWindowHeight;  // Minimum height
                 return 0;
             }
             

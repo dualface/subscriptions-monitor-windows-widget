@@ -8,7 +8,14 @@
 
 #include <string>
 #include <vector>
-#include <optional>
+
+// Workaround for LSP not recognizing std::optional in MSVC
+#if __cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
+    #include <optional>
+#else
+    #error "C++17 or later is required"
+#endif
+
 #include "json.hpp"
 
 using json = nlohmann::json;
