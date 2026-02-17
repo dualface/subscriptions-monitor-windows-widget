@@ -11,7 +11,15 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 - **Real-time monitoring** -- Fetches subscription data from a configurable HTTP API endpoint
 - **Color-coded progress bars** -- Green (< 50%), yellow (50-80%), red (> 80%) usage indicators
 - **Auto-refresh** -- Automatically refreshes every 60 seconds, with manual refresh via F5
+- **Compact mode** -- Minimalist view with smaller bars and condensed information
+- **Theme support** -- Light, dark, or system theme with automatic switching
+- **Always on top** -- Pin window to stay above other applications
+- **System tray** -- Minimize to system tray, show/hide from tray menu
+- **Window transparency** -- Adjustable opacity (25%, 50%, 75%, 100%)
 - **HiDPI support** -- Per-Monitor DPI awareness (Windows 10 1607+), scales cleanly on high-DPI displays
+- **Persistent settings** -- Saves window position, size, theme, API URL, and pin state between sessions
+- **Flexible URL input** -- Command-line argument, saved config, or interactive dialog on first run
+- **Smooth scrolling** -- Mouse wheel support with custom scrollbar
 - **Debug mode** -- Optional `--debug` flag enables console output and file logging
 - **Smart formatting** -- Large numbers displayed with K/M suffixes; countdown to quota reset shown as "Xh Ym"
 - **Lightweight** -- Pure native Win32 + GDI, no Electron or web runtime; single static executable with zero runtime dependencies
@@ -19,6 +27,7 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 
 ## Screenshot
 
+### Normal Mode
 ```
 ┌─────────────────────────────────────────────┐
 │  ZenMux - Ultra Plan                        │
@@ -31,6 +40,15 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 │  █████░░░░░░░░░░░░░░░░  231K / 1M          │
 │                          8h 12m refresh     │
 └─────────────────────────────────────────────┘
+```
+
+### Compact Mode
+```
+┌──────────────────┐
+│ ZenMux           │
+│ 7 Day    64%     │
+│ 1 Day    23%     │
+└──────────────────┘
 ```
 
 ## Requirements
@@ -122,29 +140,58 @@ The executable will be at `build/bin/Release/AISubscriptionsMonitor.exe`.
 ## Usage
 
 ```
-AISubscriptionsMonitor.exe [--debug] <url>
+AISubscriptionsMonitor.exe [--debug] [--theme <theme>] [--compact] [<url>]
 ```
 
-| Argument    | Description                                                      |
-| ----------- | ---------------------------------------------------------------- |
-| `<url>`     | HTTP endpoint that returns subscription data (required)          |
-| `--debug`   | Enable debug console and file logging (`AISubscriptionsMonitor.log`) |
+| Argument      | Description                                                      |
+| ------------- | ---------------------------------------------------------------- |
+| `<url>`       | HTTP endpoint that returns subscription data (optional if saved) |
+| `--debug`     | Enable debug console and file logging (`AISubscriptionsMonitor.log`) |
+| `--theme`     | Theme mode: `light`, `dark`, or `system` (default: `system`)     |
+| `--compact`   | Start in compact mode                                            |
 
 ### Examples
 
 ```powershell
-# Basic usage
+# Basic usage with URL
 AISubscriptionsMonitor.exe http://api.example.com:8080/subscriptions
 
 # With debug logging
 AISubscriptionsMonitor.exe --debug http://localhost:3000/api/v1/usage
+
+# Dark theme
+AISubscriptionsMonitor.exe --theme dark http://api.example.com/subscriptions
+
+# Compact mode with light theme
+AISubscriptionsMonitor.exe --compact --theme light http://api.example.com/subscriptions
 ```
+
+### First Run
+
+If no URL is provided via command line or saved in configuration, the app will prompt you with an input dialog to enter the API endpoint. The URL will be validated before the app starts.
+
+### System Tray
+
+The application runs from the system tray:
+- **Left click** tray icon: Show/hide the window
+- **Right click** tray icon: Open context menu
+- **Minimize**: Hides to tray instead of taskbar
+- **Close button (X)**: Hides to tray (use Exit in menu to quit)
+
+### Context Menu (Right-click on window)
+
+- **Hide to Tray** -- Minimize to system tray
+- **Compact Mode** -- Toggle between normal and compact view
+- **Pin to Top** -- Keep window always on top
+- **Opacity** -- Set window transparency (25%, 50%, 75%, 100%)
+- **Exit** -- Close the application
 
 ### Keyboard Shortcuts
 
-| Key   | Action              |
-| ----- | ------------------- |
-| `F5`  | Manual data refresh |
+| Key          | Action                  |
+| ------------ | ----------------------- |
+| `F5`         | Manual data refresh     |
+| `Ctrl + T`   | Toggle "Pin to Top"     |
 
 ## API Format
 
@@ -174,13 +221,13 @@ The endpoint must return a JSON array of subscription objects. Each subscription
           "limit": 1200,
           "remaining": 427.34,
           "unit": "flows"
-        },
-        "cost": {
-          "amount": 12.50,
-          "currency": "USD"
         }
       }
     ],
+    "cost": {
+      "total": 12.50,
+      "currency": "USD"
+    },
     "status": "ok"
   }
 ]
@@ -188,30 +235,57 @@ The endpoint must return a JSON array of subscription objects. Each subscription
 
 ### Field Reference
 
-| Field                     | Type     | Required | Description                              |
-| ------------------------- | -------- | -------- | ---------------------------------------- |
-| `provider_id`             | string   | yes      | Unique provider identifier               |
-| `display_name`            | string   | yes      | Human-readable service name              |
-| `plan.name`               | string   | yes      | Subscription plan name                   |
-| `plan.type`               | string   | yes      | Plan type (e.g. `"subscription"`)        |
-| `metrics[].name`          | string   | yes      | Metric name (e.g. `"7d Flows"`)         |
-| `metrics[].window.label`  | string   | yes      | Window label (e.g. `"7 Day"`)           |
-| `metrics[].window.resets_at` | string | no    | ISO 8601 timestamp for next reset        |
-| `metrics[].amount.used`   | number   | yes      | Current usage                            |
-| `metrics[].amount.limit`  | number   | no       | Usage cap (omit for unlimited metrics)   |
-| `metrics[].amount.remaining` | number | no    | Remaining quota                          |
-| `metrics[].amount.unit`   | string   | yes      | Unit label (e.g. `"flows"`, `"tokens"`)  |
-| `metrics[].cost`          | object   | no       | Optional cost information                |
+| Field                       | Type     | Required | Description                              |
+| --------------------------- | -------- | -------- | ---------------------------------------- |
+| `provider_id`               | string   | yes      | Unique provider identifier               |
+| `display_name`              | string   | yes      | Human-readable service name              |
+| `plan.name`                 | string   | yes      | Subscription plan name                   |
+| `plan.type`                 | string   | yes      | Plan type (e.g. `"subscription"`)        |
+| `metrics[].name`            | string   | yes      | Metric name (e.g. `"7d Flows"`)         |
+| `metrics[].window.label`    | string   | yes      | Window label (e.g. `"7 Day"`)           |
+| `metrics[].window.resets_at`| string   | no       | ISO 8601 timestamp for next reset        |
+| `metrics[].amount.used`     | number   | yes      | Current usage                            |
+| `metrics[].amount.limit`    | number   | no       | Usage cap (omit for unlimited metrics)   |
+| `metrics[].amount.remaining`| number   | no       | Remaining quota                          |
+| `metrics[].amount.unit`     | string   | yes      | Unit label (e.g. `"flows"`, `"tokens"`)  |
+| `cost.total`                | number   | no       | Optional total cost                      |
+| `cost.currency`             | string   | no       | Currency code (e.g. `"USD"`)             |
+
+### Protocol Support
+
+The app supports both HTTP and HTTPS endpoints:
+- `http://host:port/path`
+- `https://host:port/path`
+
+Default ports: HTTP (80), HTTPS (443)
 
 ## Progress Bar Colors
 
+### Light Theme
 | Color  | Usage Range | Meaning              |
 | ------ | ----------- | -------------------- |
 | Green  | 0 -- 49%    | Normal usage         |
 | Yellow | 50 -- 80%   | Elevated usage       |
 | Red    | 81 -- 100%  | Approaching limit    |
 
+### Dark Theme
+| Color        | Usage Range | Meaning              |
+| ------------ | ----------- | -------------------- |
+| Muted Green  | 0 -- 49%    | Normal usage         |
+| Orange       | 50 -- 80%   | Elevated usage       |
+| Red          | 81 -- 100%  | Approaching limit    |
+
 Metrics without a `limit` field are displayed as text-only (no progress bar).
+
+## Configuration
+
+Settings are automatically saved to `%LOCALAPPDATA%\AISubscriptionsMonitor\settings.txt`:
+
+- Window position and size (separate for normal and compact modes)
+- Pin state
+- Theme preference
+- API URL
+- Opacity level
 
 ## Tech Stack
 
@@ -224,6 +298,19 @@ Metrics without a `limit` field are displayed as text-only (no progress bar).
 | JSON        | [nlohmann/json](https://github.com/nlohmann/json) v3.11.3 |
 | Build       | CMake 3.16+ / MSVC                                  |
 | Font        | Microsoft YaHei UI (CJK-compatible)                 |
+
+## Troubleshooting
+
+### No window appears
+Check the log file `AISubscriptionsMonitor.log` for errors.
+
+### API connection fails
+- Verify the URL is correct and accessible
+- Check if firewall is blocking the connection
+- For HTTPS, ensure the certificate is valid
+
+### Wrong theme
+The app follows the Windows system theme by default. Use `--theme light` or `--theme dark` to override.
 
 ## License
 

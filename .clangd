@@ -1,7 +1,0 @@
-CompileFlags:
-  Add: [-std=c++17]
-  Compiler: cl
-
-Diagnostics:
-  UnusedIncludes: Strict
-  MissingIncludes: Strict
