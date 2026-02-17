@@ -1333,17 +1333,29 @@ static void ToggleCompact(HWND hwnd)
     if (!g_app || !g_app->renderer)
         return;
 
-    bool compact = !g_app->renderer->IsCompact();
-    g_app->renderer->SetCompact(compact);
+    bool oldCompact = g_app->renderer->IsCompact();
+    bool newCompact = !oldCompact;
+
+    // Save current mode settings before switching
+    SaveSettings(hwnd, g_app->isPinned, oldCompact, g_app->themeMode, g_app->apiUrl, g_app->opacity);
+
+    g_app->renderer->SetCompact(newCompact);
 
     // Update system menu check mark
     HMENU hSysMenu = GetSystemMenu(hwnd, FALSE);
     if (hSysMenu) {
-        CheckMenuItem(hSysMenu, IDM_COMPACT_MODE, MF_BYCOMMAND | (compact ? MF_CHECKED : MF_UNCHECKED));
+        CheckMenuItem(hSysMenu, IDM_COMPACT_MODE, MF_BYCOMMAND | (newCompact ? MF_CHECKED : MF_UNCHECKED));
     }
 
+    // Load opacity for the new mode from settings and apply it
+    SavedSettings settings = LoadSettings();
+    BYTE newOpacity = newCompact ? settings.compact.opacity : settings.normal.opacity;
+    if (newOpacity == 0)
+        newOpacity = 255;  // Default to opaque if not set
+    SetWindowOpacity(hwnd, newOpacity);
+
     ApplyCompactLayout(hwnd);
-    Log("Compact mode toggled: %s", compact ? "on" : "off");
+    Log("Compact mode toggled: %s", newCompact ? "on" : "off");
 }
 
 // ---------------------------------------------------------------------------
@@ -2246,6 +2258,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
             CheckMenuItem(hSysMenu, IDM_COMPACT_MODE, MF_BYCOMMAND | MF_CHECKED);
         }
     }
+
+    // Apply saved opacity after window is created and visible
+    SetWindowOpacity(hwnd, app.opacity);
 
     Log("Window shown (tray-only, hidden owner suppresses taskbar button)");
 
