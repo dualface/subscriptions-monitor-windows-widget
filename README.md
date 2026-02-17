@@ -46,7 +46,9 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 ```
 .
 ├── CMakeLists.txt            # CMake build configuration
-├── build.bat                 # One-click build script (cl.exe)
+├── build.ps1                 # PowerShell build script
+├── app_icon.png              # Application icon source
+├── app_icon.ico              # Generated icon (multi-size)
 ├── LICENSE                   # MIT License
 ├── README.md
 └── src/
@@ -54,12 +56,47 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
     ├── subscription.h/cpp    # Data model, JSON deserialization, formatting
     ├── http_client.h/cpp     # WinHTTP client wrapper
     ├── renderer.h/cpp        # GDI progress bar rendering engine
+    ├── resource.h            # Win32 resource IDs
+    ├── app.rc                # Win32 resource script (icon embedding)
     └── json.hpp              # nlohmann/json v3.11.3 (header-only, vendored)
 ```
 
 ## Building
 
-### Option A: CMake (recommended)
+### Option A: build.ps1 (recommended)
+
+The PowerShell build script auto-detects your Visual Studio installation, generates the icon, and compiles everything in one step.
+
+```powershell
+# Default Release build
+.\build.ps1
+
+# Debug build (with debug symbols)
+.\build.ps1 -Config Debug
+
+# Clean build directory, then rebuild
+.\build.ps1 -Clean
+
+# Build and launch the app
+.\build.ps1 -Run
+
+# Only regenerate app_icon.ico from app_icon.png
+.\build.ps1 -IconOnly
+
+# Combine flags
+.\build.ps1 -Clean -Config Release -Run
+```
+
+The executable will be at `build\AISubscriptionMonitor.exe`.
+
+> **Note:** If you encounter an execution policy error, run:
+> ```powershell
+> powershell -ExecutionPolicy Bypass -File build.ps1
+> ```
+
+> **Note:** ICO auto-generation requires Python 3 with [Pillow](https://pypi.org/project/Pillow/) (`pip install Pillow`). If unavailable, the script will skip this step and use the existing `app_icon.ico`.
+
+### Option B: CMake
 
 ```powershell
 mkdir build
@@ -70,18 +107,6 @@ cmake --build . --config Release
 
 The executable will be at `build/bin/Release/AISubscriptionMonitor.exe`.
 
-### Option B: build.bat
-
-Run the batch file from the project root. It invokes `vcvars64.bat` and compiles directly with `cl.exe`:
-
-```powershell
-.\build.bat
-```
-
-The executable will be at `build\AISubscriptionMonitor.exe`.
-
-> **Note:** The batch file assumes Visual Studio 2022 Community Edition is installed at the default path. Edit the `vcvars64.bat` path in `build.bat` if your installation differs.
-
 ### Option C: Visual Studio IDE
 
 1. Open Visual Studio 2022
@@ -90,7 +115,7 @@ The executable will be at `build\AISubscriptionMonitor.exe`.
 4. Set project properties:
    - **C/C++ > C++ Language Standard**: ISO C++17
    - **C/C++ > Additional Include Directories**: `$(ProjectDir)src`
-   - **Linker > Input > Additional Dependencies**: `winhttp.lib;gdi32.lib;user32.lib;kernel32.lib;comctl32.lib`
+   - **Linker > Input > Additional Dependencies**: `winhttp.lib;gdi32.lib;user32.lib;kernel32.lib;comctl32.lib;advapi32.lib;dwmapi.lib;shell32.lib;ole32.lib`
    - **Linker > System > SubSystem**: Windows
 5. Build and run
 
