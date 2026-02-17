@@ -133,8 +133,10 @@ void SetupCrashHandlers() {
 
 const wchar_t kClassName[] = L"AISubscriptionsMonitor";
 const wchar_t kWindowTitle[] = L"AI Subscriptions Monitor";
-const int kMinWindowWidth = 620;     // Minimum window width
-const int kMinWindowHeight = 400;    // Minimum window height
+const int kMinWindowWidth = 620;           // Minimum window width (normal)
+const int kMinWindowHeight = 400;          // Minimum window height (normal)
+const int kMinWindowWidthCompact = 300;    // Minimum window width (compact)
+const int kMinWindowHeightCompact = 200;   // Minimum window height (compact)
 const int kWindowWidth = kMinWindowWidth;    // Initial window width
 const int kWindowHeight = 600;               // Initial window height
 const int kRefreshIntervalMs = 60000;
@@ -221,8 +223,10 @@ static SavedSettings LoadSettings() {
     }
 
     if (gotX && gotY && gotW && gotH && ss.w > 0 && ss.h > 0) {
-        if (ss.w < kMinWindowWidth)  ss.w = kMinWindowWidth;
-        if (ss.h < kMinWindowHeight) ss.h = kMinWindowHeight;
+        int minW = ss.compact ? kMinWindowWidthCompact  : kMinWindowWidth;
+        int minH = ss.compact ? kMinWindowHeightCompact : kMinWindowHeight;
+        if (ss.w < minW) ss.w = minW;
+        if (ss.h < minH) ss.h = minH;
 
         RECT testRect = { ss.x, ss.y, ss.x + ss.w, ss.y + ss.h };
         HMONITOR hMon = MonitorFromRect(&testRect, MONITOR_DEFAULTTONEAREST);
@@ -788,8 +792,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 
             case WM_GETMINMAXINFO: {
                 MINMAXINFO* mmi = (MINMAXINFO*)lParam;
-                mmi->ptMinTrackSize.x = kMinWindowWidth;
-                mmi->ptMinTrackSize.y = kMinWindowHeight;
+                bool compact = g_app && g_app->renderer && g_app->renderer->IsCompact();
+                mmi->ptMinTrackSize.x = compact ? kMinWindowWidthCompact  : kMinWindowWidth;
+                mmi->ptMinTrackSize.y = compact ? kMinWindowHeightCompact : kMinWindowHeight;
                 return 0;
             }
             
