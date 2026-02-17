@@ -36,7 +36,8 @@
 #define IDM_TRAY_EXIT 40002
 #define IDM_COMPACT_MODE 40003
 
-// Context menu items (opacity)
+// Context menu items
+#define IDM_TRAY_HIDE 40004
 #define IDM_OPACITY_25 40010
 #define IDM_OPACITY_50 40011
 #define IDM_OPACITY_75 40012
@@ -644,7 +645,7 @@ static void ShowWindowContextMenu(HWND hwnd)
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
 
     // Hide to tray
-    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_SHOW, L"Hide to Tray");
+    AppendMenuW(hMenu, MF_STRING, IDM_TRAY_HIDE, L"Hide to Tray");
     AppendMenuW(hMenu, MF_STRING, IDM_TRAY_EXIT, L"Exit");
 
     // Required for the menu to disappear when clicking outside
@@ -1504,6 +1505,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             switch (LOWORD(wParam)) {
             case IDM_TRAY_SHOW:
                 ShowAppWindow(hwnd);
+                break;
+            case IDM_TRAY_HIDE:
+                HideAppWindow(hwnd);
                 break;
             case IDM_COMPACT_MODE:
                 ToggleCompact(hwnd);
