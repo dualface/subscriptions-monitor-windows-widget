@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Build script for AI Subscription Monitor.
+    Build script for AI Subscriptions Monitor.
 
 .DESCRIPTION
     Compiles the project using MSVC (cl.exe) with full static linking.
@@ -46,7 +46,7 @@ $ErrorActionPreference = "Stop"
 $ProjectDir  = $PSScriptRoot
 $BuildDir    = Join-Path $ProjectDir "build"
 $SrcDir      = Join-Path $ProjectDir "src"
-$ExeName     = "AISubscriptionMonitor.exe"
+$ExeName     = "AISubscriptionsMonitor.exe"
 $IconPng     = Join-Path $ProjectDir "app_icon.png"
 $IconIco     = Join-Path $ProjectDir "app_icon.ico"
 $IconLightPng = Join-Path $ProjectDir "app_icon_light.png"

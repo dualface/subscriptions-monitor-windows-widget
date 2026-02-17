@@ -80,7 +80,7 @@ void Log(const char* fmt, ...) {
 bool InitLogging(bool debugMode) {
     g_debugMode = debugMode;
     
-    g_logFile.open("AISubscriptionMonitor.log", std::ios::out | std::ios::app);
+    g_logFile.open("AISubscriptionsMonitor.log", std::ios::out | std::ios::app);
     if (!g_logFile.is_open()) {
         return false;
     }
@@ -130,8 +130,8 @@ void SetupCrashHandlers() {
     signal(SIGILL, CrashHandler);
 }
 
-const wchar_t kClassName[] = L"AISubscriptionMonitor";
-const wchar_t kWindowTitle[] = L"AI Subscription Monitor";
+const wchar_t kClassName[] = L"AISubscriptionsMonitor";
+const wchar_t kWindowTitle[] = L"AI Subscriptions Monitor";
 const int kMinWindowWidth = 620;     // Minimum window width
 const int kMinWindowHeight = 400;    // Minimum window height
 const int kWindowWidth = kMinWindowWidth;    // Initial window width
@@ -139,7 +139,7 @@ const int kWindowHeight = 600;               // Initial window height
 const int kRefreshIntervalMs = 60000;
 
 // ---------------------------------------------------------------------------
-// Window state persistence (%LOCALAPPDATA%\AISubscriptionMonitor\settings.txt)
+// Window state persistence (%LOCALAPPDATA%\AISubscriptionsMonitor\settings.txt)
 // ---------------------------------------------------------------------------
 
 struct SavedSettings {
@@ -159,7 +159,7 @@ static std::wstring GetSettingsPath() {
     if (FAILED(SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, nullptr, &localAppData)) || !localAppData) {
         return std::wstring();
     }
-    std::wstring dir = std::wstring(localAppData) + L"\\AISubscriptionMonitor";
+    std::wstring dir = std::wstring(localAppData) + L"\\AISubscriptionsMonitor";
     CoTaskMemFree(localAppData);
 
     // Ensure directory exists
@@ -361,7 +361,7 @@ static void CreateTrayIcon(HWND hwnd) {
     g_app->nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     g_app->nid.uCallbackMessage = WM_TRAYICON;
     g_app->nid.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(iconRes));
-    wcscpy_s(g_app->nid.szTip, L"AI Subscription Monitor");
+    wcscpy_s(g_app->nid.szTip, L"AI Subscriptions Monitor");
 
     Shell_NotifyIconW(NIM_ADD, &g_app->nid);
     g_app->trayIconCreated = true;
@@ -686,7 +686,7 @@ static const UINT IDM_PIN_TO_TOP = 0x0010; // Custom system menu command ID
 static void UpdateWindowTitle(HWND hwnd) {
     if (!g_app) return;
     if (g_app->isPinned)
-        SetWindowTextW(hwnd, L"\U0001F4CC AI Subscription Monitor");
+        SetWindowTextW(hwnd, L"\U0001F4CC AI Subscriptions Monitor");
     else
         SetWindowTextW(hwnd, kWindowTitle);
 }
@@ -1379,7 +1379,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     }
     
     Log("========================================");
-    Log("Starting AI Subscription Monitor...");
+    Log("Starting AI Subscriptions Monitor...");
     Log("Debug mode: %s", debugMode ? "enabled" : "disabled");
     
     AppState app;

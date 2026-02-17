@@ -1,4 +1,4 @@
-# AI Subscription Monitor
+# AI Subscriptions Monitor
 
 A lightweight native Windows desktop widget for monitoring AI subscription service usage and quotas in real time. It fetches data from an HTTP API endpoint and renders color-coded progress bars showing consumption per service/metric.
 
@@ -87,7 +87,7 @@ The PowerShell build script auto-detects your Visual Studio installation, genera
 .\build.ps1 -Clean -Config Release -Run
 ```
 
-The executable will be at `build\AISubscriptionMonitor.exe`.
+The executable will be at `build\AISubscriptionsMonitor.exe`.
 
 > **Note:** If you encounter an execution policy error, run:
 > ```powershell
@@ -105,7 +105,7 @@ cmake .. -G "Visual Studio 17 2022"
 cmake --build . --config Release
 ```
 
-The executable will be at `build/bin/Release/AISubscriptionMonitor.exe`.
+The executable will be at `build/bin/Release/AISubscriptionsMonitor.exe`.
 
 ### Option C: Visual Studio IDE
 
@@ -122,22 +122,22 @@ The executable will be at `build/bin/Release/AISubscriptionMonitor.exe`.
 ## Usage
 
 ```
-AISubscriptionMonitor.exe [--debug] <url>
+AISubscriptionsMonitor.exe [--debug] <url>
 ```
 
 | Argument    | Description                                                      |
 | ----------- | ---------------------------------------------------------------- |
 | `<url>`     | HTTP endpoint that returns subscription data (required)          |
-| `--debug`   | Enable debug console and file logging (`AISubscriptionMonitor.log`) |
+| `--debug`   | Enable debug console and file logging (`AISubscriptionsMonitor.log`) |
 
 ### Examples
 
 ```powershell
 # Basic usage
-AISubscriptionMonitor.exe http://api.example.com:8080/subscriptions
+AISubscriptionsMonitor.exe http://api.example.com:8080/subscriptions
 
 # With debug logging
-AISubscriptionMonitor.exe --debug http://localhost:3000/api/v1/usage
+AISubscriptionsMonitor.exe --debug http://localhost:3000/api/v1/usage
 ```
 
 ### Keyboard Shortcuts

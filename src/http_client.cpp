@@ -2,7 +2,7 @@
 #include <sstream>
 #include <vector>
 
-const wchar_t* HttpClient::kUserAgent = L"AI-Subscription-Monitor/1.0";
+const wchar_t* HttpClient::kUserAgent = L"AI-Subscriptions-Monitor/1.0";
 
 HttpClient::HttpClient() : hSession_(nullptr), initialized_(false) {}
 
