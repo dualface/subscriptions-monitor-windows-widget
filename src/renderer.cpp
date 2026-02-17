@@ -1,6 +1,8 @@
 #include "renderer.h"
 #include <sstream>
 #include <iomanip>
+#include <ctime>
+#include <cstdio>
 
 const COLORREF ProgressBarRenderer::kBgColor = RGB(240, 240, 240);
 const COLORREF ProgressBarRenderer::kBarBgColor = RGB(224, 224, 224);
@@ -18,6 +20,75 @@ static std::wstring ToWString(const std::string& str) {
     std::wstring wstr(size_needed, 0);
     MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
     return wstr;
+}
+
+// Helper function to format large numbers
+static std::wstring FormatNumber(double value, const std::string& metricName) {
+    std::wstringstream ss;
+    
+    // Check if it's Total Tokens or API Requests
+    if (metricName == "Total Tokens") {
+        // Format as integer, or as millions if large
+        long long intValue = static_cast<long long>(value);
+        if (intValue >= 1000000) {
+            double millions = intValue / 1000000.0;
+            ss << std::fixed << std::setprecision(1) << millions << L"M";
+        } else {
+            ss << intValue;
+        }
+    } else if (metricName == "API Requests") {
+        // Format as integer
+        ss << static_cast<long long>(value);
+    } else {
+        // Default: show with one decimal place
+        ss << std::fixed << std::setprecision(1) << value;
+    }
+    
+    return ss.str();
+}
+
+// Helper function to calculate remaining time until reset
+static std::wstring CalculateRemainingTime(const std::string& resetsAt) {
+    if (resetsAt.empty()) return L"";
+    
+    // Parse ISO 8601 format (e.g., "2026-02-20T07:36:05Z")
+    struct tm resetTime = {0};
+    int year, month, day, hour, minute, second;
+    if (sscanf_s(resetsAt.c_str(), "%d-%d-%dT%d:%d:%d", 
+                 &year, &month, &day, &hour, &minute, &second) != 6) {
+        return L"";
+    }
+    
+    resetTime.tm_year = year - 1900;
+    resetTime.tm_mon = month - 1;
+    resetTime.tm_mday = day;
+    resetTime.tm_hour = hour;
+    resetTime.tm_min = minute;
+    resetTime.tm_sec = second;
+    resetTime.tm_isdst = 0;
+    
+    time_t resetTimestamp = _mkgmtime(&resetTime);
+    time_t now = time(nullptr);
+    
+    if (resetTimestamp <= now) {
+        return L"Refreshing soon";
+    }
+    
+    double diffSeconds = difftime(resetTimestamp, now);
+    int diffHours = static_cast<int>(diffSeconds / 3600);
+    int diffMinutes = static_cast<int>((diffSeconds - diffHours * 3600) / 60);
+    
+    std::wstringstream ss;
+    if (diffHours > 0) {
+        ss << diffHours << L"h " << diffMinutes << L"m";
+    } else if (diffMinutes > 0) {
+        ss << diffMinutes << L"m";
+    } else {
+        ss << L"<1m";
+    }
+    ss << L" refresh";
+    
+    return ss.str();
 }
 
 ProgressBarRenderer::ProgressBarRenderer() 
@@ -138,43 +209,50 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
         DeleteObject(hBgBrush);
     }
     
-    // Setup text area
-    RECT textRect = { x + 10, y, x + width - 10, y + kBarHeight };
-    
     // Select normal font
     HFONT hOldFont = (HFONT)SelectObject(hdc, hFontNormal_);
     
-    // Build metric name and window label
-    std::wstringstream ss;
-    ss << ToWString(metric.name);
-    ss << L" (";
-    ss << ToWString(metric.window.label);
-    ss << L")";
+    // Build left side: metric name and window label
+    std::wstringstream leftSs;
+    leftSs << ToWString(metric.name);
+    leftSs << L" (";
+    leftSs << ToWString(metric.window.label);
+    leftSs << L")";
     
+    // Calculate width needed for left text
+    SIZE textSize;
+    GetTextExtentPoint32W(hdc, leftSs.str().c_str(), (int)leftSs.str().length(), &textSize);
+    int leftTextWidth = textSize.cx + 20; // Add padding
+    
+    // Draw left side text
+    RECT leftRect = { x + 10, y, x + leftTextWidth, y + kBarHeight };
     SetTextColor(hdc, kTextColor);
     SetBkMode(hdc, TRANSPARENT);
-    DrawTextW(hdc, ss.str().c_str(), -1, &textRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+    DrawTextW(hdc, leftSs.str().c_str(), -1, &leftRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     
-    // Draw value on the right (percentage if has limit, otherwise actual value)
-    std::wstringstream valueSs;
+    // Build middle section: usage value
+    std::wstringstream middleSs;
     if (hasLimit) {
-        valueSs << percentage << L"%";
+        middleSs << percentage << L"%";
     } else {
-        // Show actual usage value for metrics without limits
-        valueSs << std::fixed << std::setprecision(1) << metric.amount.used;
-        valueSs << L" " << ToWString(metric.amount.unit);
+        // Use formatted number for metrics without limits
+        middleSs << FormatNumber(metric.amount.used, metric.name);
+        middleSs << L" " << ToWString(metric.amount.unit);
     }
     
-    RECT valueRect = { x, y, x + width - 10, y + kBarHeight };
-    DrawTextW(hdc, valueSs.str().c_str(), -1, &valueRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+    // Draw middle text (center-left area)
+    int middleStart = x + leftTextWidth + 10;
+    RECT middleRect = { middleStart, y, x + width - 150, y + kBarHeight };
+    DrawTextW(hdc, middleSs.str().c_str(), -1, &middleRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     
-    // Draw reset time if available (small font)
+    // Build right side: remaining time until refresh (large, black font)
     if (metric.window.resets_at.has_value()) {
-        SelectObject(hdc, hFontSmall_);
-        RECT subRect = { x + 10, y + 20, x + width - 10, y + kBarHeight };
-        std::wstring resetText = L"Resets: " + ToWString(metric.window.formatResetTime());
-        SetTextColor(hdc, kSubTextColor);
-        DrawTextW(hdc, resetText.c_str(), -1, &subRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+        std::wstring remainingTime = CalculateRemainingTime(*metric.window.resets_at);
+        if (!remainingTime.empty()) {
+            RECT rightRect = { x + width - 140, y, x + width - 10, y + kBarHeight };
+            SetTextColor(hdc, RGB(0, 0, 0)); // Black color
+            DrawTextW(hdc, remainingTime.c_str(), -1, &rightRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+        }
     }
     
     // Restore original font
