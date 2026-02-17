@@ -285,6 +285,10 @@ struct AppState {
     // Pin (always-on-top)
     bool isPinned;
 
+    // Saved normal-mode window rect (for restoring when leaving compact)
+    RECT savedNormalRect;
+    bool hasSavedNormalRect;
+
     // System tray (notification area)
     NOTIFYICONDATAW nid;
     bool trayIconCreated;
@@ -294,7 +298,8 @@ struct AppState {
           themeMode(ThemeMode::System), scrollOffset(0), contentHeight(0),
           hBgBrush(nullptr), initialResizeDone(false),
           scrollDragging(false), dragStartMouseY(0), dragStartOffset(0),
-          scrollThumbHovered(false), isPinned(false), nid{}, trayIconCreated(false) {
+          scrollThumbHovered(false), isPinned(false),
+          savedNormalRect{}, hasSavedNormalRect(false), nid{}, trayIconCreated(false) {
         renderer = std::make_unique<ProgressBarRenderer>();
         httpClient = std::make_unique<HttpClient>();
     }
@@ -729,7 +734,7 @@ static void TogglePin(HWND hwnd) {
 // ---------------------------------------------------------------------------
 
 // Resize the window to exactly fit content (compact mode only).
-// Also disables / re-enables resizing.
+// Also disables / re-enables resizing and saves/restores normal-mode geometry.
 static void ApplyCompactLayout(HWND hwnd) {
     if (!g_app || !g_app->renderer) return;
     bool compact = g_app->renderer->IsCompact();
@@ -747,6 +752,16 @@ static void ApplyCompactLayout(HWND hwnd) {
     g_app->scrollOffset = 0;
 
     if (compact && !g_app->subscriptions.empty()) {
+        // Save current normal-mode window rect before resizing
+        if (!g_app->hasSavedNormalRect) {
+            GetWindowRect(hwnd, &g_app->savedNormalRect);
+            g_app->hasSavedNormalRect = true;
+            Log("Saved normal rect: %d,%d %dx%d",
+                g_app->savedNormalRect.left, g_app->savedNormalRect.top,
+                g_app->savedNormalRect.right - g_app->savedNormalRect.left,
+                g_app->savedNormalRect.bottom - g_app->savedNormalRect.top);
+        }
+
         // Measure content width using a screen DC
         HDC hdc = GetDC(hwnd);
         int contentW = g_app->renderer->CalculateContentWidth(hdc, g_app->subscriptions);
@@ -773,8 +788,22 @@ static void ApplyCompactLayout(HWND hwnd) {
         SetWindowPos(hwnd, nullptr, 0, 0, winW, winH,
                      SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
         Log("Compact auto-resize: client=%dx%d window=%dx%d", contentW, contentH, winW, winH);
+    } else if (!compact) {
+        // Leaving compact — restore saved normal-mode window rect
+        if (g_app->hasSavedNormalRect) {
+            RECT& r = g_app->savedNormalRect;
+            SetWindowPos(hwnd, nullptr, r.left, r.top,
+                         r.right - r.left, r.bottom - r.top,
+                         SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+            g_app->hasSavedNormalRect = false;
+            Log("Restored normal rect: %d,%d %dx%d",
+                r.left, r.top, r.right - r.left, r.bottom - r.top);
+        } else {
+            SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
+                         SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        }
     } else {
-        // Leaving compact or no data yet — just refresh the frame
+        // Compact but no data yet — just refresh the frame
         SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
                      SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
     }
