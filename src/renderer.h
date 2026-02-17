@@ -74,6 +74,10 @@ public:
     // Set the active color scheme
     void SetColorScheme(const ColorScheme& scheme);
     const ColorScheme& GetActiveScheme() const { return colors_; }
+
+    // Compact mode: smaller bars, less info, tighter spacing
+    void SetCompact(bool compact);
+    bool IsCompact() const { return compact_; }
     
     // Render all subscription progress bars.
     // scrollOffset: vertical pixel offset applied before drawing.
@@ -120,15 +124,16 @@ private:
     // Active color scheme
     ColorScheme colors_;
     
-    // Layout constants
-    static const int kMargin = 16;
-    static const int kBarHeight = 44;
-    static const int kHeaderHeight = 32;
-    static const int kItemSpacing = 14;
-    static const int kServiceSpacing = 24;
+    // Layout helpers (values depend on compact_ flag)
+    int Margin()         const { return compact_ ? 8  : 16; }
+    int BarHeight()      const { return compact_ ? 26 : 44; }
+    int HeaderHeight()   const { return compact_ ? 22 : 32; }
+    int ItemSpacing()    const { return compact_ ? 6  : 14; }
+    int ServiceSpacing() const { return compact_ ? 12 : 24; }
     
     int windowWidth_;
     int windowHeight_;
+    bool compact_;
     
     // Fonts
     HFONT hFontNormal_;

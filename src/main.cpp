@@ -30,6 +30,7 @@
 #define WM_TRAYICON       (WM_USER + 100)
 #define IDM_TRAY_SHOW     40001
 #define IDM_TRAY_EXIT     40002
+#define IDM_COMPACT_MODE  40003
 
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
@@ -146,6 +147,7 @@ struct SavedSettings {
     // Window geometry
     int  x, y, w, h;
     bool pinned;
+    bool compact;
     bool windowValid;     // true if x/y/w/h loaded successfully
 
     // API URL (empty if not saved)
@@ -168,7 +170,7 @@ static std::wstring GetSettingsPath() {
     return dir + L"\\settings.txt";
 }
 
-static void SaveSettings(HWND hwnd, bool pinned, const std::string& apiUrl) {
+static void SaveSettings(HWND hwnd, bool pinned, bool compact, const std::string& apiUrl) {
     WINDOWPLACEMENT wp = { sizeof(wp) };
     if (!GetWindowPlacement(hwnd, &wp)) return;
 
@@ -185,6 +187,7 @@ static void SaveSettings(HWND hwnd, bool pinned, const std::string& apiUrl) {
     f << "w=" << (rc.right - rc.left) << "\n";
     f << "h=" << (rc.bottom - rc.top) << "\n";
     f << "pinned=" << (pinned ? 1 : 0) << "\n";
+    f << "compact=" << (compact ? 1 : 0) << "\n";
     if (!apiUrl.empty()) {
         f << "api_url=" << apiUrl << "\n";
     }
@@ -213,6 +216,7 @@ static SavedSettings LoadSettings() {
         else if (key == "w")       { ss.w = std::stoi(val); gotW = true; }
         else if (key == "h")       { ss.h = std::stoi(val); gotH = true; }
         else if (key == "pinned")  { ss.pinned = (std::stoi(val) != 0); }
+        else if (key == "compact") { ss.compact = (std::stoi(val) != 0); }
         else if (key == "api_url") { ss.apiUrl = val; }
     }
 
@@ -400,7 +404,7 @@ static void ShowAppWindow(HWND hwnd) {
 static void HideAppWindow(HWND hwnd) {
     if (g_app) {
         // Save settings before hiding so geometry is persisted
-        SaveSettings(hwnd, g_app->isPinned, g_app->apiUrl);
+        SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->apiUrl);
     }
     ShowWindow(hwnd, SW_HIDE);
     Log("Window hidden to tray");
@@ -413,7 +417,10 @@ static void ShowTrayContextMenu(HWND hwnd) {
     HMENU hMenu = CreatePopupMenu();
     if (!hMenu) return;
 
+    bool compact = g_app ? g_app->renderer->IsCompact() : false;
     AppendMenuW(hMenu, MF_STRING, IDM_TRAY_SHOW, L"Show Window");
+    AppendMenuW(hMenu, MF_STRING | (compact ? MF_CHECKED : MF_UNCHECKED),
+                IDM_COMPACT_MODE, L"Compact Mode");
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
     AppendMenuW(hMenu, MF_STRING, IDM_TRAY_EXIT, L"Exit");
 
@@ -714,6 +721,31 @@ static void TogglePin(HWND hwnd) {
 }
 
 // ---------------------------------------------------------------------------
+// Compact mode toggle
+// ---------------------------------------------------------------------------
+
+static void ToggleCompact(HWND hwnd) {
+    if (!g_app || !g_app->renderer) return;
+
+    bool compact = !g_app->renderer->IsCompact();
+    g_app->renderer->SetCompact(compact);
+
+    // Recalculate content height and scroll
+    g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
+    UpdateScrollInfo(hwnd);
+
+    // Update system menu check mark
+    HMENU hSysMenu = GetSystemMenu(hwnd, FALSE);
+    if (hSysMenu) {
+        CheckMenuItem(hSysMenu, IDM_COMPACT_MODE,
+                      MF_BYCOMMAND | (compact ? MF_CHECKED : MF_UNCHECKED));
+    }
+
+    InvalidateRect(hwnd, nullptr, TRUE);
+    Log("Compact mode toggled: %s", compact ? "on" : "off");
+}
+
+// ---------------------------------------------------------------------------
 // WndProc
 // ---------------------------------------------------------------------------
 
@@ -726,11 +758,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     g_app->hwnd = hwnd;
                     ApplyTheme();
 
-                    // Add "Pin to Top" item to system menu
+                    // Add custom items to system menu
                     HMENU hSysMenu = GetSystemMenu(hwnd, FALSE);
                     if (hSysMenu) {
                         AppendMenuW(hSysMenu, MF_SEPARATOR, 0, nullptr);
                         AppendMenuW(hSysMenu, MF_STRING, IDM_PIN_TO_TOP, L"Pin to Top\tCtrl+T");
+                        AppendMenuW(hSysMenu, MF_STRING, IDM_COMPACT_MODE, L"Compact Mode");
                     }
 
                     // Create system tray icon
@@ -929,6 +962,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     TogglePin(hwnd);
                     return 0;
                 }
+                if (cmd == IDM_COMPACT_MODE) {
+                    ToggleCompact(hwnd);
+                    return 0;
+                }
                 if (cmd == SC_MINIMIZE) {
                     // Minimize -> hide to tray instead of taskbar
                     HideAppWindow(hwnd);
@@ -957,6 +994,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     case IDM_TRAY_SHOW:
                         ShowAppWindow(hwnd);
                         break;
+                    case IDM_COMPACT_MODE:
+                        ToggleCompact(hwnd);
+                        break;
                     case IDM_TRAY_EXIT:
                         DestroyWindow(hwnd);
                         break;
@@ -977,7 +1017,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 RemoveTrayIcon();
                 // Persist settings before closing
                 if (g_app) {
-                    SaveSettings(hwnd, g_app->isPinned, g_app->apiUrl);
+                    SaveSettings(hwnd, g_app->isPinned, g_app->renderer->IsCompact(), g_app->apiUrl);
                     Log("Settings saved");
                 }
                 KillTimer(hwnd, 1);
@@ -1307,6 +1347,8 @@ bool ParseCommandLine(AppState& app, bool& debugMode, std::wstring& outUrlArg) {
         std::wstring arg = argv[i];
         if (arg == L"--debug") {
             debugMode = true;
+        } else if (arg == L"--compact") {
+            app.renderer->SetCompact(true);
         } else if (arg == L"--theme" && i + 1 < argc) {
             themeArg = argv[++i];
         } else if (arg[0] != L'-') {
@@ -1461,7 +1503,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         initW = saved.w;
         initH = saved.h;
         app.isPinned = saved.pinned;
-        Log("Restored window state: %d,%d %dx%d pinned=%d", initX, initY, initW, initH, (int)saved.pinned);
+        if (saved.compact) app.renderer->SetCompact(true);
+        Log("Restored window state: %d,%d %dx%d pinned=%d compact=%d",
+            initX, initY, initW, initH, (int)saved.pinned, (int)saved.compact);
     }
 
     // Create a hidden owner window so the main window does not appear in the
@@ -1508,11 +1552,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     UpdateWindow(hwnd);
 
     // Update title and menu after window is visible
-    if (app.isPinned) {
-        UpdateWindowTitle(hwnd);
+    {
         HMENU hSysMenu = GetSystemMenu(hwnd, FALSE);
-        if (hSysMenu) {
-            CheckMenuItem(hSysMenu, IDM_PIN_TO_TOP, MF_BYCOMMAND | MF_CHECKED);
+        if (app.isPinned) {
+            UpdateWindowTitle(hwnd);
+            if (hSysMenu) {
+                CheckMenuItem(hSysMenu, IDM_PIN_TO_TOP, MF_BYCOMMAND | MF_CHECKED);
+            }
+        }
+        if (app.renderer->IsCompact() && hSysMenu) {
+            CheckMenuItem(hSysMenu, IDM_COMPACT_MODE, MF_BYCOMMAND | MF_CHECKED);
         }
     }
 
