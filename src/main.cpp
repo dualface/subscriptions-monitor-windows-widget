@@ -1258,8 +1258,13 @@ static void ApplyCompactLayout(HWND hwnd)
     int oldCenterX = (oldRect.left + oldRect.right) / 2;
     int oldCenterY = (oldRect.top + oldRect.bottom) / 2;
 
+    // Check if currently in normal mode (has caption) BEFORE modifying styles
+    // This is important for determining whether to save the current window rect
+    LONG currentStyle = GetWindowLong(hwnd, GWL_STYLE);
+    bool currentlyInNormalMode = (currentStyle & WS_CAPTION) != 0;
+
     // Toggle resizable frame, caption, and client edge
-    LONG style = GetWindowLong(hwnd, GWL_STYLE);
+    LONG style = currentStyle;
     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     if (compact) {
         // Compact mode: remove caption, border, thick frame, client edge
@@ -1294,12 +1299,8 @@ static void ApplyCompactLayout(HWND hwnd)
 
     if (compact && !g_app->subscriptions.empty()) {
         // Save current normal-mode window rect before resizing
-        // Only save if current window has a caption (i.e., it's in normal mode)
-        // If already in compact mode (no caption), don't overwrite the saved rect
-        LONG currentStyle = GetWindowLong(hwnd, GWL_STYLE);
-        bool hasCaption = (currentStyle & WS_CAPTION) != 0;
-
-        if (hasCaption) {
+        // Use the pre-calculated currentlyInNormalMode flag (before styles were modified)
+        if (currentlyInNormalMode) {
             GetWindowRect(hwnd, &g_app->savedNormalRect);
             g_app->hasSavedNormalRect = true;
             Log("Saved normal rect: %d,%d %dx%d", g_app->savedNormalRect.left, g_app->savedNormalRect.top,
