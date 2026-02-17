@@ -48,9 +48,9 @@ std::string Window::formatResetTime() const {
     return full;
 }
 
-std::optional<int> Metric::percentage() const {
+std::optional<double> Metric::percentage() const {
     if (amount.limit.has_value() && *amount.limit > 0) {
-        return static_cast<int>((amount.used / *amount.limit) * 100);
+        return (amount.used / *amount.limit) * 100.0;
     }
     return std::nullopt;
 }

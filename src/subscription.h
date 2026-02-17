@@ -50,7 +50,7 @@ struct Metric {
     Amount amount;
     
     // Calculate percentage (if limit exists)
-    std::optional<int> percentage() const;
+    std::optional<double> percentage() const;
     
     // Whether to show progress bar (only if limit exists)
     bool hasProgress() const;
