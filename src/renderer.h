@@ -127,7 +127,7 @@ private:
     // Layout helpers (values depend on compact_ flag)
     int Margin()         const { return compact_ ? 8  : 16; }
     int BarHeight()      const { return compact_ ? 26 : 44; }
-    int HeaderHeight()   const { return compact_ ? 22 : 32; }
+    int HeaderHeight()   const { return compact_ ? 26 : 32; }  // same as BarHeight in compact
     int ItemSpacing()    const { return compact_ ? 6  : 14; }
     int ServiceSpacing() const { return compact_ ? 12 : 24; }
     

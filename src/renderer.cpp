@@ -108,7 +108,7 @@ static std::wstring FormatNumber(double value, const std::string& metricName) {
     return ss.str();
 }
 
-static std::wstring CalculateRemainingTime(const std::string& resetsAt) {
+static std::wstring CalculateRemainingTime(const std::string& resetsAt, bool compact = false) {
     if (resetsAt.empty()) return L"";
 
     struct tm resetTime = {0};
@@ -127,17 +127,25 @@ static std::wstring CalculateRemainingTime(const std::string& resetsAt) {
 
     time_t resetTimestamp = _mkgmtime(&resetTime);
     time_t now = time(nullptr);
-    if (resetTimestamp <= now) return L"Refreshing soon";
+    if (resetTimestamp <= now) return compact ? L"soon" : L"Refreshing soon";
 
     double diffSeconds = difftime(resetTimestamp, now);
-    int diffHours   = static_cast<int>(diffSeconds / 3600);
-    int diffMinutes = static_cast<int>((diffSeconds - diffHours * 3600) / 60);
+    int totalMinutes = static_cast<int>(diffSeconds / 60);
+    int diffHours   = totalMinutes / 60;
+    int diffMinutes = totalMinutes % 60;
 
     std::wstringstream ss;
-    if (diffHours > 0)        ss << diffHours << L"h " << diffMinutes << L"m";
-    else if (diffMinutes > 0) ss << diffMinutes << L"m";
-    else                      ss << L"<1m";
-    ss << L" refresh";
+    if (compact) {
+        // Compact: just "2h15m" or "15m" or "<1m"
+        if (diffHours > 0)        ss << diffHours << L"h" << diffMinutes << L"m";
+        else if (diffMinutes > 0) ss << diffMinutes << L"m";
+        else                      ss << L"<1m";
+    } else {
+        if (diffHours > 0)        ss << diffHours << L"h " << diffMinutes << L"m";
+        else if (diffMinutes > 0) ss << diffMinutes << L"m";
+        else                      ss << L"<1m";
+        ss << L" refresh";
+    }
     return ss.str();
 }
 
@@ -219,10 +227,15 @@ void ProgressBarRenderer::SetWindowSize(int width, int height) {
 int ProgressBarRenderer::CalculateContentHeight(const std::vector<Subscription>& subscriptions) const {
     int h = Margin();
     for (const auto& sub : subscriptions) {
-        h += HeaderHeight();
-        for (size_t i = 0; i < sub.metrics.size(); ++i) {
-            h += BarHeight() + ItemSpacing();
+        int metricCount = 0;
+        for (const auto& metric : sub.metrics) {
+            // In compact mode, skip metrics without a limit (e.g. Total Tokens, API Requests)
+            if (compact_ && !metric.amount.limit.has_value()) continue;
+            ++metricCount;
         }
+        if (compact_ && metricCount == 0) continue;  // skip empty services
+        h += HeaderHeight();
+        h += metricCount * (BarHeight() + ItemSpacing());
         h += ServiceSpacing();
     }
     // Add bottom margin
@@ -238,12 +251,22 @@ int ProgressBarRenderer::Render(HDC hdc, const std::vector<Subscription>& subscr
     int currentY = Margin() - scrollOffset;
 
     for (const auto& sub : subscriptions) {
+        // In compact mode, check if this service has any displayable metrics
+        if (compact_) {
+            bool hasDisplayable = false;
+            for (const auto& m : sub.metrics) {
+                if (m.amount.limit.has_value()) { hasDisplayable = true; break; }
+            }
+            if (!hasDisplayable) continue;
+        }
+
         if (currentY + HeaderHeight() > 0 && currentY < windowHeight_) {
             RenderServiceHeader(hdc, Margin(), currentY, windowWidth_ - 2 * Margin(), sub);
         }
         currentY += HeaderHeight();
 
         for (const auto& metric : sub.metrics) {
+            if (compact_ && !metric.amount.limit.has_value()) continue;
             if (currentY + BarHeight() > 0 && currentY < windowHeight_) {
                 RenderMetric(hdc, Margin(), currentY, windowWidth_ - 2 * Margin(), metric, sub.display_name);
             }
@@ -262,7 +285,7 @@ int ProgressBarRenderer::Render(HDC hdc, const std::vector<Subscription>& subscr
 
 void ProgressBarRenderer::RenderServiceHeader(HDC hdc, int x, int y, int width, const Subscription& sub) {
     RECT rect = { x, y, x + width, y + HeaderHeight() };
-    HFONT hOldFont = (HFONT)SelectObject(hdc, hFontBold_);
+    HFONT hOldFont = (HFONT)SelectObject(hdc, compact_ ? hFontNormal_ : hFontBold_);
 
     std::wstringstream ss;
     ss << ToWString(sub.display_name) << L" - " << ToWString(sub.plan.name);
@@ -303,7 +326,7 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
     SetBkMode(hdc, TRANSPARENT);
 
     if (compact_) {
-        // Compact: "window_label   percentage%   remaining_time"
+        // Compact: "window_label   percentage%   2h15m"
         std::wstring labelW = ToWString(metric.window.label);
 
         SIZE labelSize;
@@ -313,22 +336,17 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width,
         RECT leftRect = { x + pad, y, x + labelWidth, y + barH };
         DrawTextW(hdc, labelW.c_str(), -1, &leftRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
-        // Middle: percentage or raw usage
+        // Middle: percentage
         std::wstringstream midSs;
-        if (hasLimit) {
-            midSs << std::fixed << std::setprecision(1) << percentage << L"%";
-        } else {
-            midSs << FormatNumber(metric.amount.used, metric.name)
-                  << L" " << ToWString(metric.amount.unit);
-        }
-        RECT midRect = { x + labelWidth + pad, y, x + width - 140, y + barH };
+        midSs << std::fixed << std::setprecision(1) << percentage << L"%";
+        RECT midRect = { x + labelWidth + pad, y, x + width - 90, y + barH };
         DrawTextW(hdc, midSs.str().c_str(), -1, &midRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
-        // Right: remaining time
+        // Right: remaining time (compact format, e.g. "2h15m")
         if (metric.window.resets_at.has_value()) {
-            std::wstring remaining = CalculateRemainingTime(*metric.window.resets_at);
+            std::wstring remaining = CalculateRemainingTime(*metric.window.resets_at, true);
             if (!remaining.empty()) {
-                RECT rightRect = { x + width - 140, y, x + width - pad, y + barH };
+                RECT rightRect = { x + width - 90, y, x + width - pad, y + barH };
                 SetTextColor(hdc, colors_.resetTimeColor);
                 DrawTextW(hdc, remaining.c_str(), -1, &rightRect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
             }
