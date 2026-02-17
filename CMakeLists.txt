@@ -22,6 +22,7 @@ set(SOURCES
     src/subscription.cpp
     src/http_client.cpp
     src/renderer.cpp
+    src/app.rc
 )
 
 # 头文件
@@ -29,6 +30,7 @@ set(HEADERS
     src/subscription.h
     src/http_client.h
     src/renderer.h
+    src/resource.h
     src/json.hpp
 )
 
@@ -47,6 +49,8 @@ if(WIN32)
         user32
         kernel32
         comctl32
+        advapi32
+        dwmapi
     )
 endif()
 
