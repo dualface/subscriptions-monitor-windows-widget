@@ -216,26 +216,34 @@ void ProgressBarRenderer::SetCompact(bool compact)
     if (compact_ == compact)
         return;
     compact_ = compact;
+    // Recreate fonts with compact mode sizes
+    DestroyFonts();
+    CreateFonts();
+}
+
+// Helper to create a font with system default font face
+// Uses "MS Shell Dlg 2" which maps to the system default GUI font
+// This ensures proper display across different Windows language versions
+static HFONT CreateSystemFont(int height, int weight = FW_NORMAL)
+{
+    return CreateFontW(height, 0, 0, 0, weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+                       CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"MS Shell Dlg 2");
 }
 
 void ProgressBarRenderer::CreateFonts()
 {
-    const int baseNormalSize = 18;
-    const int baseBoldSize = 20;
-    const int baseSmallSize = 14;
+    // Compact mode uses smaller fonts for more compact display
+    const int baseNormalSize = compact_ ? 15 : 18;
+    const int baseBoldSize = compact_ ? 17 : 20;
+    const int baseSmallSize = compact_ ? 11 : 14;
 
     int normalSize = static_cast<int>(baseNormalSize * dpiScale_);
     int boldSize = static_cast<int>(baseBoldSize * dpiScale_);
     int smallSize = static_cast<int>(baseSmallSize * dpiScale_);
 
-    hFontNormal_ = CreateFontW(normalSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                               CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
-
-    hFontBold_ = CreateFontW(boldSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                             CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
-
-    hFontSmall_ = CreateFontW(smallSize, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                              CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
+    hFontNormal_ = CreateSystemFont(normalSize, FW_NORMAL);
+    hFontBold_ = CreateSystemFont(boldSize, FW_BOLD);
+    hFontSmall_ = CreateSystemFont(smallSize, FW_NORMAL);
 }
 
 void ProgressBarRenderer::OnDpiChanged(UINT newDpi)

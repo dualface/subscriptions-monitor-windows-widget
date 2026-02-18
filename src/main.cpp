@@ -705,6 +705,15 @@ static void UpdateTrayIcon()
     Log("Tray icon updated for %s theme", dark ? "dark" : "light");
 }
 
+// Helper to create a font with system default font face
+// Uses "MS Shell Dlg 2" which maps to the system default GUI font
+// This ensures proper display across different Windows language versions
+static HFONT CreateSystemFont(int height, int weight = FW_NORMAL)
+{
+    return CreateFontW(height, 0, 0, 0, weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+                       CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"MS Shell Dlg 2");
+}
+
 static void ShowAppWindow(HWND hwnd)
 {
     // Ensure the window has no taskbar button: keep WS_EX_TOOLWINDOW
@@ -1116,8 +1125,7 @@ void OnPaint(HWND hwnd)
             if (g_debugMode)
                 Log("Rendering: Loading state");
 
-            HFONT hFont = CreateFontW(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                                      CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
+            HFONT hFont = CreateSystemFont(18);
             if (hFont) {
                 HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
@@ -1134,8 +1142,7 @@ void OnPaint(HWND hwnd)
             if (g_debugMode)
                 Log("Rendering: Error state - %s", lastErrorCopy.c_str());
 
-            HFONT hFont = CreateFontW(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                                      CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
+            HFONT hFont = CreateSystemFont(16);
             if (hFont) {
                 HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
@@ -1161,8 +1168,7 @@ void OnPaint(HWND hwnd)
             if (g_debugMode)
                 Log("Rendering: No data available");
 
-            HFONT hFont = CreateFontW(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                                      CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
+            HFONT hFont = CreateSystemFont(16);
             if (hFont) {
                 HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
