@@ -7,9 +7,10 @@
 #include <atomic>
 #include <chrono>
 #include <csignal>
+#include <cstring>
 #include <ctime>
 #include <fstream>
-#include <iostream>
+#include <io.h>
 #include <memory>
 #include <mutex>
 #include <shobjidl.h>
@@ -35,7 +36,11 @@
 #define WM_TRAYICON (WM_USER + 100)
 #define IDM_TRAY_SHOW 40001
 #define IDM_TRAY_EXIT 40002
-#define IDM_COMPACT_MODE 40003
+// Custom system menu command IDs.
+// WM_SYSCOMMAND masks wParam with 0xFFF0, so the low 4 bits are lost.
+// Use values that are unique after masking and don't collide with
+// standard SC_* constants (0xF000+).  Range 0xE000-0xEFF0 is safe.
+#define IDM_COMPACT_MODE 0xE010
 
 // Context menu items
 #define IDM_TRAY_HIDE 40004
@@ -44,7 +49,7 @@
 #define IDM_OPACITY_75 40012
 #define IDM_OPACITY_100 40013
 
-static const UINT IDM_PIN_TO_TOP = 0x0010;  // Custom system menu command ID
+static const UINT IDM_PIN_TO_TOP = 0xE020;  // Custom system menu command ID (see IDM_COMPACT_MODE comment)
 
 #pragma comment(                                                                                                       \
     linker,                                                                                                            \
@@ -57,14 +62,39 @@ static const UINT IDM_PIN_TO_TOP = 0x0010;  // Custom system menu command ID
 
 // Global log file
 static std::ofstream g_logFile;
+static std::mutex g_logMutex;  // Protects g_logFile and g_consoleOut
 static bool g_debugMode = false;
 static std::atomic<bool> g_shuttingDown {false};
 static FILE* g_consoleOut = nullptr;
 
 // Log rotation constants
-static const char* g_logFilePath = "AISubscriptionsMonitor.log";
-static const char* g_oldLogFilePath = "AISubscriptionsMonitor.log.old";
+static std::string g_logFilePath;
+static std::string g_oldLogFilePath;
 static const std::streamoff g_maxLogSize = 5 * 1024 * 1024;  // 5 MB limit
+
+// Build log file paths under %LOCALAPPDATA%\AISubscriptionsMonitor
+static void InitLogPaths()
+{
+    wchar_t* localAppData = nullptr;
+    if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, nullptr, &localAppData)) && localAppData) {
+        std::wstring dir = std::wstring(localAppData) + L"\\AISubscriptionsMonitor";
+        CoTaskMemFree(localAppData);
+        CreateDirectoryW(dir.c_str(), nullptr);
+
+        // Convert to narrow string for std::ofstream
+        int len = WideCharToMultiByte(CP_UTF8, 0, dir.c_str(), (int)dir.size(), nullptr, 0, nullptr, nullptr);
+        std::string dirA(len, 0);
+        WideCharToMultiByte(CP_UTF8, 0, dir.c_str(), (int)dir.size(), &dirA[0], len, nullptr, nullptr);
+
+        g_logFilePath = dirA + "\\AISubscriptionsMonitor.log";
+        g_oldLogFilePath = dirA + "\\AISubscriptionsMonitor.log.old";
+    }
+    else {
+        // Fallback to current directory
+        g_logFilePath = "AISubscriptionsMonitor.log";
+        g_oldLogFilePath = "AISubscriptionsMonitor.log.old";
+    }
+}
 
 // Check and rotate log file if needed
 static void CheckAndRotateLog()
@@ -82,13 +112,13 @@ static void CheckAndRotateLog()
     g_logFile.close();
 
     // Remove old backup if exists
-    DeleteFileA(g_oldLogFilePath);
+    DeleteFileA(g_oldLogFilePath.c_str());
 
     // Rename current log to backup
-    MoveFileA(g_logFilePath, g_oldLogFilePath);
+    MoveFileA(g_logFilePath.c_str(), g_oldLogFilePath.c_str());
 
     // Reopen new log file
-    g_logFile.open(g_logFilePath, std::ios::out | std::ios::app);
+    g_logFile.open(g_logFilePath.c_str(), std::ios::out | std::ios::app);
     if (g_logFile.is_open()) {
         g_logFile << "[";
         char timeStr[64];
@@ -130,14 +160,15 @@ void Log(const char* fmt, ...)
     char logLine[8192];
     snprintf(logLine, sizeof(logLine), "[%s] %s", timeStr, buffer);
 
+    std::lock_guard<std::mutex> lock(g_logMutex);
+
     if (g_debugMode && g_consoleOut) {
         fprintf(g_consoleOut, "%s\n", logLine);
         fflush(g_consoleOut);
     }
 
     if (g_logFile.is_open()) {
-        g_logFile << logLine << std::endl;
-        g_logFile.flush();
+        g_logFile << logLine << std::endl;  // std::endl already flushes
         CheckAndRotateLog();
     }
 }
@@ -147,7 +178,8 @@ bool InitLogging(bool debugMode)
 {
     g_debugMode = debugMode;
 
-    g_logFile.open(g_logFilePath, std::ios::out | std::ios::app);
+    InitLogPaths();
+    g_logFile.open(g_logFilePath.c_str(), std::ios::out | std::ios::app);
     if (!g_logFile.is_open()) {
         return false;
     }
@@ -180,17 +212,49 @@ void CloseLogging()
 
 void CrashHandler(int signal)
 {
-    Log("FATAL ERROR: Signal %d caught", signal);
-    Log("Application crashed!");
-    CloseLogging();
+    // IMPORTANT: Only use async-signal-safe operations here.
+    // Log(), std::ofstream, etc. are NOT safe in signal context.
+    // Use raw write() to the log file descriptor as a best-effort.
+    const char* msg = nullptr;
+    switch (signal) {
+    case SIGSEGV:
+        msg = "[CRASH] FATAL: Segmentation fault (SIGSEGV)\n";
+        break;
+    case SIGABRT:
+        msg = "[CRASH] FATAL: Abort signal (SIGABRT)\n";
+        break;
+    case SIGFPE:
+        msg = "[CRASH] FATAL: Floating point exception (SIGFPE)\n";
+        break;
+    case SIGILL:
+        msg = "[CRASH] FATAL: Illegal instruction (SIGILL)\n";
+        break;
+    default:
+        msg = "[CRASH] FATAL: Unknown signal caught\n";
+        break;
+    }
+
+    // Best-effort write to stderr (async-signal-safe on Windows via _write)
+    if (msg) {
+        _write(2, msg, (unsigned int)strlen(msg));
+    }
+
     _exit(1);  // Use _exit() instead of exit() — safe from signal handlers
 }
 
 LONG WINAPI ExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
 {
-    Log("FATAL ERROR: Exception code 0x%08X", pExceptionInfo->ExceptionRecord->ExceptionCode);
-    Log("Exception at address: 0x%p", pExceptionInfo->ExceptionRecord->ExceptionAddress);
-    CloseLogging();
+    // IMPORTANT: Only use async-signal-safe / exception-safe operations here.
+    // The process state may be corrupted (heap lock held, stack smashed, etc.),
+    // so Log(), std::ofstream, and heap-allocating functions are NOT safe.
+    // Use raw _write() to stderr as a best-effort diagnostic.
+    char buf[256];
+    int len =
+        snprintf(buf, sizeof(buf), "[CRASH] FATAL: Exception code 0x%08lX at address 0x%p\n",
+                 pExceptionInfo->ExceptionRecord->ExceptionCode, pExceptionInfo->ExceptionRecord->ExceptionAddress);
+    if (len > 0) {
+        _write(2, buf, (unsigned int)len);
+    }
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
@@ -212,6 +276,16 @@ const int kMinWindowHeightCompact = 120;   // Minimum window height (compact)
 const int kWindowWidth = kMinWindowWidth;  // Initial window width
 const int kWindowHeight = 600;             // Initial window height
 const int kRefreshIntervalMs = 60000;
+
+// Opacity presets (0-255)
+const BYTE kOpacity25 = 64;    // ~25%
+const BYTE kOpacity50 = 128;   // ~50%
+const BYTE kOpacity75 = 191;   // ~75%
+const BYTE kOpacity100 = 255;  // 100%
+
+// Scroll behaviour
+const int kScrollLineHeight = 40;    // pixels per "line" when scrolling
+const int kScrollLinesPerNotch = 3;  // lines per mouse wheel notch
 
 // ---------------------------------------------------------------------------
 // Window state persistence (%LOCALAPPDATA%\AISubscriptionsMonitor\settings.txt)
@@ -236,10 +310,10 @@ struct SavedSettings
     ModeSettings compact;
 
     // Current mode preference
-    bool isCompact;
+    bool isCompact = false;
 
     // Pin state (shared between modes)
-    bool pinned;
+    bool pinned = false;
 
     // Theme preference
     std::string theme;  // "light", "dark", or "" (system)
@@ -284,7 +358,11 @@ static void SaveSettings(HWND hwnd, bool pinned, bool compact, ThemeMode themeMo
     if (path.empty())
         return;
 
-    std::ofstream f(path);
+    // Write to a temporary file first, then atomically replace.
+    // This prevents settings corruption if the app crashes mid-write.
+    std::wstring tmpPath = path + L".tmp";
+
+    std::ofstream f(tmpPath);
     if (!f.is_open())
         return;
 
@@ -335,6 +413,17 @@ static void SaveSettings(HWND hwnd, bool pinned, bool compact, ThemeMode themeMo
     }
     if (!apiUrl.empty()) {
         f << "api_url=" << apiUrl << "\n";
+    }
+
+    f.close();
+
+    // Atomic replace: MoveFileExW with MOVEFILE_REPLACE_EXISTING
+    if (!f.fail()) {
+        MoveFileExW(tmpPath.c_str(), path.c_str(), MOVEFILE_REPLACE_EXISTING);
+    }
+    else {
+        // Write failed, clean up temp file
+        DeleteFileW(tmpPath.c_str());
     }
 }
 
@@ -638,14 +727,18 @@ static void ApplyTheme()
         DwmSetWindowAttribute(g_app->hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDark, sizeof(useDark));
 
         // Switch app icon to match theme: light icon (dark shapes) for light
-        // mode, dark icon (light shapes) for dark mode
+        // mode, dark icon (light shapes) for dark mode.
+        // Use LoadImage with explicit sizes so big/small icons are correct.
         HINSTANCE hInst = (HINSTANCE)GetWindowLongPtrW(g_app->hwnd, GWLP_HINSTANCE);
         int iconRes = dark ? IDI_APPICON : IDI_APPICON_LIGHT;
-        HICON hIcon = LoadIcon(hInst, MAKEINTRESOURCE(iconRes));
-        if (hIcon) {
-            SendMessage(g_app->hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
-            SendMessage(g_app->hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-        }
+        HICON hIconBig = (HICON)LoadImageW(hInst, MAKEINTRESOURCEW(iconRes), IMAGE_ICON, GetSystemMetrics(SM_CXICON),
+                                           GetSystemMetrics(SM_CYICON), LR_SHARED);
+        HICON hIconSmall = (HICON)LoadImageW(hInst, MAKEINTRESOURCEW(iconRes), IMAGE_ICON,
+                                             GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), LR_SHARED);
+        if (hIconBig)
+            SendMessage(g_app->hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIconBig);
+        if (hIconSmall)
+            SendMessage(g_app->hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall);
 
         // Update tray icon to match theme
         UpdateTrayIcon();
@@ -705,14 +798,6 @@ static void UpdateTrayIcon()
     Log("Tray icon updated for %s theme", dark ? "dark" : "light");
 }
 
-// Helper to create a font with system default font face
-// Uses "MS Shell Dlg 2" which maps to the system default GUI font
-// This ensures proper display across different Windows language versions
-static HFONT CreateSystemFont(int height, int weight = FW_NORMAL)
-{
-    return CreateFontW(height, 0, 0, 0, weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                       CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"MS Shell Dlg 2");
-}
 
 static void ShowAppWindow(HWND hwnd)
 {
@@ -792,10 +877,11 @@ static HMENU BuildContextMenu(bool showTrayItem)
 
     // Opacity submenu
     HMENU hOpacityMenu = CreatePopupMenu();
-    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == 64 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_25, L"25%");
-    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == 128 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_50, L"50%");
-    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == 191 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_75, L"75%");
-    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == 255 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_100, L"100%");
+    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == kOpacity25 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_25, L"25%");
+    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == kOpacity50 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_50, L"50%");
+    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == kOpacity75 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_75, L"75%");
+    AppendMenuW(hOpacityMenu, MF_STRING | (opacity == kOpacity100 ? MF_CHECKED : MF_UNCHECKED), IDM_OPACITY_100,
+                L"100%");
     AppendMenuW(hMenu, MF_POPUP, (UINT_PTR)hOpacityMenu, L"Opacity");
 
     AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
@@ -848,6 +934,7 @@ static void UpdateScrollInfo(HWND hwnd)
     GetClientRect(hwnd, &rc);
     int clientHeight = rc.bottom - rc.top;
 
+    std::lock_guard<std::mutex> lock(g_dataMutex);
     if (g_app->contentHeight <= clientHeight) {
         // Content fits -- reset offset
         g_app->scrollOffset = 0;
@@ -870,13 +957,21 @@ static void ScrollTo(HWND hwnd, int pos)
     RECT rc;
     GetClientRect(hwnd, &rc);
     int clientHeight = rc.bottom - rc.top;
-    int maxScroll = g_app->contentHeight - clientHeight;
-    if (maxScroll < 0)
-        maxScroll = 0;
 
-    pos = max(0, min(pos, maxScroll));
-    if (pos != g_app->scrollOffset) {
-        g_app->scrollOffset = pos;
+    bool changed = false;
+    {
+        std::lock_guard<std::mutex> lock(g_dataMutex);
+        int maxScroll = g_app->contentHeight - clientHeight;
+        if (maxScroll < 0)
+            maxScroll = 0;
+
+        pos = max(0, min(pos, maxScroll));
+        if (pos != g_app->scrollOffset) {
+            g_app->scrollOffset = pos;
+            changed = true;
+        }
+    }
+    if (changed) {
         InvalidateRect(hwnd, nullptr, FALSE);
     }
 }
@@ -935,19 +1030,45 @@ static ParsedUrl ParseUrl(const std::wstring& url)
         urlToParse = urlToParse.substr(7);
     }
 
+    // Strip fragment (#...) before further parsing
+    size_t fragPos = urlToParse.find(L'#');
+    if (fragPos != std::wstring::npos) {
+        urlToParse = urlToParse.substr(0, fragPos);
+    }
+
     size_t pathPos = urlToParse.find(L'/');
     if (pathPos != std::wstring::npos) {
         result.path = urlToParse.substr(pathPos);
         urlToParse = urlToParse.substr(0, pathPos);
     }
 
-    size_t portPos = urlToParse.find(L':');
-    if (portPos != std::wstring::npos) {
-        result.host = urlToParse.substr(0, portPos);
-        result.port = _wtoi(urlToParse.substr(portPos + 1).c_str());
+    // Check for IPv6 literal (e.g. [::1]:8080)
+    if (!urlToParse.empty() && urlToParse.front() == L'[') {
+        size_t bracketEnd = urlToParse.find(L']');
+        if (bracketEnd != std::wstring::npos) {
+            result.host = urlToParse.substr(0, bracketEnd + 1);  // include brackets
+            if (bracketEnd + 1 < urlToParse.size() && urlToParse[bracketEnd + 1] == L':') {
+                int parsedPort = _wtoi(urlToParse.substr(bracketEnd + 2).c_str());
+                if (parsedPort > 0 && parsedPort <= 65535)
+                    result.port = parsedPort;
+            }
+        }
+        else {
+            result.host = urlToParse;  // malformed, best effort
+        }
     }
     else {
-        result.host = urlToParse;
+        size_t portPos = urlToParse.find(L':');
+        if (portPos != std::wstring::npos) {
+            result.host = urlToParse.substr(0, portPos);
+            int parsedPort = _wtoi(urlToParse.substr(portPos + 1).c_str());
+            // Validate port range (1-65535); if invalid, keep default
+            if (parsedPort > 0 && parsedPort <= 65535)
+                result.port = parsedPort;
+        }
+        else {
+            result.host = urlToParse;
+        }
     }
 
     return result;
@@ -962,9 +1083,13 @@ void RefreshData()
     if (!g_app || g_app->isLoading.load())
         return;
 
-    // Join previous refresh thread if it finished but hasn't been joined yet
+    // Detach any previous refresh thread that has already finished.
+    // We know it has finished because isLoading is false (checked above)
+    // and the thread sets isLoading to false as its last shared-state write.
+    // Detaching instead of joining avoids blocking the UI thread if the
+    // thread is somehow still running (e.g. OS scheduling delays).
     if (g_refreshThread.joinable()) {
-        g_refreshThread.join();
+        g_refreshThread.detach();
     }
 
     Log("Refreshing data...");
@@ -1024,26 +1149,23 @@ void RefreshData()
         if (g_shuttingDown.load())
             return;
 
-        // Safely publish results to shared state under the mutex
+        // Safely publish results to shared state under the mutex.
+        // NOTE: contentHeight is recalculated on the UI thread (WM_USER+1)
+        // to avoid data races with the renderer.
+        // Capture hwnd under the lock so we don't access g_app after unlock.
+        HWND targetHwnd = nullptr;
         {
             std::lock_guard<std::mutex> lock(g_dataMutex);
             if (g_app) {
                 g_app->subscriptions = std::move(newSubs);
                 g_app->lastError = std::move(newError);
-                if (!g_app->subscriptions.empty()) {
-                    g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
-                }
-                else {
-                    g_app->contentHeight = 0;
-                }
+                g_app->isLoading.store(false);
+                targetHwnd = g_app->hwnd;
             }
         }
 
-        if (g_app) {
-            g_app->isLoading.store(false);
-            if (g_app->hwnd && !g_shuttingDown.load()) {
-                PostMessage(g_app->hwnd, WM_USER + 1, 0, 0);  // custom "data ready" message
-            }
+        if (targetHwnd && !g_shuttingDown.load()) {
+            PostMessage(targetHwnd, WM_USER + 1, 0, 0);  // custom "data ready" message
         }
     });
 }
@@ -1098,10 +1220,15 @@ void OnPaint(HWND hwnd)
     // Get current color scheme
     const ColorScheme& colors = g_app->renderer->GetActiveScheme();
 
-    // Fill background
-    HBRUSH hBgBrush = CreateSolidBrush(colors.bgColor);
-    FillRect(hdcMem, &clientRect, hBgBrush);
-    DeleteObject(hBgBrush);
+    // Fill background (reuse the cached brush from AppState to avoid GDI churn)
+    if (g_app->hBgBrush) {
+        FillRect(hdcMem, &clientRect, g_app->hBgBrush);
+    }
+    else {
+        HBRUSH hTmpBrush = CreateSolidBrush(colors.bgColor);
+        FillRect(hdcMem, &clientRect, hTmpBrush);
+        DeleteObject(hTmpBrush);
+    }
 
     // Take a snapshot of shared state under the data mutex to avoid
     // data races with the background HTTP thread.
@@ -1125,7 +1252,7 @@ void OnPaint(HWND hwnd)
             if (g_debugMode)
                 Log("Rendering: Loading state");
 
-            HFONT hFont = CreateSystemFont(18);
+            HFONT hFont = CreateSystemUiFont(18);
             if (hFont) {
                 HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
@@ -1142,7 +1269,7 @@ void OnPaint(HWND hwnd)
             if (g_debugMode)
                 Log("Rendering: Error state - %s", lastErrorCopy.c_str());
 
-            HFONT hFont = CreateSystemFont(16);
+            HFONT hFont = CreateSystemUiFont(16);
             if (hFont) {
                 HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
@@ -1168,7 +1295,7 @@ void OnPaint(HWND hwnd)
             if (g_debugMode)
                 Log("Rendering: No data available");
 
-            HFONT hFont = CreateSystemFont(16);
+            HFONT hFont = CreateSystemUiFont(16);
             if (hFont) {
                 HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
@@ -1325,8 +1452,8 @@ static void ApplyCompactLayout(HWND hwnd)
     {
         std::lock_guard<std::mutex> lock(g_dataMutex);
         g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
+        g_app->scrollOffset = 0;
     }
-    g_app->scrollOffset = 0;
 
     // Get monitor work area for clamping
     HMONITOR hMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
@@ -1472,6 +1599,26 @@ static void ToggleCompact(HWND hwnd)
 }
 
 // ---------------------------------------------------------------------------
+// SEH helper: safely check if WM_SETTINGCHANGE lParam is "ImmersiveColorSet".
+// Separated from WndProc because MSVC forbids C++ try and SEH __try in the
+// same function.
+// ---------------------------------------------------------------------------
+
+static bool IsSettingImmersiveColorSet(LPARAM lParam)
+{
+    __try {
+        LPCWSTR setting = reinterpret_cast<LPCWSTR>(lParam);
+        if (wcscmp(setting, L"ImmersiveColorSet") == 0) {
+            return true;
+        }
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER) {
+        // lParam was not a valid string pointer -- ignore
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------------
 // WndProc
 // ---------------------------------------------------------------------------
 
@@ -1556,35 +1703,42 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             int cw = rc.right - rc.left;
             int ch = rc.bottom - rc.top;
 
-            ScrollHitZone zone =
-                g_app->renderer->HitTestScrollbar(mx, my, cw, ch, g_app->contentHeight, g_app->scrollOffset);
+            // Snapshot contentHeight under lock to avoid data race with bg thread
+            int snapContentH;
+            int snapScrollOff;
+            {
+                std::lock_guard<std::mutex> lock(g_dataMutex);
+                snapContentH = g_app->contentHeight;
+                snapScrollOff = g_app->scrollOffset;
+            }
+
+            ScrollHitZone zone = g_app->renderer->HitTestScrollbar(mx, my, cw, ch, snapContentH, snapScrollOff);
 
             if (zone == ScrollHitZone::Thumb) {
                 // Start thumb drag
                 g_app->scrollDragging = true;
                 g_app->dragStartMouseY = my;
-                g_app->dragStartOffset = g_app->scrollOffset;
+                g_app->dragStartOffset = snapScrollOff;
                 SetCapture(hwnd);
                 InvalidateRect(hwnd, nullptr, FALSE);
             }
             else if (zone == ScrollHitZone::Track) {
                 // Page up/down: jump towards click position
                 int pageAmount = ch;
-                int thumbH = (std::max)(kScrollbarMinThumb,
-                                        static_cast<int>((static_cast<long long>(ch) * ch) / g_app->contentHeight));
+                int thumbH =
+                    (std::max)(kScrollbarMinThumb, static_cast<int>((static_cast<long long>(ch) * ch) / snapContentH));
                 int trackRange = ch - thumbH;
-                int maxScroll = g_app->contentHeight - ch;
-                int currentThumbY =
-                    (maxScroll > 0) ? (int)((long long)g_app->scrollOffset * trackRange / maxScroll) : 0;
+                int maxScroll = snapContentH - ch;
+                int currentThumbY = (maxScroll > 0) ? (int)((long long)snapScrollOff * trackRange / maxScroll) : 0;
                 int thumbMid = currentThumbY + thumbH / 2;
 
                 if (my < thumbMid)
-                    ScrollTo(hwnd, g_app->scrollOffset - pageAmount);
+                    ScrollTo(hwnd, snapScrollOff - pageAmount);
                 else
-                    ScrollTo(hwnd, g_app->scrollOffset + pageAmount);
+                    ScrollTo(hwnd, snapScrollOff + pageAmount);
             }
-            else {
-                // Start window drag (click on non-scrollbar area)
+            else if (g_app->renderer && g_app->renderer->IsCompact()) {
+                // Start window drag (only in compact mode where there is no title bar)
                 g_app->windowDragging = true;
                 g_app->dragStartMouseX = mx;
                 g_app->dragStartMouseY2 = my;
@@ -1656,8 +1810,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 RECT rc;
                 GetClientRect(hwnd, &rc);
                 int ch = rc.bottom - rc.top;
-                int newOffset = g_app->renderer->ScrollOffsetFromThumbDrag(
-                    my, g_app->dragStartMouseY, g_app->dragStartOffset, ch, g_app->contentHeight);
+                int snapContentH;
+                {
+                    std::lock_guard<std::mutex> lock(g_dataMutex);
+                    snapContentH = g_app->contentHeight;
+                }
+                int newOffset = g_app->renderer->ScrollOffsetFromThumbDrag(my, g_app->dragStartMouseY,
+                                                                           g_app->dragStartOffset, ch, snapContentH);
                 ScrollTo(hwnd, newOffset);
             }
             else if (g_app->windowDragging) {
@@ -1680,8 +1839,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 int cw = rc.right - rc.left;
                 int ch = rc.bottom - rc.top;
 
-                ScrollHitZone zone =
-                    g_app->renderer->HitTestScrollbar(mx, my, cw, ch, g_app->contentHeight, g_app->scrollOffset);
+                int snapContentH, snapScrollOff;
+                {
+                    std::lock_guard<std::mutex> lock(g_dataMutex);
+                    snapContentH = g_app->contentHeight;
+                    snapScrollOff = g_app->scrollOffset;
+                }
+                ScrollHitZone zone = g_app->renderer->HitTestScrollbar(mx, my, cw, ch, snapContentH, snapScrollOff);
                 bool wasHovered = g_app->scrollThumbHovered;
                 g_app->scrollThumbHovered = (zone == ScrollHitZone::Thumb);
 
@@ -1695,10 +1859,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         }
 
         case WM_MOUSEWHEEL: {
+            if (!g_app)
+                return DefWindowProc(hwnd, msg, wParam, lParam);
             int delta = GET_WHEEL_DELTA_WPARAM(wParam);  // positive = scroll up
-            int lineHeight = 40;
-            int lines = 3;  // scroll 3 lines per notch
-            ScrollTo(hwnd, g_app->scrollOffset - (delta / WHEEL_DELTA) * lineHeight * lines);
+            int currentOffset;
+            {
+                std::lock_guard<std::mutex> lock(g_dataMutex);
+                currentOffset = g_app->scrollOffset;
+            }
+            ScrollTo(hwnd, currentOffset - (delta / WHEEL_DELTA) * kScrollLineHeight * kScrollLinesPerNotch);
             return 0;
         }
 
@@ -1724,16 +1893,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         // ----- System theme change -----
         case WM_SETTINGCHANGE: {
             // Windows broadcasts this when personalisation settings change.
-            // lParam may be a string pointer or a numeric value; guard with
-            // IsBadStringPtrW to avoid crashing on non-pointer values.
+            // lParam may be a string pointer or a numeric value; use a
+            // helper with SEH to safely probe the pointer.
             if (lParam) {
-                LPCWSTR setting = reinterpret_cast<LPCWSTR>(lParam);
-                if (!IsBadStringPtrW(setting, 64) && wcscmp(setting, L"ImmersiveColorSet") == 0) {
-                    if (g_app && g_app->themeMode == ThemeMode::System) {
-                        Log("System theme changed, re-applying theme");
-                        ApplyTheme();
-                        InvalidateRect(hwnd, nullptr, TRUE);
-                    }
+                bool isThemeChange = IsSettingImmersiveColorSet(lParam);
+                if (isThemeChange && g_app && g_app->themeMode == ThemeMode::System) {
+                    Log("System theme changed, re-applying theme");
+                    ApplyTheme();
+                    InvalidateRect(hwnd, nullptr, TRUE);
                 }
             }
             return 0;
@@ -1741,6 +1908,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         // ----- Custom: data ready from background thread -----
         case WM_USER + 1: {
+            // Recalculate content height on the UI thread (safe for renderer access)
+            if (g_app && g_app->renderer) {
+                std::lock_guard<std::mutex> lock(g_dataMutex);
+                if (!g_app->subscriptions.empty()) {
+                    g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
+                }
+                else {
+                    g_app->contentHeight = 0;
+                }
+            }
+
             bool compact = g_app && g_app->renderer && g_app->renderer->IsCompact();
             if (compact) {
                 // Compact mode: always auto-resize to fit content
@@ -1831,16 +2009,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
                 TogglePin(hwnd);
                 break;
             case IDM_OPACITY_25:
-                SetWindowOpacity(hwnd, 64);  // 25%
+                SetWindowOpacity(hwnd, kOpacity25);
                 break;
             case IDM_OPACITY_50:
-                SetWindowOpacity(hwnd, 128);  // 50%
+                SetWindowOpacity(hwnd, kOpacity50);
                 break;
             case IDM_OPACITY_75:
-                SetWindowOpacity(hwnd, 191);  // 75%
+                SetWindowOpacity(hwnd, kOpacity75);
                 break;
             case IDM_OPACITY_100:
-                SetWindowOpacity(hwnd, 255);  // 100%
+                SetWindowOpacity(hwnd, kOpacity100);
                 break;
             case IDM_TRAY_EXIT:
                 DestroyWindow(hwnd);
@@ -1860,8 +2038,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         case WM_DESTROY:
             Log("WM_DESTROY received");
-            // Signal background thread to stop, then wait for it
+            // Signal background thread to stop
             g_shuttingDown.store(true);
+            // Wait for any in-flight refresh to finish.  The thread may have been
+            // detached (see RefreshData), so we cannot rely on joinable().
+            // Instead, spin-wait on the isLoading flag with a bounded timeout
+            // to avoid hanging the UI indefinitely.
+            if (g_app && g_app->isLoading.load()) {
+                Log("Waiting for background refresh to finish...");
+                auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+                while (g_app->isLoading.load() && std::chrono::steady_clock::now() < deadline) {
+                    Sleep(50);
+                }
+                if (g_app->isLoading.load()) {
+                    Log("WARNING: Background refresh did not finish within timeout");
+                }
+            }
+            // If the thread was not detached, join it now
             if (g_refreshThread.joinable()) {
                 g_refreshThread.join();
             }
@@ -1884,6 +2077,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         Log("EXCEPTION in WndProc (msg=%d): %s", msg, e.what());
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
+}
+
+// ---------------------------------------------------------------------------
+// URL sanitization: mask query string parameters that may contain credentials
+// ---------------------------------------------------------------------------
+
+static std::wstring SanitizeUrlForLog(const std::wstring& url)
+{
+    // Mask query string to avoid leaking API keys / tokens in logs
+    size_t qpos = url.find(L'?');
+    if (qpos != std::wstring::npos) {
+        return url.substr(0, qpos) + L"?<redacted>";
+    }
+    // Also mask userinfo in URL (e.g. http://user:pass@host)
+    size_t schemeEnd = url.find(L"://");
+    if (schemeEnd != std::wstring::npos) {
+        size_t atPos = url.find(L'@', schemeEnd + 3);
+        size_t slashPos = url.find(L'/', schemeEnd + 3);
+        if (atPos != std::wstring::npos && (slashPos == std::wstring::npos || atPos < slashPos)) {
+            return url.substr(0, schemeEnd + 3) + L"<redacted>@" + url.substr(atPos + 1);
+        }
+    }
+    return url;
 }
 
 // ---------------------------------------------------------------------------
@@ -1973,39 +2189,16 @@ static INT_PTR ShowUrlInputDialog(HINSTANCE hInst, const std::wstring& defaultUr
     g_dialogUrl = defaultUrl;
     g_dialogPrompt = prompt;
 
-// We build a simple dialog: a static label, an edit box, OK and Cancel buttons.
-// All coordinates in dialog units.
-// Dialog: 320 x 130 DU
-//   Static "prompt" label: ID 102, y=7
-//   Static "Enter URL:":   y=40
-//   Edit:   ID 101,        y=52
-//   OK:     IDOK,          y=75
-//   Cancel: IDCANCEL,      y=75
+    // We build a simple dialog template in a byte buffer:
+    // a static label, an edit box, OK and Cancel buttons.
+    // All coordinates in dialog units.
+    // Dialog: 280 x 105 DU
+    //   Static "prompt" label: ID 102, y=7
+    //   Static "Enter URL:":   y=38
+    //   Edit:   ID 101,        y=52
+    //   OK:     IDOK,          y=78
+    //   Cancel: IDCANCEL,      y=78
 
-// Using the DS_SETFONT style so we can specify the font
-#pragma pack(push, 1)
-    struct
-    {
-        DLGTEMPLATE dlg;
-        WORD menu;      // 0
-        WORD wndClass;  // 0 = default
-        WORD title;     // 0 = empty
-        WORD fontSize;
-        wchar_t fontName[20];  // "MS Shell Dlg"
-        // ----- Items follow (5 items) -----
-        // Each item must be DWORD-aligned
-    } hdr = {};
-#pragma pack(pop)
-
-    // We'll use DialogBoxIndirectParam with a manually built template.
-    // This is complex, so let's use a simpler approach: build with DialogBoxParam
-    // from a global atom. Actually, the simplest reliable approach is just to use
-    // a modal message-box loop with CreateWindowExW.
-
-    // --- Simpler approach: Use a dynamically created modeless window as a dialog ---
-    // Actually, let's just use the classic approach of building DLGTEMPLATE in a byte buffer.
-
-    // For simplicity and robustness, use a pre-built buffer:
     std::vector<BYTE> buf;
     auto Align4 = [&]() {
         while (buf.size() % 4)
@@ -2299,7 +2492,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         CloseLogging();
         return 1;
     }
-    Log("HTTP client initialized");
+    // Set reasonable timeouts to prevent UI hangs when joining the refresh thread
+    app.httpClient->SetTimeout(5000, 5000, 10000, 15000);
+    Log("HTTP client initialized (timeouts: resolve=5s, connect=5s, send=10s, receive=15s)");
 
     // Load saved settings
     SavedSettings saved = LoadSettings();
@@ -2308,11 +2503,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     std::wstring apiUrlW;
     if (!cmdUrlArg.empty()) {
         apiUrlW = cmdUrlArg;
-        Log("Using command-line URL: %ls", apiUrlW.c_str());
+        Log("Using command-line URL: %ls", SanitizeUrlForLog(apiUrlW).c_str());
     }
     else if (!saved.apiUrl.empty()) {
         apiUrlW = StrToWstr(saved.apiUrl);
-        Log("Using saved URL: %ls", apiUrlW.c_str());
+        Log("Using saved URL: %ls", SanitizeUrlForLog(apiUrlW).c_str());
     }
 
     if (apiUrlW.empty()) {
@@ -2412,7 +2607,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     }
 
     // Initialize ITaskbarList for taskbar button control
-    CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList, (void**)&app.taskbarList);
+    hr = CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList, (void**)&app.taskbarList);
+    if (SUCCEEDED(hr) && app.taskbarList) {
+        hr = app.taskbarList->HrInit();
+        if (FAILED(hr)) {
+            Log("WARNING: ITaskbarList::HrInit() failed (hr=0x%08X)", hr);
+            app.taskbarList->Release();
+            app.taskbarList = nullptr;
+        }
+    }
+    else {
+        app.taskbarList = nullptr;
+    }
 
     // If compact mode restored, apply compact layout (removes caption, sets topmost).
     // The window will auto-resize when data arrives (WM_USER+1).
@@ -2499,6 +2705,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     }
 
     Log("Message loop ended");
+
+    // Release COM resources BEFORE CoUninitialize to avoid use-after-free.
+    // AppState destructor would release taskbarList, but it runs after
+    // CoUninitialize() when 'app' goes out of scope at end of wWinMain.
+    if (app.taskbarList) {
+        app.taskbarList->Release();
+        app.taskbarList = nullptr;
+    }
+
     g_app = nullptr;
     CloseLogging();
     CoUninitialize();

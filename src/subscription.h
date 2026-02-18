@@ -22,10 +22,7 @@ struct Amount
     std::optional<double> remaining;
     std::string unit;
 
-    // Format amount display
-    std::string formatUsed() const;
-    std::string formatLimit() const;
-    std::string formatRemaining() const;
+    // NOTE: formatting is handled by the renderer (renderer.cpp FormatNumber)
 };
 
 // Time window
@@ -85,15 +82,33 @@ struct Subscription
     std::string status;
 };
 
+// Helper: safely extract a numeric value from a JSON field that may be
+// a number or a numeric string (e.g. "123.4").
+inline double json_to_double(const json& val)
+{
+    if (val.is_number()) {
+        return val.get<double>();
+    }
+    if (val.is_string()) {
+        try {
+            return std::stod(val.get<std::string>());
+        }
+        catch (...) {
+            return 0.0;
+        }
+    }
+    return 0.0;
+}
+
 // JSON parsing functions
 inline void from_json(const json& j, Amount& a)
 {
-    j.at("used").get_to(a.used);
+    a.used = json_to_double(j.at("used"));
     if (j.contains("limit") && !j.at("limit").is_null()) {
-        a.limit = j.at("limit").get<double>();
+        a.limit = json_to_double(j.at("limit"));
     }
     if (j.contains("remaining") && !j.at("remaining").is_null()) {
-        a.remaining = j.at("remaining").get<double>();
+        a.remaining = json_to_double(j.at("remaining"));
     }
     j.at("unit").get_to(a.unit);
 }
