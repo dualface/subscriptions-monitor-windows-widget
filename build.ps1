@@ -245,7 +245,7 @@ function Invoke-Build {
     )
 
     if ($Config -eq "Debug") {
-        $clFlags += "/Od", "/Zi", "/MDd", "/DDEBUG", "/D_DEBUG"
+        $clFlags += "/Od", "/Zi", "/MTd", "/DDEBUG", "/D_DEBUG"
     } else {
         $clFlags += "/O2", "/MT", "/DNDEBUG"
     }

@@ -41,8 +41,6 @@
 *.dwo
 *.log
 build/
-build_cmake/
-*.pdb
-AISubscriptionsMonitor.log
 
-
+# Windows NUL device artefact
+nul

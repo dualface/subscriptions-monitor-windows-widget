@@ -54,16 +54,13 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 ## Requirements
 
 - **OS**: Windows 10 (version 1607+) or Windows 11
-- **Build tools** (one of):
-  - [CMake](https://cmake.org/) 3.16+ with Visual Studio 2022 generator
-  - Visual Studio 2022 (Community or higher) with C++ Desktop Development workload
+- **Build tools**: Visual Studio 2022 (Community or higher) with C++ Desktop Development workload
 - **Dependencies**: None beyond the Windows SDK. The only third-party library ([nlohmann/json](https://github.com/nlohmann/json) v3.11.3) is vendored as a single header file.
 
 ## Project Structure
 
 ```
 .
-├── CMakeLists.txt            # CMake build configuration
 ├── build.ps1                 # PowerShell build script
 ├── app_icon.png              # Application icon source
 ├── app_icon.ico              # Generated icon (multi-size)
@@ -81,7 +78,7 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 
 ## Building
 
-### Option A: build.ps1 (recommended)
+### build.ps1 (recommended)
 
 The PowerShell build script auto-detects your Visual Studio installation, generates the icon, and compiles everything in one step.
 
@@ -114,18 +111,7 @@ The executable will be at `build\AISubscriptionsMonitor.exe`.
 
 > **Note:** ICO auto-generation requires Python 3 with [Pillow](https://pypi.org/project/Pillow/) (`pip install Pillow`). If unavailable, the script will skip this step and use the existing `app_icon.ico`.
 
-### Option B: CMake
-
-```powershell
-mkdir build
-cd build
-cmake .. -G "Visual Studio 17 2022"
-cmake --build . --config Release
-```
-
-The executable will be at `build/bin/Release/AISubscriptionsMonitor.exe`.
-
-### Option C: Visual Studio IDE
+### Visual Studio IDE
 
 1. Open Visual Studio 2022
 2. Create a new empty C++ project
@@ -296,7 +282,7 @@ Settings are automatically saved to `%LOCALAPPDATA%\AISubscriptionsMonitor\setti
 | UI          | Native GDI rendering                                |
 | HTTP        | WinHTTP                                             |
 | JSON        | [nlohmann/json](https://github.com/nlohmann/json) v3.11.3 |
-| Build       | CMake 3.16+ / MSVC                                  |
+| Build       | PowerShell + MSVC (cl.exe)                          |
 | Font        | Microsoft YaHei UI (CJK-compatible)                 |
 
 ## Troubleshooting
