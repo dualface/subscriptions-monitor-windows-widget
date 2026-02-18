@@ -559,6 +559,15 @@ struct AppState
     // Window opacity (0-255, where 255 is fully opaque)
     BYTE opacity;
 
+    // Saved opacity from config for current mode (used by menu and mouse leave restore)
+    BYTE savedModeOpacity;
+
+    // Mouse hover opacity state
+    bool mouseInWindow;       // true when mouse is inside window
+    bool trackingMouseLeave;  // true when TrackMouseEvent is active
+    bool hoverHighlight;      // true when temporarily showing 100% opacity on hover
+    BYTE preHoverOpacity;     // opacity value before hover highlight
+
     // Saved normal-mode window rect (for restoring when leaving compact)
     RECT savedNormalRect;
     bool hasSavedNormalRect;
@@ -575,7 +584,9 @@ struct AppState
           themeMode(ThemeMode::System), scrollOffset(0), contentHeight(0), hBgBrush(nullptr), initialResizeDone(false),
           scrollDragging(false), dragStartMouseY(0), dragStartOffset(0), scrollThumbHovered(false),
           windowDragging(false), dragStartMouseX(0), dragStartMouseY2(0), isPinned(false), opacity(255),
-          savedNormalRect {}, hasSavedNormalRect(false), nid {}, trayIconCreated(false), taskbarList(nullptr)
+          savedModeOpacity(255), mouseInWindow(false), trackingMouseLeave(false), hoverHighlight(false),
+          preHoverOpacity(255), savedNormalRect {}, hasSavedNormalRect(false), nid {}, trayIconCreated(false),
+          taskbarList(nullptr)
     {
         renderer = std::make_unique<ProgressBarRenderer>();
         httpClient = std::make_unique<HttpClient>();
@@ -720,6 +731,9 @@ static void SetWindowOpacity(HWND hwnd, BYTE opacity)
 
     g_app->opacity = opacity;
 
+    // Always update savedModeOpacity to persist the new setting
+    g_app->savedModeOpacity = opacity;
+
     // Enable layered window style if not already enabled
     LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
     if (!(exStyle & WS_EX_LAYERED)) {
@@ -742,7 +756,9 @@ static HMENU BuildContextMenu(bool showTrayItem)
 
     bool compact = g_app ? g_app->renderer->IsCompact() : false;
     bool pinned = g_app ? g_app->isPinned : false;
-    BYTE opacity = g_app ? g_app->opacity : 255;
+    // Menu always shows savedModeOpacity (the configured opacity for current mode)
+    // not the temporary display opacity during mouse hover
+    BYTE opacity = g_app ? g_app->savedModeOpacity : 255;
 
     // Show/Hide menu item
     if (showTrayItem) {
@@ -1414,6 +1430,10 @@ static void ToggleCompact(HWND hwnd)
     BYTE newOpacity = newCompact ? settings.compact.opacity : settings.normal.opacity;
     if (newOpacity == 0)
         newOpacity = 255;  // Default to opaque if not set
+
+    // Update savedModeOpacity for the new mode
+    g_app->savedModeOpacity = newOpacity;
+
     SetWindowOpacity(hwnd, newOpacity);
 
     ApplyCompactLayout(hwnd);
@@ -1587,6 +1607,35 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             int mx = GET_X_LPARAM(lParam);
             int my = GET_Y_LPARAM(lParam);
 
+            // Handle opacity hover effect
+            if (!g_app->mouseInWindow) {
+                // Mouse just entered the window
+                g_app->mouseInWindow = true;
+
+                // If current display opacity is not 100%, temporarily set to 100%
+                if (g_app->opacity < 255) {
+                    g_app->preHoverOpacity = g_app->opacity;
+                    g_app->hoverHighlight = true;
+                    // Directly set opacity without calling SetWindowOpacity to avoid updating savedModeOpacity
+                    g_app->opacity = 255;
+                    SetLayeredWindowAttributes(hwnd, 0, 255, LWA_ALPHA);
+                    Log("Mouse entered window: opacity temporarily set to 100%% (will restore to %d%%)",
+                        (g_app->savedModeOpacity * 100) / 255);
+                }
+            }
+
+            // Request mouse leave notification if not already tracking
+            if (!g_app->trackingMouseLeave) {
+                TRACKMOUSEEVENT tme;
+                tme.cbSize = sizeof(TRACKMOUSEEVENT);
+                tme.dwFlags = TME_LEAVE;
+                tme.hwndTrack = hwnd;
+                tme.dwHoverTime = HOVER_DEFAULT;
+                if (TrackMouseEvent(&tme)) {
+                    g_app->trackingMouseLeave = true;
+                }
+            }
+
             if (g_app->scrollDragging) {
                 // Drag thumb
                 RECT rc;
@@ -1635,6 +1684,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             int lineHeight = 40;
             int lines = 3;  // scroll 3 lines per notch
             ScrollTo(hwnd, g_app->scrollOffset - (delta / WHEEL_DELTA) * lineHeight * lines);
+            return 0;
+        }
+
+        case WM_MOUSELEAVE: {
+            if (!g_app)
+                return DefWindowProc(hwnd, msg, wParam, lParam);
+
+            g_app->trackingMouseLeave = false;
+            g_app->mouseInWindow = false;
+
+            // Restore saved opacity if we were in hover highlight mode
+            if (g_app->hoverHighlight) {
+                g_app->hoverHighlight = false;
+                g_app->opacity = g_app->savedModeOpacity;
+                SetLayeredWindowAttributes(hwnd, 0, g_app->savedModeOpacity, LWA_ALPHA);
+                Log("Mouse left window: opacity restored to %d%% (saved mode opacity)",
+                    (g_app->savedModeOpacity * 100) / 255);
+            }
+
             return 0;
         }
 
@@ -2265,6 +2333,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         initW = saved.compact.w;
         initH = saved.compact.h;
         app.opacity = saved.compact.opacity;
+        app.savedModeOpacity = saved.compact.opacity;  // Initialize saved mode opacity
         hasSavedGeometry = true;
     }
     else if (!saved.isCompact && saved.normal.valid) {
@@ -2273,7 +2342,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         initW = saved.normal.w;
         initH = saved.normal.h;
         app.opacity = saved.normal.opacity;
+        app.savedModeOpacity = saved.normal.opacity;  // Initialize saved mode opacity
         hasSavedGeometry = true;
+    }
+    else {
+        // No saved settings, use defaults
+        app.savedModeOpacity = 255;  // Default to 100%
     }
 
     if (hasSavedGeometry) {
