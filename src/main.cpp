@@ -108,6 +108,9 @@ static std::mutex g_dataMutex;
 // Background refresh thread handle (joined before shutdown)
 static std::thread g_refreshThread;
 
+// Single instance mutex handle (released on exit)
+static HANDLE g_hInstanceMutex = NULL;
+
 // Logging function - outputs to console and file
 void Log(const char* fmt, ...)
 {
@@ -2201,6 +2204,29 @@ static void ApplyUrl(AppState& app, const std::wstring& urlStr)
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+    // Check if another instance is already running
+    g_hInstanceMutex = CreateMutexW(NULL, FALSE, L"AISubscriptionsMonitor_SingleInstance");
+    if (g_hInstanceMutex == NULL) {
+        // Failed to create mutex
+        MessageBoxW(nullptr, L"Failed to initialize application", L"Error", MB_OK | MB_ICONERROR);
+        return 1;
+    }
+
+    if (GetLastError() == ERROR_ALREADY_EXISTS) {
+        // Another instance is running - find and activate it
+        CloseHandle(g_hInstanceMutex);
+        g_hInstanceMutex = NULL;
+
+        HWND hwndExisting = FindWindowW(kClassName, NULL);
+        if (hwndExisting) {
+            // Show and activate the existing window
+            ShowWindow(hwndExisting, SW_RESTORE);
+            SetForegroundWindow(hwndExisting);
+        }
+
+        return 0;
+    }
+
     // Enable Per-Monitor DPI Awareness for Windows 10 (1607+) and Windows 11
     HMODULE hUser32 = GetModuleHandleW(L"user32.dll");
     if (hUser32) {
@@ -2470,5 +2496,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     g_app = nullptr;
     CloseLogging();
     CoUninitialize();
+
+    // Release the single instance mutex
+    if (g_hInstanceMutex) {
+        CloseHandle(g_hInstanceMutex);
+        g_hInstanceMutex = NULL;
+    }
+
     return (int)msg.wParam;
 }
