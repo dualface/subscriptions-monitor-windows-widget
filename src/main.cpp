@@ -614,7 +614,7 @@ static void UpdateTrayIcon();
 // Apply the resolved theme to the renderer and repaint
 static void ApplyTheme()
 {
-    if (!g_app)
+    if (!g_app || !g_app->renderer)
         return;
 
     bool dark = IsDarkModeActive(g_app->themeMode);
@@ -671,7 +671,7 @@ static void CreateTrayIcon(HWND hwnd)
     g_app->nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     g_app->nid.uCallbackMessage = WM_TRAYICON;
     g_app->nid.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(iconRes));
-    wcscpy_s(g_app->nid.szTip, L"AI Subscriptions Monitor");
+    wcscpy_s(g_app->nid.szTip, _countof(g_app->nid.szTip), L"AI Subscriptions Monitor");
 
     Shell_NotifyIconW(NIM_ADD, &g_app->nid);
     g_app->trayIconCreated = true;
@@ -1115,15 +1115,17 @@ void OnPaint(HWND hwnd)
 
             HFONT hFont = CreateFontW(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
                                       CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
-            HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
+            if (hFont) {
+                HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
-            RECT textRect = {0, height / 2 - 20, width, height / 2 + 20};
-            SetTextColor(hdcMem, colors.loadingTextColor);
-            SetBkMode(hdcMem, TRANSPARENT);
-            DrawTextW(hdcMem, L"Loading...", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                RECT textRect = {0, height / 2 - 20, width, height / 2 + 20};
+                SetTextColor(hdcMem, colors.loadingTextColor);
+                SetBkMode(hdcMem, TRANSPARENT);
+                DrawTextW(hdcMem, L"Loading...", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-            SelectObject(hdcMem, hOldFont);
-            DeleteObject(hFont);
+                SelectObject(hdcMem, hOldFont);
+                DeleteObject(hFont);
+            }
         }
         else if (!lastErrorCopy.empty()) {
             if (g_debugMode)
@@ -1131,17 +1133,19 @@ void OnPaint(HWND hwnd)
 
             HFONT hFont = CreateFontW(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
                                       CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
-            HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
+            if (hFont) {
+                HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
-            RECT textRect = {20, height / 2 - 40, width - 20, height / 2 + 40};
-            SetTextColor(hdcMem, colors.errorTextColor);
-            SetBkMode(hdcMem, TRANSPARENT);
+                RECT textRect = {20, height / 2 - 40, width - 20, height / 2 + 40};
+                SetTextColor(hdcMem, colors.errorTextColor);
+                SetBkMode(hdcMem, TRANSPARENT);
 
-            std::wstring errorW = StrToWstr(lastErrorCopy);
-            DrawTextW(hdcMem, errorW.c_str(), -1, &textRect, DT_CENTER | DT_WORDBREAK);
+                std::wstring errorW = StrToWstr(lastErrorCopy);
+                DrawTextW(hdcMem, errorW.c_str(), -1, &textRect, DT_CENTER | DT_WORDBREAK);
 
-            SelectObject(hdcMem, hOldFont);
-            DeleteObject(hFont);
+                SelectObject(hdcMem, hOldFont);
+                DeleteObject(hFont);
+            }
         }
         else if (!subsCopy.empty()) {
             if (g_debugMode)
@@ -1156,15 +1160,17 @@ void OnPaint(HWND hwnd)
 
             HFONT hFont = CreateFontW(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
                                       CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"Microsoft YaHei UI");
-            HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
+            if (hFont) {
+                HFONT hOldFont = (HFONT)SelectObject(hdcMem, hFont);
 
-            RECT textRect = {0, height / 2 - 20, width, height / 2 + 20};
-            SetTextColor(hdcMem, colors.noDataTextColor);
-            SetBkMode(hdcMem, TRANSPARENT);
-            DrawTextW(hdcMem, L"No data available", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+                RECT textRect = {0, height / 2 - 20, width, height / 2 + 20};
+                SetTextColor(hdcMem, colors.noDataTextColor);
+                SetBkMode(hdcMem, TRANSPARENT);
+                DrawTextW(hdcMem, L"No data available", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-            SelectObject(hdcMem, hOldFont);
-            DeleteObject(hFont);
+                SelectObject(hdcMem, hOldFont);
+                DeleteObject(hFont);
+            }
         }
     }
     catch (const std::exception& e) {
