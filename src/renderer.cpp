@@ -1,7 +1,9 @@
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <ctime>
 #include <iomanip>
+#include <limits>
 #include <sstream>
 
 #include "renderer.h"
@@ -118,11 +120,29 @@ static std::wstring ToWString(const std::string& str)
 static std::wstring FormatNumber(double value, const std::string& /*metricName*/)
 {
     std::wstringstream ss;
+
+    // Guard against values outside the safe range for long long conversion
+    // (including NaN and infinity)
+    if (std::isnan(value) || std::isinf(value)) {
+        ss << value;
+        return ss.str();
+    }
+
+    // Clamp to a safe range for integer conversion
+    constexpr double kMaxSafe = static_cast<double>(std::numeric_limits<long long>::max());
+    constexpr double kMinSafe = static_cast<double>(std::numeric_limits<long long>::min());
+
+    if (value > kMaxSafe || value < kMinSafe) {
+        // Very large values: use scientific notation
+        ss << std::scientific << std::setprecision(2) << value;
+        return ss.str();
+    }
+
     long long intValue = static_cast<long long>(value);
-    if (intValue >= 1000000) {
+    if (intValue >= 1000000 || intValue <= -1000000) {
         ss << std::fixed << std::setprecision(1) << intValue / 1000000.0 << L"M";
     }
-    else if (intValue >= 1000) {
+    else if (intValue >= 1000 || intValue <= -1000) {
         ss << std::fixed << std::setprecision(1) << intValue / 1000.0 << L"K";
     }
     else if (value == static_cast<double>(intValue)) {
@@ -191,7 +211,9 @@ static std::wstring CalculateRemainingTime(const std::string& resetsAt, bool com
 
 ProgressBarRenderer::ProgressBarRenderer()
     : windowWidth_(800), windowHeight_(600), compact_(false), hFontNormal_(nullptr), hFontBold_(nullptr),
-      hFontSmall_(nullptr), dpiScale_(1.0f), colors_(kLightScheme)
+      hFontSmall_(nullptr), dpiScale_(1.0f), colors_(kLightScheme), hBrushBarBg_(nullptr), hBrushBarLow_(nullptr),
+      hBrushBarMedium_(nullptr), hBrushBarHigh_(nullptr), hBrushScrollTrack_(nullptr), hBrushScrollThumb_(nullptr),
+      hBrushScrollHover_(nullptr)
 {
     HDC hdc = GetDC(nullptr);
     if (hdc) {
@@ -199,16 +221,21 @@ ProgressBarRenderer::ProgressBarRenderer()
         ReleaseDC(nullptr, hdc);
     }
     CreateFonts();
+    CreateBrushes();
 }
 
 ProgressBarRenderer::~ProgressBarRenderer()
 {
     DestroyFonts();
+    DestroyBrushes();
 }
 
 void ProgressBarRenderer::SetColorScheme(const ColorScheme& scheme)
 {
     colors_ = scheme;
+    // Recreate cached brushes for the new color scheme
+    DestroyBrushes();
+    CreateBrushes();
 }
 
 void ProgressBarRenderer::SetCompact(bool compact)
@@ -221,14 +248,6 @@ void ProgressBarRenderer::SetCompact(bool compact)
     CreateFonts();
 }
 
-// Helper to create a font with system default font face
-// Uses "MS Shell Dlg 2" which maps to the system default GUI font
-// This ensures proper display across different Windows language versions
-static HFONT CreateSystemFont(int height, int weight = FW_NORMAL)
-{
-    return CreateFontW(height, 0, 0, 0, weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                       CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, L"MS Shell Dlg 2");
-}
 
 void ProgressBarRenderer::CreateFonts()
 {
@@ -241,9 +260,9 @@ void ProgressBarRenderer::CreateFonts()
     int boldSize = static_cast<int>(baseBoldSize * dpiScale_);
     int smallSize = static_cast<int>(baseSmallSize * dpiScale_);
 
-    hFontNormal_ = CreateSystemFont(normalSize, FW_NORMAL);
-    hFontBold_ = CreateSystemFont(boldSize, FW_BOLD);
-    hFontSmall_ = CreateSystemFont(smallSize, FW_NORMAL);
+    hFontNormal_ = CreateSystemUiFont(normalSize, FW_NORMAL);
+    hFontBold_ = CreateSystemUiFont(boldSize, FW_BOLD);
+    hFontSmall_ = CreateSystemUiFont(smallSize, FW_NORMAL);
 }
 
 void ProgressBarRenderer::OnDpiChanged(UINT newDpi)
@@ -267,6 +286,34 @@ void ProgressBarRenderer::DestroyFonts()
         DeleteObject(hFontSmall_);
         hFontSmall_ = nullptr;
     }
+}
+
+void ProgressBarRenderer::CreateBrushes()
+{
+    hBrushBarBg_ = CreateSolidBrush(colors_.barBgColor);
+    hBrushBarLow_ = CreateSolidBrush(colors_.barLowColor);
+    hBrushBarMedium_ = CreateSolidBrush(colors_.barMediumColor);
+    hBrushBarHigh_ = CreateSolidBrush(colors_.barHighColor);
+    hBrushScrollTrack_ = CreateSolidBrush(colors_.scrollTrackColor);
+    hBrushScrollThumb_ = CreateSolidBrush(colors_.scrollThumbColor);
+    hBrushScrollHover_ = CreateSolidBrush(colors_.scrollThumbHover);
+}
+
+void ProgressBarRenderer::DestroyBrushes()
+{
+    auto destroy = [](HBRUSH& b) {
+        if (b) {
+            DeleteObject(b);
+            b = nullptr;
+        }
+    };
+    destroy(hBrushBarBg_);
+    destroy(hBrushBarLow_);
+    destroy(hBrushBarMedium_);
+    destroy(hBrushBarHigh_);
+    destroy(hBrushScrollTrack_);
+    destroy(hBrushScrollThumb_);
+    destroy(hBrushScrollHover_);
 }
 
 void ProgressBarRenderer::SetWindowSize(int width, int height)
@@ -387,8 +434,11 @@ int ProgressBarRenderer::Render(HDC hdc, const std::vector<Subscription>& subscr
         currentY += ServiceSpacing();
     }
 
-    // Return total content height (scrollOffset is already accounted for in currentY)
-    return currentY + Margin();
+    // Return total content height.
+    // currentY started at (Margin - scrollOffset), so add scrollOffset back
+    // to get the true content height.  Note: callers should prefer
+    // CalculateContentHeight() for an accurate value without rendering.
+    return currentY + scrollOffset + Margin();
 }
 
 // ---------------------------------------------------------------------------
@@ -426,20 +476,18 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width, const M
     int pad = compact_ ? 6 : 10;  // inner horizontal padding
 
     if (hasLimit) {
-        COLORREF barColor;
+        HBRUSH barBrush;
         if (percentage < 50.0)
-            barColor = colors_.barLowColor;
+            barBrush = hBrushBarLow_;
         else if (percentage < 80.0)
-            barColor = colors_.barMediumColor;
+            barBrush = hBrushBarMedium_;
         else
-            barColor = colors_.barHighColor;
-        DrawProgressBar(hdc, x, y, width, barH, percentage, barColor);
+            barBrush = hBrushBarHigh_;
+        DrawProgressBar(hdc, x, y, width, barH, percentage, barBrush);
     }
     else {
         RECT bgRect = {x, y, x + width, y + barH};
-        HBRUSH hBgBrush = CreateSolidBrush(colors_.barBgColor);
-        FillRect(hdc, &bgRect, hBgBrush);
-        DeleteObject(hBgBrush);
+        FillRect(hdc, &bgRect, hBrushBarBg_);
     }
 
     HFONT hOldFont = (HFONT)SelectObject(hdc, hFontNormal_);
@@ -555,19 +603,15 @@ void ProgressBarRenderer::RenderMetric(HDC hdc, int x, int y, int width, const M
 // ---------------------------------------------------------------------------
 
 void ProgressBarRenderer::DrawProgressBar(HDC hdc, int x, int y, int width, int height, double percentage,
-                                          COLORREF barColor)
+                                          HBRUSH fillBrush)
 {
     RECT bgRect = {x, y, x + width, y + height};
-    HBRUSH hBgBrush = CreateSolidBrush(colors_.barBgColor);
-    FillRect(hdc, &bgRect, hBgBrush);
-    DeleteObject(hBgBrush);
+    FillRect(hdc, &bgRect, hBrushBarBg_);
 
     int fillWidth = static_cast<int>((width * percentage) / 100.0);
     if (fillWidth > 0) {
         RECT fillRect = {x, y, x + fillWidth, y + height};
-        HBRUSH hFillBrush = CreateSolidBrush(barColor);
-        FillRect(hdc, &fillRect, hFillBrush);
-        DeleteObject(hFillBrush);
+        FillRect(hdc, &fillRect, fillBrush);
     }
 }
 
@@ -617,20 +661,14 @@ void ProgressBarRenderer::DrawScrollbar(HDC hdc, int clientWidth, int clientHeig
 
     int trackX = clientWidth - kScrollbarWidth;
 
-    // Track
+    // Track (use cached brush)
     RECT trackRect = {trackX, 0, clientWidth, clientHeight};
-    HBRUSH hTrackBrush = CreateSolidBrush(colors_.scrollTrackColor);
-    FillRect(hdc, &trackRect, hTrackBrush);
-    DeleteObject(hTrackBrush);
+    FillRect(hdc, &trackRect, hBrushScrollTrack_);
 
-    // Thumb
+    // Thumb (use cached brush)
     RECT thumbRect;
     CalcThumbRect(clientHeight, contentHeight, scrollOffset, trackX, thumbRect);
-
-    COLORREF thumbColor = thumbHovered ? colors_.scrollThumbHover : colors_.scrollThumbColor;
-    HBRUSH hThumbBrush = CreateSolidBrush(thumbColor);
-    FillRect(hdc, &thumbRect, hThumbBrush);
-    DeleteObject(hThumbBrush);
+    FillRect(hdc, &thumbRect, thumbHovered ? hBrushScrollHover_ : hBrushScrollThumb_);
 }
 
 // ---------------------------------------------------------------------------
