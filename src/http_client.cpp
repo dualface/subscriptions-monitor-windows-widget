@@ -132,6 +132,12 @@ std::string HttpClient::GetSync(const std::wstring& host, const std::wstring& pa
         if (dwSize == 0)
             break;
 
+        // Guard against excessively large responses to prevent OOM
+        if (result.size() + dwSize > kMaxResponseSize) {
+            result = "Response too large (exceeded " + std::to_string(kMaxResponseSize / (1024 * 1024)) + " MB limit)";
+            return result;  // success remains false
+        }
+
         std::vector<char> buffer(dwSize + 1);
         ZeroMemory(buffer.data(), dwSize + 1);
 
