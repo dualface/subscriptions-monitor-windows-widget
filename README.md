@@ -28,6 +28,7 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 ## Screenshot
 
 ### Normal Mode
+
 ```
 ┌─────────────────────────────────────────────┐
 │  ZenMux - Ultra Plan                        │
@@ -43,6 +44,7 @@ A lightweight native Windows desktop widget for monitoring AI subscription servi
 ```
 
 ### Compact Mode
+
 ```
 ┌──────────────────┐
 │ ZenMux           │
@@ -105,6 +107,7 @@ The PowerShell build script auto-detects your Visual Studio installation, genera
 The executable will be at `build\AISubscriptionsMonitor.exe`.
 
 > **Note:** If you encounter an execution policy error, run:
+>
 > ```powershell
 > powershell -ExecutionPolicy Bypass -File build.ps1
 > ```
@@ -129,12 +132,12 @@ The executable will be at `build\AISubscriptionsMonitor.exe`.
 AISubscriptionsMonitor.exe [--debug] [--theme <theme>] [--compact] [<url>]
 ```
 
-| Argument      | Description                                                      |
-| ------------- | ---------------------------------------------------------------- |
-| `<url>`       | HTTP endpoint that returns subscription data (optional if saved) |
-| `--debug`     | Enable debug console and file logging (`AISubscriptionsMonitor.log`) |
-| `--theme`     | Theme mode: `light`, `dark`, or `system` (default: `system`)     |
-| `--compact`   | Start in compact mode                                            |
+| Argument    | Description                                                          |
+| ----------- | -------------------------------------------------------------------- |
+| `<url>`     | HTTP endpoint that returns subscription data (optional if saved)     |
+| `--debug`   | Enable debug console and file logging (`AISubscriptionsMonitor.log`) |
+| `--theme`   | Theme mode: `light`, `dark`, or `system` (default: `system`)         |
+| `--compact` | Start in compact mode                                                |
 
 ### Examples
 
@@ -159,6 +162,7 @@ If no URL is provided via command line or saved in configuration, the app will p
 ### System Tray
 
 The application runs from the system tray:
+
 - **Left click** tray icon: Show/hide the window
 - **Right click** tray icon: Open context menu
 - **Minimize**: Hides to tray instead of taskbar
@@ -174,10 +178,10 @@ The application runs from the system tray:
 
 ### Keyboard Shortcuts
 
-| Key          | Action                  |
-| ------------ | ----------------------- |
-| `F5`         | Manual data refresh     |
-| `Ctrl + T`   | Toggle "Pin to Top"     |
+| Key        | Action              |
+| ---------- | ------------------- |
+| `F5`       | Manual data refresh |
+| `Ctrl + T` | Toggle "Pin to Top" |
 
 ## API Format
 
@@ -211,7 +215,7 @@ The endpoint must return a JSON array of subscription objects. Each subscription
       }
     ],
     "cost": {
-      "total": 12.50,
+      "total": 12.5,
       "currency": "USD"
     },
     "status": "ok"
@@ -221,25 +225,26 @@ The endpoint must return a JSON array of subscription objects. Each subscription
 
 ### Field Reference
 
-| Field                       | Type     | Required | Description                              |
-| --------------------------- | -------- | -------- | ---------------------------------------- |
-| `provider_id`               | string   | yes      | Unique provider identifier               |
-| `display_name`              | string   | yes      | Human-readable service name              |
-| `plan.name`                 | string   | yes      | Subscription plan name                   |
-| `plan.type`                 | string   | yes      | Plan type (e.g. `"subscription"`)        |
-| `metrics[].name`            | string   | yes      | Metric name (e.g. `"7d Flows"`)         |
-| `metrics[].window.label`    | string   | yes      | Window label (e.g. `"7 Day"`)           |
-| `metrics[].window.resets_at`| string   | no       | ISO 8601 timestamp for next reset        |
-| `metrics[].amount.used`     | number   | yes      | Current usage                            |
-| `metrics[].amount.limit`    | number   | no       | Usage cap (omit for unlimited metrics)   |
-| `metrics[].amount.remaining`| number   | no       | Remaining quota                          |
-| `metrics[].amount.unit`     | string   | yes      | Unit label (e.g. `"flows"`, `"tokens"`)  |
-| `cost.total`                | number   | no       | Optional total cost                      |
-| `cost.currency`             | string   | no       | Currency code (e.g. `"USD"`)             |
+| Field                        | Type   | Required | Description                             |
+| ---------------------------- | ------ | -------- | --------------------------------------- |
+| `provider_id`                | string | yes      | Unique provider identifier              |
+| `display_name`               | string | yes      | Human-readable service name             |
+| `plan.name`                  | string | yes      | Subscription plan name                  |
+| `plan.type`                  | string | yes      | Plan type (e.g. `"subscription"`)       |
+| `metrics[].name`             | string | yes      | Metric name (e.g. `"7d Flows"`)         |
+| `metrics[].window.label`     | string | yes      | Window label (e.g. `"7 Day"`)           |
+| `metrics[].window.resets_at` | string | no       | ISO 8601 timestamp for next reset       |
+| `metrics[].amount.used`      | number | yes      | Current usage                           |
+| `metrics[].amount.limit`     | number | no       | Usage cap (omit for unlimited metrics)  |
+| `metrics[].amount.remaining` | number | no       | Remaining quota                         |
+| `metrics[].amount.unit`      | string | yes      | Unit label (e.g. `"flows"`, `"tokens"`) |
+| `cost.total`                 | number | no       | Optional total cost                     |
+| `cost.currency`              | string | no       | Currency code (e.g. `"USD"`)            |
 
 ### Protocol Support
 
 The app supports both HTTP and HTTPS endpoints:
+
 - `http://host:port/path`
 - `https://host:port/path`
 
@@ -248,18 +253,20 @@ Default ports: HTTP (80), HTTPS (443)
 ## Progress Bar Colors
 
 ### Light Theme
-| Color  | Usage Range | Meaning              |
-| ------ | ----------- | -------------------- |
-| Green  | 0 -- 49%    | Normal usage         |
-| Yellow | 50 -- 80%   | Elevated usage       |
-| Red    | 81 -- 100%  | Approaching limit    |
+
+| Color  | Usage Range | Meaning           |
+| ------ | ----------- | ----------------- |
+| Green  | 0 -- 49%    | Normal usage      |
+| Yellow | 50 -- 80%   | Elevated usage    |
+| Red    | 81 -- 100%  | Approaching limit |
 
 ### Dark Theme
-| Color        | Usage Range | Meaning              |
-| ------------ | ----------- | -------------------- |
-| Muted Green  | 0 -- 49%    | Normal usage         |
-| Orange       | 50 -- 80%   | Elevated usage       |
-| Red          | 81 -- 100%  | Approaching limit    |
+
+| Color       | Usage Range | Meaning           |
+| ----------- | ----------- | ----------------- |
+| Muted Green | 0 -- 49%    | Normal usage      |
+| Orange      | 50 -- 80%   | Elevated usage    |
+| Red         | 81 -- 100%  | Approaching limit |
 
 Metrics without a `limit` field are displayed as text-only (no progress bar).
 
@@ -275,27 +282,30 @@ Settings are automatically saved to `%LOCALAPPDATA%\AISubscriptionsMonitor\setti
 
 ## Tech Stack
 
-| Component   | Technology                                          |
-| ----------- | --------------------------------------------------- |
-| Language    | C++17                                               |
-| Platform    | Win32 API                                           |
-| UI          | Native GDI rendering                                |
-| HTTP        | WinHTTP                                             |
-| JSON        | [nlohmann/json](https://github.com/nlohmann/json) v3.11.3 |
-| Build       | PowerShell + MSVC (cl.exe)                          |
-| Font        | Microsoft YaHei UI (CJK-compatible)                 |
+| Component | Technology                                                |
+| --------- | --------------------------------------------------------- |
+| Language  | C++17                                                     |
+| Platform  | Win32 API                                                 |
+| UI        | Native GDI rendering                                      |
+| HTTP      | WinHTTP                                                   |
+| JSON      | [nlohmann/json](https://github.com/nlohmann/json) v3.11.3 |
+| Build     | PowerShell + MSVC (cl.exe)                                |
+| Font      | Microsoft YaHei UI (CJK-compatible)                       |
 
 ## Troubleshooting
 
 ### No window appears
+
 Check the log file `AISubscriptionsMonitor.log` for errors.
 
 ### API connection fails
+
 - Verify the URL is correct and accessible
 - Check if firewall is blocking the connection
 - For HTTPS, ensure the certificate is valid
 
 ### Wrong theme
+
 The app follows the Windows system theme by default. Use `--theme light` or `--theme dark` to override.
 
 ## License
