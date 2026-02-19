@@ -135,6 +135,9 @@ private:
     // Render service header
     void RenderServiceHeader(HDC hdc, int x, int y, int width, const Subscription& sub);
 
+    // Render error message bar (when provider returns error)
+    void RenderErrorBar(HDC hdc, int x, int y, int width, const std::string& errorMessage);
+
     // Draw a progress bar using cached brushes
     void DrawProgressBar(HDC hdcDest, int x, int y, int width, int height, double percentage, HBRUSH fillBrush);
 

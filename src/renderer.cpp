@@ -330,17 +330,31 @@ int ProgressBarRenderer::CalculateContentHeight(const std::vector<Subscription>&
 {
     int h = Margin();
     for (const auto& sub : subscriptions) {
+        bool hasError = sub.error.has_value();
+
         int metricCount = 0;
-        for (const auto& metric : sub.metrics) {
-            // In compact mode, skip metrics without a limit (e.g. Total Tokens, API Requests)
-            if (compact_ && !metric.amount.limit.has_value())
-                continue;
-            ++metricCount;
+        if (!hasError) {
+            for (const auto& metric : sub.metrics) {
+                // In compact mode, skip metrics without a limit (e.g. Total Tokens, API Requests)
+                if (compact_ && !metric.amount.limit.has_value())
+                    continue;
+                ++metricCount;
+            }
         }
-        if (compact_ && metricCount == 0)
-            continue;  // skip empty services
+
+        // Always show services with errors; skip empty services in compact mode
+        if (compact_ && metricCount == 0 && !hasError)
+            continue;
+
         h += HeaderHeight();
-        h += metricCount * (BarHeight() + ItemSpacing());
+
+        // If has error, show one error bar; otherwise show metrics
+        if (hasError) {
+            h += BarHeight() + ItemSpacing();
+        }
+        else {
+            h += metricCount * (BarHeight() + ItemSpacing());
+        }
         h += ServiceSpacing();
     }
     // Add bottom margin
@@ -405,8 +419,12 @@ int ProgressBarRenderer::Render(HDC hdc, const std::vector<Subscription>& subscr
     int currentY = Margin() - scrollOffset;
 
     for (const auto& sub : subscriptions) {
+        // Check if this subscription has an error
+        bool hasError = sub.error.has_value();
+
         // In compact mode, check if this service has any displayable metrics
-        if (compact_) {
+        // (but always show services with errors)
+        if (compact_ && !hasError) {
             bool hasDisplayable = false;
             for (const auto& m : sub.metrics) {
                 if (m.amount.limit.has_value()) {
@@ -423,13 +441,22 @@ int ProgressBarRenderer::Render(HDC hdc, const std::vector<Subscription>& subscr
         }
         currentY += HeaderHeight();
 
-        for (const auto& metric : sub.metrics) {
-            if (compact_ && !metric.amount.limit.has_value())
-                continue;
+        // If there's an error, render error message instead of metrics
+        if (hasError) {
             if (currentY + BarHeight() > 0 && currentY < windowHeight_) {
-                RenderMetric(hdc, Margin(), currentY, windowWidth_ - 2 * Margin(), metric, sub.display_name);
+                RenderErrorBar(hdc, Margin(), currentY, windowWidth_ - 2 * Margin(), sub.error.value());
             }
             currentY += BarHeight() + ItemSpacing();
+        }
+        else {
+            for (const auto& metric : sub.metrics) {
+                if (compact_ && !metric.amount.limit.has_value())
+                    continue;
+                if (currentY + BarHeight() > 0 && currentY < windowHeight_) {
+                    RenderMetric(hdc, Margin(), currentY, windowWidth_ - 2 * Margin(), metric, sub.display_name);
+                }
+                currentY += BarHeight() + ItemSpacing();
+            }
         }
         currentY += ServiceSpacing();
     }
@@ -451,14 +478,53 @@ void ProgressBarRenderer::RenderServiceHeader(HDC hdc, int x, int y, int width, 
     HFONT hOldFont = (HFONT)SelectObject(hdc, compact_ ? hFontNormal_ : hFontBold_);
 
     std::wstringstream ss;
-    if (compact_)
+    if (compact_) {
         ss << ToWString(sub.display_name);
-    else
-        ss << ToWString(sub.display_name) << L" - " << ToWString(sub.plan.name);
+    }
+    else {
+        ss << ToWString(sub.display_name);
+        // Only show plan name if it exists and is not empty
+        if (!sub.plan.name.empty()) {
+            ss << L" - " << ToWString(sub.plan.name);
+        }
+    }
 
-    SetTextColor(hdc, colors_.textColor);
+    // If there's an error, show header in error color
+    if (sub.error.has_value()) {
+        SetTextColor(hdc, colors_.errorTextColor);
+    }
+    else {
+        SetTextColor(hdc, colors_.textColor);
+    }
     SetBkMode(hdc, TRANSPARENT);
     DrawTextW(hdc, ss.str().c_str(), -1, &rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+    SelectObject(hdc, hOldFont);
+}
+
+// ---------------------------------------------------------------------------
+// Error bar (displayed when provider returns error)
+// ---------------------------------------------------------------------------
+
+void ProgressBarRenderer::RenderErrorBar(HDC hdc, int x, int y, int width, const std::string& errorMessage)
+{
+    int barH = BarHeight();
+    int pad = compact_ ? 6 : 10;
+
+    // Draw background bar with error color
+    RECT bgRect = {x, y, x + width, y + barH};
+    HBRUSH hErrorBrush = CreateSolidBrush(colors_.errorTextColor);
+    FillRect(hdc, &bgRect, hErrorBrush);
+    DeleteObject(hErrorBrush);
+
+    // Draw error text
+    HFONT hOldFont = (HFONT)SelectObject(hdc, hFontNormal_);
+    SetTextColor(hdc, RGB(255, 255, 255));  // White text on error background
+    SetBkMode(hdc, TRANSPARENT);
+
+    std::wstring errorW = ToWString(errorMessage);
+    RECT textRect = {x + pad, y, x + width - pad, y + barH};
+    DrawTextW(hdc, errorW.c_str(), -1, &textRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 
     SelectObject(hdc, hOldFont);
 }
