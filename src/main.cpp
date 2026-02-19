@@ -202,10 +202,15 @@ bool InitLogging(bool debugMode)
 
 void CloseLogging()
 {
+    // Write final log lines via Log() (which acquires g_logMutex internally),
+    // then close the file under the same mutex to prevent a race with any
+    // concurrent Log() call from a lingering thread.
+    Log("========================================");
+    Log("Application shutting down");
+    Log("========================================");
+
+    std::lock_guard<std::mutex> lock(g_logMutex);
     if (g_logFile.is_open()) {
-        Log("========================================");
-        Log("Application shutting down");
-        Log("========================================");
         g_logFile.close();
     }
 }
@@ -500,7 +505,8 @@ static SavedSettings LoadSettings()
                 gotNormalH = true;
             }
             else if (key == "normal_opacity") {
-                ss.normal.opacity = static_cast<BYTE>(std::stoi(val));
+                int v = std::stoi(val);
+                ss.normal.opacity = (v >= 1 && v <= 255) ? static_cast<BYTE>(v) : 255;
             }
             // Compact mode settings
             else if (key == "compact_x") {
@@ -520,7 +526,8 @@ static SavedSettings LoadSettings()
                 gotCompactH = true;
             }
             else if (key == "compact_opacity") {
-                ss.compact.opacity = static_cast<BYTE>(std::stoi(val));
+                int v = std::stoi(val);
+                ss.compact.opacity = (v >= 1 && v <= 255) ? static_cast<BYTE>(v) : 255;
             }
             // Global settings
             else if (key == "pinned") {
@@ -1083,13 +1090,12 @@ void RefreshData()
     if (!g_app || g_app->isLoading.load())
         return;
 
-    // Detach any previous refresh thread that has already finished.
-    // We know it has finished because isLoading is false (checked above)
-    // and the thread sets isLoading to false as its last shared-state write.
-    // Detaching instead of joining avoids blocking the UI thread if the
-    // thread is somehow still running (e.g. OS scheduling delays).
+    // Join the previous refresh thread before starting a new one.
+    // isLoading is false (checked above), so the thread has finished its
+    // shared-state work.  join() may briefly block while the thread exits
+    // (PostMessage + return), but this is bounded and near-instant.
     if (g_refreshThread.joinable()) {
-        g_refreshThread.detach();
+        g_refreshThread.join();
     }
 
     Log("Refreshing data...");
@@ -1109,6 +1115,17 @@ void RefreshData()
     HttpClient* client = g_app->httpClient.get();
 
     g_refreshThread = std::thread([host, path, port, isHttps, client]() {
+        // RAII guard: ensure isLoading is cleared on every exit path,
+        // including early returns due to g_shuttingDown.
+        struct LoadingGuard
+        {
+            ~LoadingGuard()
+            {
+                if (g_app)
+                    g_app->isLoading.store(false);
+            }
+        } loading_guard;
+
         if (g_shuttingDown.load())
             return;
 
@@ -1117,7 +1134,6 @@ void RefreshData()
 
         std::vector<Subscription> newSubs;
         std::string newError;
-        int newContentHeight = 0;
 
         try {
             std::string response = client->GetSync(host, path, port, isHttps, success);
@@ -1159,7 +1175,7 @@ void RefreshData()
             if (g_app) {
                 g_app->subscriptions = std::move(newSubs);
                 g_app->lastError = std::move(newError);
-                g_app->isLoading.store(false);
+                // isLoading cleared by LoadingGuard destructor after this scope
                 targetHwnd = g_app->hwnd;
             }
         }
@@ -1449,10 +1465,12 @@ static void ApplyCompactLayout(HWND hwnd)
     SetWindowPos(hwnd, zOrder, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 
     // Recalculate content (under lock since subscriptions may be written by bg thread)
+    bool has_data = false;
     {
         std::lock_guard<std::mutex> lock(g_dataMutex);
         g_app->contentHeight = g_app->renderer->CalculateContentHeight(g_app->subscriptions);
         g_app->scrollOffset = 0;
+        has_data = !g_app->subscriptions.empty();
     }
 
     // Get monitor work area for clamping
@@ -1461,7 +1479,7 @@ static void ApplyCompactLayout(HWND hwnd)
     GetMonitorInfo(hMon, &mi);
     RECT workArea = mi.rcWork;
 
-    if (compact && !g_app->subscriptions.empty()) {
+    if (compact && has_data) {
         // Save current normal-mode window rect before resizing
         // Use the pre-calculated currentlyInNormalMode flag (before styles were modified)
         if (currentlyInNormalMode) {
@@ -2038,25 +2056,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
         case WM_DESTROY:
             Log("WM_DESTROY received");
-            // Signal background thread to stop
+            // Signal background thread to stop, then join it.
+            // The thread is never detached (RefreshData always joins before
+            // starting a new one), so joinable() reliably indicates a live thread.
+            // HTTP timeouts (max 15s receive) bound the join duration.
             g_shuttingDown.store(true);
-            // Wait for any in-flight refresh to finish.  The thread may have been
-            // detached (see RefreshData), so we cannot rely on joinable().
-            // Instead, spin-wait on the isLoading flag with a bounded timeout
-            // to avoid hanging the UI indefinitely.
-            if (g_app && g_app->isLoading.load()) {
-                Log("Waiting for background refresh to finish...");
-                auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
-                while (g_app->isLoading.load() && std::chrono::steady_clock::now() < deadline) {
-                    Sleep(50);
-                }
-                if (g_app->isLoading.load()) {
-                    Log("WARNING: Background refresh did not finish within timeout");
-                }
-            }
-            // If the thread was not detached, join it now
             if (g_refreshThread.joinable()) {
+                Log("Waiting for background refresh thread to finish...");
                 g_refreshThread.join();
+                Log("Background refresh thread joined");
             }
             RemoveTrayIcon();
             // Persist settings before closing
