@@ -80,6 +80,7 @@ struct Subscription
     std::vector<Metric> metrics;
     std::optional<Cost> cost;
     std::string status;
+    std::optional<std::string> error;  // Error message from provider
 };
 
 // Helper: safely extract a numeric value from a JSON field that may be
@@ -150,12 +151,38 @@ inline void from_json(const json& j, Subscription& s)
     j.at("display_name").get_to(s.display_name);
     j.at("name").get_to(s.name);
     j.at("timestamp").get_to(s.timestamp);
-    j.at("plan").get_to(s.plan);
-    j.at("metrics").get_to(s.metrics);
+
+    // Plan is optional (may be missing when there's an error)
+    if (j.contains("plan") && !j.at("plan").is_null()) {
+        s.plan = j.at("plan").get<Plan>();
+    }
+    else {
+        s.plan = Plan {"", "", std::nullopt};
+    }
+
+    // Metrics may be null when there's an error
+    if (j.contains("metrics") && !j.at("metrics").is_null()) {
+        j.at("metrics").get_to(s.metrics);
+    }
+    else {
+        s.metrics.clear();
+    }
+
     if (j.contains("cost") && !j.at("cost").is_null()) {
         s.cost = j.at("cost").get<Cost>();
     }
-    j.at("status").get_to(s.status);
+
+    // Status is optional, defaults to empty string
+    if (j.contains("status") && !j.at("status").is_null()) {
+        j.at("status").get_to(s.status);
+    }
+    else {
+        s.status = "";
+    }
+
+    if (j.contains("error") && !j.at("error").is_null()) {
+        s.error = j.at("error").get<std::string>();
+    }
 }
 
 // Parse function declaration
