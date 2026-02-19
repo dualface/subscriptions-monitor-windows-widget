@@ -56,14 +56,8 @@ std::vector<Subscription> ParseSubscriptions(const std::string& jsonString)
             try {
                 subs.push_back(j[i].get<Subscription>());
             }
-            catch (const json::exception& e) {
-                // Provide context about which subscription entry failed
-                std::string providerHint;
-                if (j[i].contains("display_name")) {
-                    providerHint = " (" + j[i]["display_name"].get<std::string>() + ")";
-                }
-                throw std::runtime_error("Error parsing subscription #" + std::to_string(i + 1) + providerHint + ": " +
-                                         e.what());
+            catch (const json::exception&) {
+                continue;
             }
         }
         return subs;
