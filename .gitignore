@@ -41,6 +41,8 @@
 *.dwo
 *.log
 build/
+*.nativecodeanalysis.xml
 
 # Windows NUL device artefact
 nul
+

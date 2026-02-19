@@ -16,12 +16,21 @@
 .PARAMETER IconOnly
     Only regenerate app_icon.ico from app_icon.png, then exit.
 
+.PARAMETER Analyze
+    Enable MSVC static code analysis (/analyze). Reports potential bugs,
+    buffer overruns, uninitialized variables, and other defects.
+
+.PARAMETER Run
+    Launch the executable after a successful build.
+
 .EXAMPLE
     .\build.ps1
     .\build.ps1 -Config Debug
     .\build.ps1 -Clean
-    .\build.ps1 -Clean -Config Release
+    .\build.ps1 -Clean -Config Release -Run
     .\build.ps1 -IconOnly
+    .\build.ps1 -Analyze
+    .\build.ps1 -Analyze -Config Debug
 #>
 
 param(
@@ -29,7 +38,9 @@ param(
     [string]$Config = "Release",
 
     [switch]$Clean,
-    [switch]$IconOnly
+    [switch]$IconOnly,
+    [switch]$Analyze,
+    [switch]$Run
 )
 
 Set-StrictMode -Version Latest
@@ -250,6 +261,12 @@ function Invoke-Build {
         $clFlags += "/O2", "/MT", "/DNDEBUG"
     }
 
+    if ($Analyze) {
+        $clFlags += "/analyze"
+        $clFlags += "/analyze:external-"   # Skip vendored/system headers
+        Write-Ok "Static analysis enabled (/analyze)"
+    }
+
     $linkFlags = @(
         "/link"
         "`"$resFile`""
@@ -301,7 +318,12 @@ try {
         Invoke-Clean
     }
 
-    Invoke-Build
+    $exe = Invoke-Build
+
+    if ($Run -and $exe) {
+        Write-Step "Launching $ExeName"
+        Start-Process $exe
+    }
 
     Pop-Location
     exit 0
