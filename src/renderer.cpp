@@ -180,13 +180,17 @@ static std::wstring CalculateRemainingTime(const std::string& resetsAt, bool com
 
     double diffSeconds = difftime(resetTimestamp, now);
     int totalMinutes = static_cast<int>(diffSeconds / 60);
-    int diffHours = totalMinutes / 60;
+    int totalHours = totalMinutes / 60;
+    int diffDays = totalHours / 24;
+    int diffHours = totalHours % 24;
     int diffMinutes = totalMinutes % 60;
 
     std::wstringstream ss;
     if (compact) {
-        // Compact: just "2h15m" or "15m" or "<1m"
-        if (diffHours > 0)
+        // Compact: "2d15h30m" or "15h30m" or "30m" or "<1m"
+        if (diffDays > 0)
+            ss << diffDays << L"d" << diffHours << L"h" << diffMinutes << L"m";
+        else if (diffHours > 0)
             ss << diffHours << L"h" << diffMinutes << L"m";
         else if (diffMinutes > 0)
             ss << diffMinutes << L"m";
@@ -194,7 +198,9 @@ static std::wstring CalculateRemainingTime(const std::string& resetsAt, bool com
             ss << L"<1m";
     }
     else {
-        if (diffHours > 0)
+        if (diffDays > 0)
+            ss << diffDays << L"d " << diffHours << L"h " << diffMinutes << L"m";
+        else if (diffHours > 0)
             ss << diffHours << L"h " << diffMinutes << L"m";
         else if (diffMinutes > 0)
             ss << diffMinutes << L"m";
